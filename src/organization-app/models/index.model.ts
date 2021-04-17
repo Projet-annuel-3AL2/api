@@ -8,7 +8,7 @@ export const connection = createConnections([{
     username: "test",
     password: "test",
     database: "test",
-    schema:"organization-app"
+    schema: "organization-app"
 }, {
     name: "agir-pour-tous",
     type: "postgres",
@@ -17,7 +17,7 @@ export const connection = createConnections([{
     username: "test",
     password: "test",
     database: "test",
-    schema:"agir-pour-tous"
+    schema: "agir-pour-tous"
 }]);
 
 connection.then(value => value[0].)

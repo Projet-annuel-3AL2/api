@@ -16,7 +16,7 @@ createConnection({
     database: process.env.DB_NAME,
     entities: [__dirname + "*/models/*.ts"],
     synchronize: true
-}).then(() =>{
+}).then(() => {
     const app: Express = express();
     app.use(bodyParser.json());
     app.use("/apt", buildAPTRoutes());
