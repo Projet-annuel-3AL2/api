@@ -1,19 +1,7 @@
-import {config} from "dotenv";
-import express, {Express} from "express";
-import bodyParser from "body-parser";
+import {Router} from "express";
 
-config();
-const app: Express = express();
+export function buildOrgAppRoutes() {
+    const router = Router();
 
-app.use(bodyParser.json());
-
-buildRoutes(app);
-
-const port = process.env.PORT || 3000;
-
-app.use('/');
-
-
-app.listen(port, function () {
-    console.log(`Listening on ${port}...`);
-});
+    return router;
+}
