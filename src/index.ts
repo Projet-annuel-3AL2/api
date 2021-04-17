@@ -1,4 +1,4 @@
-import {createConnection, getConnection, getRepository} from "typeorm";
+import {createConnection} from "typeorm";
 import {config} from "dotenv";
 import bodyParser from "body-parser";
 import express, {Express} from "express";
