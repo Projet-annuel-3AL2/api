@@ -1,7 +1,8 @@
 import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
 import {User} from "./user.model";
+import {config} from "dotenv";
 
-@Entity({schema: process.env.DB_SCHEMA_OA})
+@Entity({schema: "organization-app"})
 export class Project {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -9,8 +10,7 @@ export class Project {
     @Column({nullable: false, unique: true})
     name: string;
 
-    @ManyToMany(() => User)
+    @ManyToMany(() => User, user => user.projects)
     @JoinTable()
     users: User[];
-
 }

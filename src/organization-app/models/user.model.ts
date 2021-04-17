@@ -1,7 +1,8 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
 import {IsNotEmpty, Length} from "class-validator";
+import {Project} from "./project.model";
 
-@Entity({schema: process.env.DB_SCHEMA_OA})
+@Entity({schema: "organization-app"})
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -25,4 +26,8 @@ export class User {
 
     @Column({nullable:false})
     isAdmin: boolean;
+
+    @ManyToMany(() => Project, project => project.users)
+    @JoinTable()
+    projects: Project[];
 }
