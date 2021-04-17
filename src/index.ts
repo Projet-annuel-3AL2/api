@@ -26,14 +26,6 @@ createConnection({
     app.listen(port, function () {
         console.log(`Listening on ${port}...`);
     });
-    let user = new User();
-    user.username = "aaaaaaaaaaaaa";
-    user.firstName = "aaaaaaaaaaaaa";
-    user.lastName = "aaaaaaaaaaaaa";
-    user.isAdmin = false;
-    user.mail = "aaaaaaaaaaaaa";
-    user.password = "aaaaaaaaaaaaaaaaa";
-    getRepository(User).save(user).then(console.log);
 });
 
 
