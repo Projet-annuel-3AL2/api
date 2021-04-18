@@ -1,6 +1,5 @@
-import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
 import {User} from "./user.model";
-import {config} from "dotenv";
 
 @Entity({schema: "organization-app"})
 export class Project {
@@ -11,6 +10,5 @@ export class Project {
     name: string;
 
     @ManyToMany(() => User, user => user.projects)
-    @JoinTable()
     users: User[];
 }

@@ -14,17 +14,17 @@ export class User {
     @Column()
     lastName: string;
 
-    @Column({unique:true})
+    @Column({unique: true})
     username: string;
 
-    @Column({unique:true})
+    @Column({unique: true})
     mail: string;
 
     @Column()
-    @Length(7,100)
+    @Length(7, 100)
     password: string;
 
-    @Column({nullable:false})
+    @Column({nullable: false})
     isAdmin: boolean;
 
     @ManyToMany(() => Project, project => project.users)

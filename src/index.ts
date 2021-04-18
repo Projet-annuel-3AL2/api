@@ -4,12 +4,11 @@ import bodyParser from "body-parser";
 import express, {Express} from "express";
 import {buildOrgAppRoutes} from "./organization-app/routes/index.route";
 import {buildAPTRoutes} from "./agir-pour-tous/routes/index.route";
-import {User} from "./organization-app/models/user.model";
 
 config();
 createConnection({
     type: "postgres",
-    logging:true,
+    logging: true,
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT!),
     username: process.env.DB_USER,
