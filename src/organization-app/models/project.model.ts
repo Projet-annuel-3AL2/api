@@ -9,6 +9,9 @@ export class Project {
     @Column({nullable: false, unique: true})
     name: string;
 
-    @ManyToMany(() => User, user => user.projects)
-    users: User[];
+    @ManyToMany(() => User, user => user.projectsMember)
+    usersMember: User[];
+
+    @ManyToMany(()=> User, user =>user.projectsAdmin)
+    usersAdmin: User[];
 }
