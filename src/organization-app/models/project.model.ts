@@ -13,7 +13,7 @@ export class Project {
     @ManyToMany(() => User, user => user.projectsMember)
     usersMember: User[];
 
-    @ManyToMany(()=> User, user =>user.projectsAdmin)
+    @ManyToMany(() => User, user => user.projectsAdmin)
     usersAdmin: User[];
 
     @OneToMany(() => Ticket, ticket => ticket.project)

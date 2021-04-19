@@ -22,7 +22,7 @@ export class User {
     @Column({unique: true})
     mail: string;
 
-    @Column({ select: false })
+    @Column({select: false})
     @Length(7, 100)
     password: string;
 
@@ -37,12 +37,12 @@ export class User {
     @JoinTable()
     projectsAdmin: Project[];
 
-    @OneToMany(()=> Ticket, ticket => ticket.userCreator)
+    @OneToMany(() => Ticket, ticket => ticket.userCreator)
     createdTicket: Ticket[];
 
-    @OneToMany( ()=> Ticket, ticket => ticket.userAssigned)
+    @OneToMany(() => Ticket, ticket => ticket.userAssigned)
     assignedTicket: Ticket[];
 
-    @OneToMany( ()=> Comment, comment => comment.user)
+    @OneToMany(() => Comment, comment => comment.user)
     comment: Comment[];
 }

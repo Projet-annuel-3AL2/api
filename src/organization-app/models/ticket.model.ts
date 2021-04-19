@@ -11,6 +11,12 @@ import {User} from "./user.model";
 import {Comment} from "./comment.model";
 import {Project} from "./project.model";
 
+export enum TicketStatus {
+    TODO = "TODO",
+    OPEN = "OPEN",
+    CLOSED = "CLOSED"
+}
+
 @Entity({schema: "organization-app"})
 export class Ticket {
 
@@ -25,7 +31,7 @@ export class Ticket {
 
     @Column({
         type: "enum",
-        enum: ["TODO", "OPEN", "CLOSED"],
+        enum: TicketStatus,
         default: "TODO"
     })
     status: string;
@@ -45,15 +51,15 @@ export class Ticket {
     @UpdateDateColumn()
     update_at: Date;
 
-    @ManyToOne(()=> User, user => user.createdTicket)
+    @ManyToOne(() => User, user => user.createdTicket)
     userCreator: User;
 
-    @ManyToOne( ()=> User, user => user.assignedTicket)
+    @ManyToOne(() => User, user => user.assignedTicket)
     userAssigned: User;
 
-    @OneToMany( ()=> Comment, comment => comment.ticket)
+    @OneToMany(() => Comment, comment => comment.ticket)
     comment: Comment[];
 
-    @ManyToOne(()=> Project, project => project.tickets)
+    @ManyToOne(() => Project, project => project.tickets)
     project: Project;
 }
