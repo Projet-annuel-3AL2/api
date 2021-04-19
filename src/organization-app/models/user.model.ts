@@ -1,6 +1,7 @@
-import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {IsNotEmpty, Length} from "class-validator";
 import {Project} from "./project.model";
+import {Ticket} from "./ticket.model";
 
 @Entity({schema: "organization-app"})
 export class User {
@@ -27,7 +28,17 @@ export class User {
     @Column({nullable: false})
     isAdmin: boolean;
 
-    @ManyToMany(() => Project, project => project.users)
+    @ManyToMany(() => Project, project => project.usersMember)
     @JoinTable()
-    projects: Project[];
+    projectsMember: Project[];
+
+    @ManyToMany(() => Project, project => project.usersAdmin)
+    @JoinTable()
+    projectsAdmin: Project[];
+
+    @OneToMany(()=> Ticket, ticket => ticket.userCreator)
+    createdTicket: Ticket[];
+
+    @OneToMany( ()=> Ticket, ticket => ticket.userAssigned)
+    assignedTicket: Ticket[];
 }
