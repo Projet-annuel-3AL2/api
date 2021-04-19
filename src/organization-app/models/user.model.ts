@@ -2,6 +2,7 @@ import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn
 import {IsNotEmpty, Length} from "class-validator";
 import {Project} from "./project.model";
 import {Ticket} from "./ticket.model";
+import {Comment} from "./comment.model";
 
 @Entity({schema: "organization-app"})
 export class User {
@@ -41,4 +42,7 @@ export class User {
 
     @OneToMany( ()=> Ticket, ticket => ticket.userAssigned)
     assignedTicket: Ticket[];
+
+    @OneToMany( ()=> Comment, comment => comment.user)
+    comment: Comment[];
 }

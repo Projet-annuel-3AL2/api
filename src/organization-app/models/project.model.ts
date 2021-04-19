@@ -1,5 +1,6 @@
-import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {User} from "./user.model";
+import {Ticket} from "./ticket.model";
 
 @Entity({schema: "organization-app"})
 export class Project {
@@ -14,4 +15,7 @@ export class Project {
 
     @ManyToMany(()=> User, user =>user.projectsAdmin)
     usersAdmin: User[];
+
+    @OneToMany(() => Ticket, ticket => ticket.project)
+    tickets: Ticket[];
 }

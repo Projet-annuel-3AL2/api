@@ -1,6 +1,17 @@
-import {Column, CreateDateColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from "typeorm";
 import {User} from "./user.model";
+import {Comment} from "./comment.model";
+import {Project} from "./project.model";
 
+@Entity({schema: "organization-app"})
 export class Ticket {
 
     @PrimaryGeneratedColumn('uuid')
@@ -34,10 +45,15 @@ export class Ticket {
     @UpdateDateColumn()
     update_at: Date;
 
-
     @ManyToOne(()=> User, user => user.createdTicket)
     userCreator: User;
 
     @ManyToOne( ()=> User, user => user.assignedTicket)
     userAssigned: User;
+
+    @OneToMany( ()=> Comment, comment => comment.ticket)
+    comment: Comment[];
+
+    @ManyToOne(()=> Project, project => project.tickets)
+    project: Project;
 }
