@@ -1,5 +1,5 @@
 import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {IsNotEmpty, Length} from "class-validator";
+import {IsEmail, IsNotEmpty, Length} from "class-validator";
 import {Project} from "./project.model";
 import {Ticket} from "./ticket.model";
 import {Comment} from "./comment.model";
@@ -14,35 +14,40 @@ export class User {
     firstName: string;
 
     @Column()
+    @IsNotEmpty()
     lastName: string;
 
     @Column({unique: true})
+    @IsNotEmpty()
     username: string;
 
     @Column({unique: true})
+    @IsNotEmpty()
+    @IsEmail()
     mail: string;
 
     @Column({select: false})
+    @IsNotEmpty()
     @Length(7, 100)
     password: string;
 
-    @Column({nullable: false})
+    @Column({nullable: false, default: false})
     isAdmin: boolean;
 
-    @ManyToMany(() => Project, project => project.usersMember)
+    @ManyToMany(() => Project, project => project.members)
     @JoinTable()
     projectsMember: Project[];
 
-    @ManyToMany(() => Project, project => project.usersAdmin)
+    @ManyToMany(() => Project, project => project.admins)
     @JoinTable()
     projectsAdmin: Project[];
 
-    @OneToMany(() => Ticket, ticket => ticket.userCreator)
-    createdTicket: Ticket[];
+    @OneToMany(() => Ticket, ticket => ticket.creator)
+    createdTickets: Ticket[];
 
-    @OneToMany(() => Ticket, ticket => ticket.userAssigned)
-    assignedTicket: Ticket[];
+    @OneToMany(() => Ticket, ticket => ticket.assignee)
+    assignedTickets: Ticket[];
 
     @OneToMany(() => Comment, comment => comment.user)
-    comment: Comment[];
+    comments: Comment[];
 }

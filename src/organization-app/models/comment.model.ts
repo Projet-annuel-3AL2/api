@@ -14,9 +14,9 @@ export class Comment {
     @CreateDateColumn()
     created_at: Date;
 
-    @ManyToOne(() => Ticket, ticket => ticket.comment)
+    @ManyToOne(() => Ticket, ticket => ticket.comments)
     ticket: Ticket;
 
-    @ManyToOne(() => User, user => user.comment)
+    @ManyToOne(() => User, user => user.comments)
     user: User;
 }

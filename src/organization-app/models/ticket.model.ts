@@ -46,19 +46,19 @@ export class Ticket {
     priority: number;
 
     @CreateDateColumn()
-    created_at: Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
-    update_at: Date;
+    updateAt: Date;
 
-    @ManyToOne(() => User, user => user.createdTicket)
-    userCreator: User;
+    @ManyToOne(() => User, user => user.createdTickets)
+    creator: User;
 
-    @ManyToOne(() => User, user => user.assignedTicket)
-    userAssigned: User;
+    @ManyToOne(() => User, user => user.assignedTickets)
+    assignee: User;
 
     @OneToMany(() => Comment, comment => comment.ticket)
-    comment: Comment[];
+    comments: Comment[];
 
     @ManyToOne(() => Project, project => project.tickets)
     project: Project;

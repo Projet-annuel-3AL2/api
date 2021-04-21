@@ -19,6 +19,11 @@ createConnection({
 }).then(() => {
     const app: Express = express();
     app.use(bodyParser.json());
+    app.use(require('express-session')({
+        secret: "cats",
+        resave: true,
+        saveUninitialized: true
+    }));
     app.use("/apt", buildAPTRoutes());
     app.use("/org-app", buildOrgAppRoutes());
     const port = process.env.PORT || 3000;

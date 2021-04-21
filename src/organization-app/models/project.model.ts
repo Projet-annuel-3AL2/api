@@ -11,10 +11,10 @@ export class Project {
     name: string;
 
     @ManyToMany(() => User, user => user.projectsMember)
-    usersMember: User[];
+    members: User[];
 
     @ManyToMany(() => User, user => user.projectsAdmin)
-    usersAdmin: User[];
+    admins: User[];
 
     @OneToMany(() => Ticket, ticket => ticket.project)
     tickets: Ticket[];
