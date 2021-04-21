@@ -5,15 +5,22 @@ import {AuthController} from "../controllers/auth.controller";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {hash} from "bcrypt";
+import {ensureLoggedIn, ensureLoggedOut} from "connect-ensure-login";
 
 
 const authRouter = express.Router();
 
-authRouter.post('/login', passport.authenticate('local-org-app'), async function (req: IGetUserAuthRequest, res) {
+authRouter.post('/login', ensureLoggedOut(), passport.authenticate('local-org-app'), async function (req: IGetUserAuthRequest, res) {
     res.json(req.user);
 });
 
-authRouter.post('/register', async function (req, res) {
+authRouter.delete('/logout', ensureLoggedIn(), async function (req, res) {
+    // @ts-ignore
+    req.logout();
+    res.status(204).end();
+});
+
+authRouter.post('/register', ensureLoggedOut(), async function (req, res) {
     const authController = await AuthController.getInstance();
     try {
         const user: User = new User();

@@ -7,7 +7,7 @@ import {Request} from "express"
 const LocalStrategy = require('passport-local').Strategy;
 
 export interface IGetUserAuthRequest extends Request {
-    user: User
+    user: User;
 }
 
 export function configure() {
@@ -15,11 +15,14 @@ export function configure() {
         usernameField: 'username',
         passwordField: 'password'
     }, function (username, password, done) {
-        getRepository(User).findOne({username: username}, {select:["id","username","password"]}).then(async user => {
-            if (user === undefined || !(await compare(password, user.password))) {
-                console.log(user)
+        getRepository(User).findOne({username: username}, {select: ["id", "username", "password"]}).then(async user => {
+            if (user === undefined) {
                 return done(null, false);
             }
+            if (!(await compare(password, user.password))) {
+                return done(null, false);
+            }
+            console.log(user);
             return done(null, user);
         }).catch(err => {
             return done(err);
@@ -29,9 +32,10 @@ export function configure() {
     passport.serializeUser(function (user, cb) {
         cb(null, user.id);
     });
+
     passport.deserializeUser(function (id, cb) {
         getRepository(User).findOne(id).then(user => {
             cb(null, user);
-        }).catch(err => cb(err));
+        }).catch(err => cb(err, false));
     });
 }

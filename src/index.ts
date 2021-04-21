@@ -19,8 +19,10 @@ createConnection({
 }).then(() => {
     const app: Express = express();
     app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: false}));
+    app.use(require('cookie-parser')());
     app.use(require('express-session')({
-        secret: "cats",
+        secret: process.env.ORG_APP_SECRET,
         resave: true,
         saveUninitialized: true
     }));
