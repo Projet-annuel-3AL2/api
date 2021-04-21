@@ -10,17 +10,17 @@ import {ensureLoggedIn, ensureLoggedOut} from "connect-ensure-login";
 
 const authRouter = express.Router();
 
-authRouter.post('/login', ensureLoggedOut(), passport.authenticate('local-org-app'), async function (req: IGetUserAuthRequest, res) {
+authRouter.post('/login', ensureLoggedOut("local-org-app"), passport.authenticate('local-org-app'), async function (req: IGetUserAuthRequest, res) {
     res.json(req.user);
 });
 
-authRouter.delete('/logout', ensureLoggedIn(), async function (req, res) {
+authRouter.delete('/logout', ensureLoggedIn("local-org-app"), async function (req, res) {
     // @ts-ignore
     req.logout();
     res.status(204).end();
 });
 
-authRouter.post('/register', ensureLoggedOut(), async function (req, res) {
+authRouter.post('/register', ensureLoggedOut("local-org-app"), async function (req, res) {
     const authController = await AuthController.getInstance();
     try {
         const user: User = new User();
@@ -33,7 +33,6 @@ authRouter.post('/register', ensureLoggedOut(), async function (req, res) {
         user.isAdmin = req.body.isAdmin;
         const errors = await validate(user);
         if (errors.length > 0) {
-            console.log(errors)
             throw errors;
         }
         await authController.register(user);

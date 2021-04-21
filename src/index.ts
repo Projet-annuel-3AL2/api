@@ -21,7 +21,7 @@ createConnection({
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: false}));
     app.use(require('cookie-parser')());
-    app.use(require('express-session')({
+    app.use("/org-app", require('express-session')({
         secret: process.env.ORG_APP_SECRET,
         resave: true,
         saveUninitialized: true

@@ -10,7 +10,7 @@ export function buildOrgAppRoutes() {
     configure();
     router.use(passport.initialize());
     router.use(passport.session());
-    router.use("/user", ensureLoggedIn(), userRouter);
+    router.use("/user", ensureLoggedIn("local-org-app"), userRouter);
     router.use("/auth", authRouter);
     return router;
 }
