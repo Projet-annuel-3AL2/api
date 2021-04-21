@@ -15,8 +15,9 @@ export function configure() {
         usernameField: 'username',
         passwordField: 'password'
     }, function (username, password, done) {
-        getRepository(User).findOne({username: username}).then(async user => {
-            if (!user || !(await compare(user.password, password))) {
+        getRepository(User).findOne({username: username}, {select:["id","username","password"]}).then(async user => {
+            if (user === undefined || !(await compare(password, user.password))) {
+                console.log(user)
                 return done(null, false);
             }
             return done(null, user);

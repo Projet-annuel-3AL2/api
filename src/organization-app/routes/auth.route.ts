@@ -4,6 +4,7 @@ import {IGetUserAuthRequest} from "../config/passport.config";
 import {AuthController} from "../controllers/auth.controller";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
+import {hash} from "bcrypt";
 
 
 const authRouter = express.Router();
@@ -17,12 +18,12 @@ authRouter.post('/register', async function (req, res) {
     try {
         const user: User = new User();
         user.lastName = req.body.lastName;
-        user.firstName = req.body.firstName
-        user.lastName = req.body.lastName
-        user.username = req.body.username
-        user.mail = req.body.mail
-        user.password = req.body.password
-        user.isAdmin = req.body.isAdmin
+        user.firstName = req.body.firstName;
+        user.lastName = req.body.lastName;
+        user.username = req.body.username;
+        user.mail = req.body.mail;
+        user.password = await hash(req.body.password, 8);
+        user.isAdmin = req.body.isAdmin;
         const errors = await validate(user);
         if (errors.length > 0) {
             console.log(errors)
