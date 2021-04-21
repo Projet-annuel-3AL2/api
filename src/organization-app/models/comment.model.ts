@@ -12,7 +12,7 @@ export class Comment {
     text: string;
 
     @CreateDateColumn()
-    created_at: Date;
+    creationDate: Date;
 
     @ManyToOne(() => Ticket, ticket => ticket.comments)
     ticket: Ticket;

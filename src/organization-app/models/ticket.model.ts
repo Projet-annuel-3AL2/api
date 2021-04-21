@@ -46,10 +46,10 @@ export class Ticket {
     priority: number;
 
     @CreateDateColumn()
-    createdAt: Date;
+    creationDate: Date;
 
     @UpdateDateColumn()
-    updateAt: Date;
+    updateDate: Date;
 
     @ManyToOne(() => User, user => user.createdTickets)
     creator: User;
