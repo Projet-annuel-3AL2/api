@@ -2,13 +2,9 @@ import {getRepository} from "typeorm";
 import {User} from "../models/user.model";
 import {compare} from "bcrypt";
 import passport from "passport";
-import {Request} from "express"
 
 const LocalStrategy = require('passport-local').Strategy;
 
-export interface IGetUserAuthRequest extends Request {
-    user: User;
-}
 
 export function configure() {
     passport.use('local-org-app', new LocalStrategy({
@@ -29,7 +25,7 @@ export function configure() {
         });
     }));
 
-    passport.serializeUser(function (user, cb) {
+    passport.serializeUser(function (user: User, cb) {
         cb(null, user.id);
     });
 

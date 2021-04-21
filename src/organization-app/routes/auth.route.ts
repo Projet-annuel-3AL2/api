@@ -1,6 +1,5 @@
 import express from "express";
 import passport from "passport";
-import {IGetUserAuthRequest} from "../config/passport.config";
 import {AuthController} from "../controllers/auth.controller";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
@@ -10,12 +9,11 @@ import {ensureLoggedIn, ensureLoggedOut} from "connect-ensure-login";
 
 const authRouter = express.Router();
 
-authRouter.post('/login', ensureLoggedOut("local-org-app"), passport.authenticate('local-org-app'), async function (req: IGetUserAuthRequest, res) {
+authRouter.post('/login', ensureLoggedOut("local-org-app"), passport.authenticate('local-org-app'), async function (req, res) {
     res.json(req.user);
 });
 
 authRouter.delete('/logout', ensureLoggedIn("local-org-app"), async function (req, res) {
-    // @ts-ignore
     req.logout();
     res.status(204).end();
 });
