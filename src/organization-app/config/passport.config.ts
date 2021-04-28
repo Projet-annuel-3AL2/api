@@ -18,7 +18,6 @@ export function configure() {
             if (!(await compare(password, user.password))) {
                 return done(null, false);
             }
-            console.log(user);
             return done(null, user);
         }).catch(err => {
             return done(err);

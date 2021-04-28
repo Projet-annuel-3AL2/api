@@ -4,6 +4,15 @@ import {Project} from "./project.model";
 import {Ticket} from "./ticket.model";
 import {Comment} from "./comment.model";
 
+export interface UserProps {
+    firstname: string;
+    lastname: string;
+    username: string;
+    mail: string;
+    password: string;
+    isAdmin?: boolean;
+}
+
 @Entity({schema: "organization-app"})
 export class User {
     @PrimaryGeneratedColumn('uuid')

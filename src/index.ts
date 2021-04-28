@@ -5,7 +5,7 @@ import express, {Express} from "express";
 import {buildOrgAppRoutes} from "./organization-app/routes/index.route";
 import {buildAPTRoutes} from "./agir-pour-tous/routes/index.route";
 import {TypeormStore} from "connect-typeorm";
-import {Session} from "./organization-app/models/Session";
+import {Session} from "./organization-app/models/session.model";
 
 config();
 createConnection({
@@ -35,7 +35,7 @@ createConnection({
     }));
     app.use("/apt", buildAPTRoutes());
     app.use("/org-app", buildOrgAppRoutes());
-    const port = process.env.PORT || 3000;
+    const port = process.env.PORT || 4500;
     app.listen(port, function () {
         console.log(`Listening on ${port}...`);
     });
