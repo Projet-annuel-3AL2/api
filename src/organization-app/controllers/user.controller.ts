@@ -1,9 +1,16 @@
 import {User} from "../models/user.model";
-import {getRepository} from "typeorm";
+import {getRepository, Repository} from "typeorm";
+import {validate} from "class-validator";
 
 export class UserController {
 
     private static instance: UserController;
+
+    private userRepository: Repository<User>;
+
+    private constructor() {
+        this.userRepository = getRepository(User);
+    }
 
     public static async getInstance(): Promise<UserController> {
         if (UserController.instance === undefined) {
@@ -13,10 +20,20 @@ export class UserController {
     }
 
     public async getAll(): Promise<User[]> {
-        return (await getRepository(User)).find();
+        return this.userRepository.find();
     }
 
     public async getById(id: string): Promise<User> {
-        return (await getRepository(User)).findOne(id);
+        return this.userRepository.findOneOrFail(id);
+    }
+
+    public async setAdmin(id: string, admin: boolean): Promise<User> {
+        const user = await this.userRepository.findOneOrFail(id);
+        user.isAdmin = admin;
+        const err = await validate(user, {validationError: {target: false}});
+        if (err.length > 0) {
+            throw err;
+        }
+        return this.userRepository.save(user);
     }
 }

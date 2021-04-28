@@ -7,9 +7,9 @@ export class AuthController {
 
     private static instance: AuthController;
 
-    private userRepository:Repository<User>;
+    private userRepository: Repository<User>;
 
-    private constructor(){
+    private constructor() {
         this.userRepository = getRepository(User);
     }
 
@@ -23,7 +23,10 @@ export class AuthController {
     public async register(props: UserProps): Promise<User | null> {
         const encryptedPass = await hash(props.password, 8);
         const user = this.userRepository.create({...props, password: encryptedPass});
-        await validate(user, { validationError: { target: false } });
-        return await this.userRepository.save(user);
+        const err = await validate(user, {validationError: {target: false}});
+        if (err.length > 0) {
+            throw err;
+        }
+        return this.userRepository.save(user);
     }
 }

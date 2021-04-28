@@ -11,6 +11,7 @@ export function ensureLoggedIn(req, res, next) {
     }
     next();
 }
+
 export function ensureAdminLoggedIn(req, res, next) {
     if (!req.isAuthenticated || !req.isAuthenticated() || !req.user.isAdmin) {
         return res.status(401).end();

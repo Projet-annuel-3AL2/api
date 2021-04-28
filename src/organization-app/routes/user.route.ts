@@ -1,24 +1,38 @@
 import express from "express";
 import {UserController} from "../controllers/user.controller";
+import {ensureAdminLoggedIn} from "../middlewares/auth.middleware";
 
 const userRouter = express.Router();
 
-userRouter.get("/", async function (req, res) {
+userRouter.get("/", async (req, res) => {
     const userController = await UserController.getInstance();
     res.json(await userController.getAll());
 });
 
-userRouter.get("/:id", async function (req, res) {
-    const id = req.params.id;
-    if (id === undefined) {
+userRouter.get("/:userId", async (req, res) => {
+    const userId = req.params.userId;
+    if (userId === undefined) {
         res.status(400).end();
     }
     const userController = await UserController.getInstance();
-    const user = await userController.getById(id);
-    if (!user) {
+    try {
+        const user = await userController.getById(userId);
+        res.json(user);
+    } catch (err) {
         res.status(404).end();
     }
-    res.json(user);
+});
+
+userRouter.put("/set-admin/:userId", ensureAdminLoggedIn, async (req, res) => {
+    const userId = req.params.userId;
+    const admin: boolean = req.body.admin;
+    const userController = await UserController.getInstance();
+    try {
+        const user = await userController.setAdmin(userId, admin);
+        res.json(user);
+    } catch (err) {
+        res.status(400).end();
+    }
 });
 
 export {

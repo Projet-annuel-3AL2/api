@@ -1,13 +1,19 @@
 import {Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {User} from "./user.model";
 import {Ticket} from "./ticket.model";
+import {Length} from "class-validator";
+
+export interface ProjectProps {
+    name: string;
+}
 
 @Entity({schema: "organization-app"})
 export class Project {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({nullable: false, unique: true})
+    @Column({length: 100, nullable: false, unique: true})
+    @Length(5, 100)
     name: string;
 
     @ManyToMany(() => User, user => user.projectsMember)

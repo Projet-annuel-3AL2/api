@@ -7,16 +7,16 @@ import {ensureAdminLoggedIn, ensureLoggedIn, ensureLoggedOut} from "../middlewar
 
 const authRouter = express.Router();
 
-authRouter.post('/login', ensureLoggedOut, passport.authenticate('local-org-app'), async function (req, res) {
+authRouter.post('/login', ensureLoggedOut, passport.authenticate('local-org-app'), async (req, res) => {
     res.json(req.user);
 });
 
-authRouter.delete('/logout', ensureLoggedIn, async function (req, res) {
+authRouter.delete('/logout', ensureLoggedIn, async (req, res) => {
     req.logout();
     res.status(204).end();
 });
 
-authRouter.post('/signup', ensureAdminLoggedIn, async function (req, res) {
+authRouter.post('/signup', ensureAdminLoggedIn, async (req, res) => {
     const authController = await AuthController.getInstance();
     try {
         const user: User = new User();
