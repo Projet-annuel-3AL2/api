@@ -1,8 +1,8 @@
-import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
-import {Project} from "./project.model";
 import {Ticket} from "./ticket.model";
 import {Comment} from "./comment.model";
+import {ProjectMembership} from "./project-membership.model";
 
 export interface UserProps {
     firstname: string;
@@ -43,13 +43,8 @@ export class User {
     @Column({nullable: false, default: false})
     isAdmin: boolean;
 
-    @ManyToMany(() => Project, project => project.members)
-    @JoinTable()
-    projectsMember: Project[];
-
-    @ManyToMany(() => Project, project => project.admins)
-    @JoinTable()
-    projectsAdmin: Project[];
+    @ManyToMany(() => ProjectMembership, projectMembership => projectMembership.project)
+    projects: ProjectMembership[];
 
     @OneToMany(() => Ticket, ticket => ticket.creator)
     createdTickets: Ticket[];

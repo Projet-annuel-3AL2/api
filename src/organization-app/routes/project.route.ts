@@ -2,7 +2,6 @@ import express from "express";
 import {ProjectController} from "../controllers/project.controller";
 import {ensureAdminLoggedIn} from "../middlewares/auth.middleware";
 import {User} from "../models/user.model";
-import {UserController} from "../controllers/user.controller";
 
 const projectRouter = express.Router();
 
@@ -74,11 +73,8 @@ projectRouter.put("/:projectId/member/:userId", async (req, res) => {
     const projectId = req.params.projectId;
     const userId = req.params.userId;
     const projectController = await ProjectController.getInstance();
-    const userController = await UserController.getInstance();
     try {
-        const user = await userController.getById(userId);
-        const project = await projectController.getById(projectId);
-        const projectResult = await projectController.addProjectAdmin(project, user);
+        const projectResult = await projectController.addProjectAdmin(projectId, userId);
         res.json(projectResult).end();
     } catch (err) {
         res.status(400).end();
@@ -89,11 +85,8 @@ projectRouter.put("/:projectId/member/:userId", async (req, res) => {
     const projectId = req.params.projectId;
     const userId = req.params.userId;
     const projectController = await ProjectController.getInstance();
-    const userController = await UserController.getInstance();
     try {
-        const user = await userController.getById(userId);
-        const project = await projectController.getById(projectId);
-        const projectResult = await projectController.addProjectMember(project, user);
+        const projectResult = await projectController.addProjectMember(projectId, userId);
         res.json(projectResult).end();
     } catch (err) {
         res.status(400).end();
@@ -106,8 +99,7 @@ projectRouter.delete("/:projectId/member/:userId", async (req, res) => {
     const userId = req.params.userId;
     const projectController = await ProjectController.getInstance();
     try {
-        const project = await projectController.getById(projectId);
-        const projectResult = await projectController.removeProjectAdmin(project, userId);
+        const projectResult = await projectController.removeProjectAdmin(projectId, userId);
         res.json(projectResult).end();
     } catch (err) {
         res.status(400).end();
@@ -119,8 +111,7 @@ projectRouter.delete("/:projectId/member/:userId", async (req, res) => {
     const userId = req.params.userId;
     const projectController = await ProjectController.getInstance();
     try {
-        const project = await projectController.getById(projectId);
-        const projectResult = await projectController.removeProjectMember(project, userId);
+        const projectResult = await projectController.removeProjectMember(projectId, userId);
         res.json(projectResult).end();
     } catch (err) {
         res.status(400).end();
