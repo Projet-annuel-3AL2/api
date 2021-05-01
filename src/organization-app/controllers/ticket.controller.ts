@@ -1,6 +1,6 @@
 import {getRepository, Repository} from "typeorm";
 import {Ticket, TicketProps} from "../models/ticket.model";
-import {User} from "../models/user.model";
+import {Comment, CommentProps} from "../models/comment.model";
 
 export class TicketController {
 
@@ -31,10 +31,13 @@ export class TicketController {
         await this.ticketRepository.delete(id);
     }
 
-    public async addComment(id: string): Promise<Ticket> {
-        /*const ticket = await this.ticketRepository.findOneOrFail(id);
-        return ticket;*/
-        return null;
+    public async addComment(id: string, props: CommentProps): Promise<Comment> {
+        const comment = getRepository(Comment).create({...props});
+        await this.ticketRepository.createQueryBuilder()
+        .relation(Ticket, "comments")
+        .of(id)
+        .add(comment);
+        return comment;
     }
 
     public async updateTicket(id: string, props: TicketProps): Promise<Ticket> {
@@ -42,9 +45,10 @@ export class TicketController {
         return await this.getById(id);
     }
 
-    public async setAssignee(id: string, assignee: User): Promise<Ticket> {
-        const ticket = await this.getById(id);
-        ticket.assignee = assignee;
-        return await this.ticketRepository.save(ticket);
+    public async setAssignee(id: string, userId: string): Promise<void> {
+        await this.ticketRepository.createQueryBuilder()
+            .relation(Ticket, "assignee")
+            .of(id)
+            .add(userId);
     }
 }
