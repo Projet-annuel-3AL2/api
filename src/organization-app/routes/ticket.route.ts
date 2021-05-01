@@ -59,6 +59,17 @@ ticketRouter.put("/:ticketId/assignee/:userId", async (req, res) => {
     }
 });
 
+ticketRouter.post("/:ticketId/comments", async (req, res) => {
+    const ticketId = req.params.ticketId;
+    const ticketController = await TicketController.getInstance();
+    try {
+        const comments = await ticketController.getComments(ticketId);
+        res.json(comments);
+    } catch (err) {
+        res.status(400).end();
+    }
+});
+
 ticketRouter.post("/:ticketId/comment", async (req, res) => {
     const ticketId = req.params.ticketId;
     const ticketController = await TicketController.getInstance();

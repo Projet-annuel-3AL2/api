@@ -51,4 +51,11 @@ export class TicketController {
             .of(id)
             .add(userId);
     }
+
+    public async getComments(ticketId: string): Promise<Comment[]> {
+        return await getRepository(Comment).createQueryBuilder()
+            .leftJoin("Comment.ticket", "Ticket")
+            .where("Ticket.id = ", {ticketId})
+            .getMany();
+    }
 }

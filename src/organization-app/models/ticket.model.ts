@@ -29,7 +29,6 @@ export interface TicketProps {
 
 @Entity({schema: "organization-app"})
 export class Ticket implements TicketProps {
-
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
