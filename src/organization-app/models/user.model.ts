@@ -20,11 +20,11 @@ export class User {
 
     @Column()
     @IsNotEmpty()
-    firstName: string;
+    firstname: string;
 
     @Column()
     @IsNotEmpty()
-    lastName: string;
+    lastname: string;
 
     @Column({unique: true})
     @IsNotEmpty()
