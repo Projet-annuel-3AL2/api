@@ -101,6 +101,32 @@ projectRouter.put("/:projectId/member/:userId",async (req, res) => {
 });
 
 
+projectRouter.delete("/:projectId/member/:userId",async (req, res) => {
+    const projectId = req.params.projectId;
+    const userId = req.params.userId;
+    const projectController = await ProjectController.getInstance();
+    try {
+        const project = await projectController.getById(projectId);
+        const projectResult = await projectController.removeProjectAdmin(project, userId);
+        res.json(projectResult).end();
+    } catch (err) {
+        res.status(400).end();
+    }
+});
+
+projectRouter.delete("/:projectId/member/:userId",async (req, res) => {
+    const projectId = req.params.projectId;
+    const userId = req.params.userId;
+    const projectController = await ProjectController.getInstance();
+    try {
+        const project = await projectController.getById(projectId);
+        const projectResult = await projectController.removeProjectMember(project, userId);
+        res.json(projectResult).end();
+    } catch (err) {
+        res.status(400).end();
+    }
+});
+
 
 export {
     projectRouter

@@ -70,4 +70,20 @@ export class ProjectController {
         project.members.push(user);
         return this.projectRepository.save(project);
     }
+
+    async removeProjectAdmin(project: Project, userId: string) {
+        if(!Array.isArray(project.admins)){
+            project.admins = []
+        }
+        project.admins = project.admins.filter((u) => u.id !== userId);
+        return this.projectRepository.save(project);
+    }
+
+    async removeProjectMember(project: Project, userId: string) {
+        if(!Array.isArray(project.members)){
+            project.members = []
+        }
+        project.members = project.members.filter((u) => u.id !== userId);
+        return this.projectRepository.save(project);
+    }
 }
