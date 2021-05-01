@@ -127,6 +127,17 @@ projectRouter.delete("/:projectId/member/:userId",async (req, res) => {
     }
 });
 
+projectRouter.get("/:projectId/tickets",async (req, res) => {
+    const projectId = req.params.projectId;
+    const projectController = await ProjectController.getInstance();
+    try {
+        const tickets = await projectController.getTickets(projectId);
+        res.json(tickets).end();
+    } catch (err) {
+        res.status(400).end();
+    }
+});
+
 
 export {
     projectRouter

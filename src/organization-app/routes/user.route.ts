@@ -35,6 +35,20 @@ userRouter.put("/set-admin/:userId", ensureAdminLoggedIn, async (req, res) => {
     }
 });
 
+userRouter.get("/:userId/projects", async (req, res) => {
+    const userId = req.params.userId;
+    if (userId === undefined) {
+        res.status(400).end();
+    }
+    const userController = await UserController.getInstance();
+    try {
+        const projects = await userController.getProjects(userId);
+        res.json(projects);
+    } catch (err) {
+        res.status(404).end();
+    }
+});
+
 export {
     userRouter
 };

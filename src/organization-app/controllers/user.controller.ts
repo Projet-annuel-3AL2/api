@@ -1,6 +1,7 @@
 import {User} from "../models/user.model";
 import {getRepository, Repository} from "typeorm";
 import {validate} from "class-validator";
+import {Project} from "../models/project.model";
 
 export class UserController {
 
@@ -25,6 +26,10 @@ export class UserController {
 
     public async getById(id: string): Promise<User> {
         return this.userRepository.findOneOrFail(id);
+    }
+
+    public async getProjects(id: string): Promise<Project[]> {
+        return (await this.userRepository.findOneOrFail(id,{relations: ["projectsMember"]})).projectsMember;
     }
 
     public async setAdmin(id: string, admin: boolean): Promise<User> {

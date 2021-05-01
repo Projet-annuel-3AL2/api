@@ -2,6 +2,7 @@ import {User} from "../models/user.model";
 import {getRepository, Repository} from "typeorm";
 import {validate} from "class-validator";
 import {Project, ProjectProps} from "../models/project.model";
+import {Ticket} from "../models/ticket.model";
 
 export class ProjectController {
 
@@ -71,7 +72,7 @@ export class ProjectController {
         return this.projectRepository.save(project);
     }
 
-    async removeProjectAdmin(project: Project, userId: string) {
+    public async removeProjectAdmin(project: Project, userId: string) {
         if(!Array.isArray(project.admins)){
             project.admins = []
         }
@@ -79,11 +80,15 @@ export class ProjectController {
         return this.projectRepository.save(project);
     }
 
-    async removeProjectMember(project: Project, userId: string) {
+    public async removeProjectMember(project: Project, userId: string) {
         if(!Array.isArray(project.members)){
             project.members = []
         }
         project.members = project.members.filter((u) => u.id !== userId);
         return this.projectRepository.save(project);
+    }
+
+    public async getTickets(projectId: string): Promise<Ticket[]> {
+        return (await this.projectRepository.findOneOrFail(projectId, {relations: ["tickets"]})).tickets;
     }
 }
