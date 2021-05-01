@@ -59,7 +59,7 @@ projectRouter.get("/:projectId/members", async (req, res) => {
     }
 });
 
-projectRouter.get("/:projectId/admins",async (req, res) => {
+projectRouter.get("/:projectId/admins", async (req, res) => {
     const projectId = req.params.projectId;
     const projectController = await ProjectController.getInstance();
     try {
@@ -70,7 +70,7 @@ projectRouter.get("/:projectId/admins",async (req, res) => {
     }
 });
 
-projectRouter.put("/:projectId/member/:userId",async (req, res) => {
+projectRouter.put("/:projectId/member/:userId", async (req, res) => {
     const projectId = req.params.projectId;
     const userId = req.params.userId;
     const projectController = await ProjectController.getInstance();
@@ -85,7 +85,7 @@ projectRouter.put("/:projectId/member/:userId",async (req, res) => {
     }
 });
 
-projectRouter.put("/:projectId/member/:userId",async (req, res) => {
+projectRouter.put("/:projectId/member/:userId", async (req, res) => {
     const projectId = req.params.projectId;
     const userId = req.params.userId;
     const projectController = await ProjectController.getInstance();
@@ -101,7 +101,7 @@ projectRouter.put("/:projectId/member/:userId",async (req, res) => {
 });
 
 
-projectRouter.delete("/:projectId/member/:userId",async (req, res) => {
+projectRouter.delete("/:projectId/member/:userId", async (req, res) => {
     const projectId = req.params.projectId;
     const userId = req.params.userId;
     const projectController = await ProjectController.getInstance();
@@ -114,7 +114,7 @@ projectRouter.delete("/:projectId/member/:userId",async (req, res) => {
     }
 });
 
-projectRouter.delete("/:projectId/member/:userId",async (req, res) => {
+projectRouter.delete("/:projectId/member/:userId", async (req, res) => {
     const projectId = req.params.projectId;
     const userId = req.params.userId;
     const projectController = await ProjectController.getInstance();
@@ -127,7 +127,7 @@ projectRouter.delete("/:projectId/member/:userId",async (req, res) => {
     }
 });
 
-projectRouter.get("/:projectId/tickets",async (req, res) => {
+projectRouter.get("/:projectId/tickets", async (req, res) => {
     const projectId = req.params.projectId;
     const projectController = await ProjectController.getInstance();
     try {

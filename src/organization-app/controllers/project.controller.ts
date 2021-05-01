@@ -9,11 +9,9 @@ export class ProjectController {
     private static instance: ProjectController;
 
     private projectRepository: Repository<Project>;
-    private userRepository: Repository<User>;
 
     private constructor() {
         this.projectRepository = getRepository(Project);
-        this.userRepository = getRepository(User);
     }
 
     public static async getInstance(): Promise<ProjectController> {
@@ -48,16 +46,16 @@ export class ProjectController {
         return this.projectRepository.findOneOrFail(id);
     }
 
-    public async getProjectMembers(id: string): Promise<User[]>{
-        return (await this.projectRepository.findOneOrFail(id, {relations:["members"]})).members;
+    public async getProjectMembers(id: string): Promise<User[]> {
+        return (await this.projectRepository.findOneOrFail(id, {relations: ["members"]})).members;
     }
 
-    public async getProjectAdmins(id: string): Promise<User[]>{
-        return (await this.projectRepository.findOneOrFail(id, {relations:["admins"]})).admins;
+    public async getProjectAdmins(id: string): Promise<User[]> {
+        return (await this.projectRepository.findOneOrFail(id, {relations: ["admins"]})).admins;
     }
 
     public async addProjectAdmin(project: Project, user: User): Promise<Project> {
-        if(!Array.isArray(project.admins)){
+        if (!Array.isArray(project.admins)) {
             project.admins = []
         }
         project.admins.push(user);
@@ -65,7 +63,7 @@ export class ProjectController {
     }
 
     public async addProjectMember(project: Project, user: User): Promise<Project> {
-        if(!Array.isArray(project.members)){
+        if (!Array.isArray(project.members)) {
             project.members = []
         }
         project.members.push(user);
@@ -73,7 +71,7 @@ export class ProjectController {
     }
 
     public async removeProjectAdmin(project: Project, userId: string) {
-        if(!Array.isArray(project.admins)){
+        if (!Array.isArray(project.admins)) {
             project.admins = []
         }
         project.admins = project.admins.filter((u) => u.id !== userId);
@@ -81,7 +79,7 @@ export class ProjectController {
     }
 
     public async removeProjectMember(project: Project, userId: string) {
-        if(!Array.isArray(project.members)){
+        if (!Array.isArray(project.members)) {
             project.members = []
         }
         project.members = project.members.filter((u) => u.id !== userId);

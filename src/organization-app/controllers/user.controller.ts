@@ -29,7 +29,7 @@ export class UserController {
     }
 
     public async getProjects(id: string): Promise<Project[]> {
-        return (await this.userRepository.findOneOrFail(id,{relations: ["projectsMember"]})).projectsMember;
+        return (await this.userRepository.findOneOrFail(id, {relations: ["projectsMember"]})).projectsMember;
     }
 
     public async setAdmin(id: string, admin: boolean): Promise<User> {

@@ -17,8 +17,18 @@ export enum TicketStatus {
     CLOSED = "CLOSED"
 }
 
+export interface TicketProps {
+    title: string;
+    description: string;
+    status: TicketStatus;
+    endDate?: Date;
+    estimatedDuration: number;
+    priority: number;
+    project: Project;
+}
+
 @Entity({schema: "organization-app"})
-export class Ticket {
+export class Ticket implements TicketProps {
 
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -34,15 +44,15 @@ export class Ticket {
         enum: TicketStatus,
         default: "TODO"
     })
-    status: string;
+    status: TicketStatus;
 
     @Column()
     endDate: Date;
 
-    @Column()
+    @Column({nullable: false})
     estimatedDuration: number;
 
-    @Column()
+    @Column({default: 0})
     priority: number;
 
     @CreateDateColumn()
