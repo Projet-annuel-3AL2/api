@@ -9,7 +9,7 @@ projectRouter.post("/", ensureAdminLoggedIn, async (req, res) => {
     const projectController = await ProjectController.getInstance();
     try {
         const project = await projectController.create({...req.body}, req.user as User);
-        res.json(project);
+        res.json(project).status(200).end();
     } catch (err) {
         res.status(400).end();
     }
@@ -87,7 +87,7 @@ projectRouter.put("/:projectId/member/:userId", async (req, res) => {
     const projectController = await ProjectController.getInstance();
     try {
         const projectResult = await projectController.addProjectMember(projectId, userId);
-        res.json(projectResult).end();
+        res.json(projectResult).status(200).end();
     } catch (err) {
         res.status(400).end();
     }
@@ -100,7 +100,7 @@ projectRouter.delete("/:projectId/member/:userId", async (req, res) => {
     const projectController = await ProjectController.getInstance();
     try {
         const projectResult = await projectController.removeProjectAdmin(projectId, userId);
-        res.json(projectResult).end();
+        res.json(projectResult).status(200).end();
     } catch (err) {
         res.status(400).end();
     }
@@ -112,7 +112,7 @@ projectRouter.delete("/:projectId/member/:userId", async (req, res) => {
     const projectController = await ProjectController.getInstance();
     try {
         const projectResult = await projectController.removeProjectMember(projectId, userId);
-        res.json(projectResult).end();
+        res.json(projectResult).status(200).end();
     } catch (err) {
         res.status(400).end();
     }
@@ -123,7 +123,7 @@ projectRouter.get("/:projectId/tickets", async (req, res) => {
     const projectController = await ProjectController.getInstance();
     try {
         const tickets = await projectController.getTickets(projectId);
-        res.json(tickets).end();
+        res.json(tickets).status(200).end();
     } catch (err) {
         res.status(400).end();
     }
