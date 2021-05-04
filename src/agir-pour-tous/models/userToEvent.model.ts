@@ -1,6 +1,6 @@
 import {CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
-import {Event} from "../event.model";
-import {User} from "../user.model";
+import {Event} from "./event.model";
+import {User} from "./user.model";
 
 @Entity({schema: "agir_pour_tous"})
 export class UserToEvent{

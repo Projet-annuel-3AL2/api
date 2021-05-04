@@ -7,8 +7,9 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
-import {UserToEvent} from "./intermediateModels/user-to-event.model";
+import {UserToEvent} from "./userToEvent.model";
 import {Post} from "./post.model";
+import {User} from "./user.model";
 
 export enum EventTypeEnum{
     CLASSIC = "CLASSIC",

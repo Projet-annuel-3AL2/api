@@ -2,17 +2,17 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    Entity, JoinTable,
+    Entity, JoinTable, ManyToMany,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
-import {UserToEvent} from "./intermediateModels/user-to-event.model";
-import {Follow} from "./intermediateModels/follow.model";
+import {UserToEvent} from "./userToEvent.model";
+import {Follow} from "./follow.model";
 import {Badge} from "./badge.model";
 import {Location} from "./location.model"
-import {PrivateMessage} from "./intermediateModels/private-message.model";
-import {Approval} from "./intermediateModels/approval.model";
+import {PrivateMessage} from "./private-message.model";
+import {Approval} from "./approval.model";
 import {Post} from "./post.model";
 import {Comment} from "./comment.model";
 
@@ -82,7 +82,8 @@ export class User implements UserProps{
     @OneToMany(() => Follow, follow => follow.followed)
     followed : User[];
 
-    @OneToMany(() => Badge, badge => badge.users)
+    @ManyToMany(() => Badge, badge => badge.users)
+    @JoinTable()
     badges : Badge[];
 
     @OneToMany(() => Location, location => location.users)

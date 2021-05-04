@@ -9,7 +9,7 @@ import {Session} from "./organization-app/models/session.model";
 
 config();
 createConnection({
-    type: "mysql",
+    type: "postgres",
     logging: true,
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT!),

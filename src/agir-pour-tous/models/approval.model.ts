@@ -1,5 +1,5 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {User} from "../user.model";
+import {User} from "./user.model";
 
 export interface ApprovalProps{
     value: number

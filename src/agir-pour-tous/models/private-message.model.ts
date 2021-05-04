@@ -1,5 +1,5 @@
 import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {User} from "../user.model";
+import {User} from "./user.model";
 
 export interface PrivateMessageProps{
     text: string,
