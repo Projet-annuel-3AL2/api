@@ -8,7 +8,7 @@ import {ensureAdminLoggedIn, ensureLoggedIn, ensureLoggedOut} from "../middlewar
 const authRouter = express.Router();
 
 authRouter.post('/login', ensureLoggedOut, passport.authenticate('local-org-app'), async (req, res) => {
-    res.json(req.user);
+    res.json(req.user).status(200).end();
 });
 
 authRouter.delete('/logout', ensureLoggedIn, async (req, res) => {
@@ -21,7 +21,7 @@ authRouter.post('/signup', ensureAdminLoggedIn, async (req, res) => {
     try {
         const user: User = new User();
         await authController.register({...req.body});
-        res.json(user);
+        res.json(user).status(200).end();
     } catch (error) {
         res.status(400).json(error).end();
     }

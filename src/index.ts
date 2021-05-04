@@ -39,4 +39,4 @@ createConnection({
     app.listen(port, function () {
         console.log(`Listening on ${port}...`);
     });
-});
+}).catch((err)=>console.log(err));
