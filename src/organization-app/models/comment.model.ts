@@ -2,7 +2,7 @@ import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} fro
 import {Ticket} from "./ticket.model";
 import {User} from "./user.model";
 
-@Entity({schema: "organization-app"})
+@Entity({schema: "organization_app"})
 export class Comment {
 
     @PrimaryGeneratedColumn('uuid')

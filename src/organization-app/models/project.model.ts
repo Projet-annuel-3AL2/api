@@ -2,7 +2,7 @@ import {Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typ
 import {User} from "./user.model";
 import {Ticket} from "./ticket.model";
 
-@Entity({schema: "organization-app"})
+@Entity({schema: "organization_app"})
 export class Project {
     @PrimaryGeneratedColumn('uuid')
     id: string;

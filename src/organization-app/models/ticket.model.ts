@@ -17,7 +17,7 @@ export enum TicketStatus {
     CLOSED = "CLOSED"
 }
 
-@Entity({schema: "organization-app"})
+@Entity({schema: "organization_app"})
 export class Ticket {
 
     @PrimaryGeneratedColumn('uuid')

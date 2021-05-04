@@ -4,7 +4,7 @@ import {Project} from "./project.model";
 import {Ticket} from "./ticket.model";
 import {Comment} from "./comment.model";
 
-@Entity({schema: "organization-app"})
+@Entity({schema: "organization_app"})
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
