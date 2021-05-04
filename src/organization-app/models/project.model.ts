@@ -7,7 +7,7 @@ export interface ProjectProps {
     name: string;
 }
 
-@Entity({schema: "organization-app"})
+@Entity({schema: "organization_app"})
 export class Project {
     @PrimaryGeneratedColumn('uuid')
     id: string;

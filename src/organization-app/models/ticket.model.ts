@@ -22,13 +22,13 @@ export interface TicketProps {
     description: string;
     status: TicketStatus;
     endDate?: Date;
-    estimatedDuration: number;
     priority: number;
+    estimatedDuration: number;
     project: Project;
 }
+@Entity({schema: "organization_app"})
+export class Ticket {
 
-@Entity({schema: "organization-app"})
-export class Ticket implements TicketProps {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 

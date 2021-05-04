@@ -5,9 +5,8 @@ import {User} from "./user.model";
 export interface CommentProps {
     text: string;
 }
-
-@Entity({schema: "organization-app"})
-export class Comment implements CommentProps {
+@Entity({schema: "organization_app"})
+export class Comment {
 
     @PrimaryGeneratedColumn('uuid')
     id: string;
