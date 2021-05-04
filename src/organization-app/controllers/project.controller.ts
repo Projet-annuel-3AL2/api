@@ -2,8 +2,9 @@ import {User} from "../models/user.model";
 import {getRepository, Repository} from "typeorm";
 import {validate} from "class-validator";
 import {Project, ProjectProps} from "../models/project.model";
-import {Ticket} from "../models/ticket.model";
+import {Ticket, TicketProps} from "../models/ticket.model";
 import {ProjectMembership} from "../models/project-membership.model";
+import {Comment} from "../models/comment.model";
 
 export class ProjectController {
 
@@ -93,5 +94,14 @@ export class ProjectController {
 
     public async getTickets(projectId: string): Promise<Ticket[]> {
         return (await this.projectRepository.findOneOrFail(projectId, {relations: ["tickets"]})).tickets;
+    }
+
+    public async addTicket(projectId: any, props: TicketProps) {
+        const ticket = getRepository(Ticket).create({...props});
+        await this.projectRepository.createQueryBuilder()
+            .relation(Ticket, "comments")
+            .of(projectId)
+            .add(ticket);
+        return ticket;
     }
 }

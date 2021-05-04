@@ -1,6 +1,8 @@
 import express from "express";
 import {UserController} from "../controllers/user.controller";
 import {ensureAdminLoggedIn} from "../middlewares/auth.middleware";
+import {TicketController} from "../controllers/ticket.controller";
+import {ticketRouter} from "./ticket.route";
 
 const userRouter = express.Router();
 
@@ -46,6 +48,28 @@ userRouter.get("/:userId/projects", async (req, res) => {
         res.json(projects);
     } catch (err) {
         res.status(404).end();
+    }
+});
+
+userRouter.delete("/:userId", async (req, res) => {
+    const userId = req.params.userId;
+    const userController = await UserController.getInstance();
+    try {
+        await userController.delete(userId);
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).end();
+    }
+});
+
+userRouter.put("/:userId", async (req, res) => {
+    const userId = req.params.userId;
+    const userController = await UserController.getInstance();
+    try {
+        const ticket = await userController.update(userId, {...req.body});
+        res.json(ticket);
+    } catch (err) {
+        res.status(400).end();
     }
 });
 
