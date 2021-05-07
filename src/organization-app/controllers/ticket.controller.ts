@@ -34,7 +34,7 @@ export class TicketController {
     public async addComment(id: string, props: CommentProps): Promise<Comment> {
         const comment = getRepository(Comment).create({...props});
         await this.ticketRepository.createQueryBuilder()
-        .relation(Ticket, "comments")
+        .relation(Comment, "comments")
         .of(id)
         .add(comment);
         return comment;

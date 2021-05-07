@@ -4,7 +4,6 @@ import {validate} from "class-validator";
 import {Project, ProjectProps} from "../models/project.model";
 import {Ticket, TicketProps} from "../models/ticket.model";
 import {ProjectMembership} from "../models/project-membership.model";
-import {Comment} from "../models/comment.model";
 
 export class ProjectController {
 
@@ -99,7 +98,7 @@ export class ProjectController {
     public async addTicket(projectId: any, props: TicketProps) {
         const ticket = getRepository(Ticket).create({...props});
         await this.projectRepository.createQueryBuilder()
-            .relation(Ticket, "comments")
+            .relation(Ticket, "tickets")
             .of(projectId)
             .add(ticket);
         return ticket;

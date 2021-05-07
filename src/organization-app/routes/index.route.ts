@@ -5,6 +5,8 @@ import {authRouter} from "./auth.route";
 import passport from "passport";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {projectRouter} from "./project.route";
+import {ticketRouter} from "./ticket.route";
+import {commentRouter} from "./comment.route";
 
 export function buildOrgAppRoutes() {
     const router = Router();
@@ -13,6 +15,8 @@ export function buildOrgAppRoutes() {
     router.use(passport.session());
     router.use("/user", ensureLoggedIn, userRouter);
     router.use("/project", ensureLoggedIn, projectRouter);
+    router.use("/ticket", ensureLoggedIn, ticketRouter);
+    router.use("/comment", ensureLoggedIn, commentRouter);
     router.use("/auth", authRouter);
     return router;
 }
