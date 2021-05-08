@@ -1,8 +1,6 @@
 import express from "express";
 import {UserController} from "../controllers/user.controller";
 import {ensureAdminLoggedIn} from "../middlewares/auth.middleware";
-import {TicketController} from "../controllers/ticket.controller";
-import {ticketRouter} from "./ticket.route";
 
 const userRouter = express.Router();
 
@@ -66,8 +64,8 @@ userRouter.put("/:userId", async (req, res) => {
     const userId = req.params.userId;
     const userController = await UserController.getInstance();
     try {
-        const ticket = await userController.update(userId, {...req.body});
-        res.json(ticket);
+        const user = await userController.update(userId, {...req.body});
+        res.json(user);
     } catch (err) {
         res.status(400).end();
     }
