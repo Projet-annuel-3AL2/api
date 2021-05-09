@@ -60,15 +60,21 @@ export class Ticket implements TicketProps {
     @UpdateDateColumn()
     updateDate: Date;
 
+    @Column({nullable: true})
+    creatorId:string;
     @ManyToOne(() => User, user => user.createdTickets)
     creator: User;
 
+    @Column({nullable: true})
+    assigneeId:string;
     @ManyToOne(() => User, user => user.assignedTickets)
     assignee: User;
 
     @OneToMany(() => Comment, comment => comment.ticket)
     comments: Comment[];
 
+    @Column({nullable: true})
+    projectId:string;
     @ManyToOne(() => Project, project => project.tickets)
     project: Project;
 }
