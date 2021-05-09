@@ -19,7 +19,7 @@ export class Comment implements CommentProps {
     creationDate: Date;
 
     @Column({nullable: true})
-    commentId: string;
+    ticketId: string;
     @ManyToOne(() => Ticket, ticket => ticket.comments)
     ticket: Ticket;
 
