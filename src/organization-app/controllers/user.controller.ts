@@ -2,8 +2,7 @@ import {User, UserProps} from "../models/user.model";
 import {getRepository, Repository} from "typeorm";
 import {validate} from "class-validator";
 import {ProjectMembership} from "../models/project-membership.model";
-import {Comment, CommentProps} from "../models/comment.model";
-import {Ticket, TicketProps} from "../models/ticket.model";
+import {hash} from "bcrypt";
 
 export class UserController {
 
@@ -45,6 +44,16 @@ export class UserController {
     public async setAdmin(id: string, admin: boolean): Promise<User> {
         const user = await this.userRepository.findOneOrFail(id);
         user.isAdmin = admin;
+        const err = await validate(user, {validationError: {target: false}});
+        if (err.length > 0) {
+            throw err;
+        }
+        return this.userRepository.save(user);
+    }
+
+    public async create(props: UserProps): Promise<User> {
+        const encryptedPass = await hash(props.password, 8);
+        const user = this.userRepository.create({...props, password: encryptedPass});
         const err = await validate(user, {validationError: {target: false}});
         if (err.length > 0) {
             throw err;

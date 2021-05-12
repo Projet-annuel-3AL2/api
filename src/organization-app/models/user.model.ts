@@ -13,7 +13,7 @@ export interface UserProps {
     isAdmin?: boolean;
 }
 
-@Entity({schema: "organization-app"})
+@Entity({schema: "organization_app"})
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;

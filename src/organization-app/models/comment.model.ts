@@ -6,7 +6,7 @@ export interface CommentProps {
     text: string;
 }
 
-@Entity({schema: "organization-app"})
+@Entity({schema: "organization_app"})
 export class Comment implements CommentProps {
 
     @PrimaryGeneratedColumn('uuid')
@@ -18,13 +18,9 @@ export class Comment implements CommentProps {
     @CreateDateColumn()
     creationDate: Date;
 
-    @Column({nullable: true})
-    ticketId: string;
     @ManyToOne(() => Ticket, ticket => ticket.comments)
     ticket: Ticket;
 
-    @Column({nullable: true})
-    userId: string;
     @ManyToOne(() => User, user => user.comments)
     user: User;
 }

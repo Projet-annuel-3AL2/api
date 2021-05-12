@@ -4,6 +4,16 @@ import {ensureAdminLoggedIn} from "../middlewares/auth.middleware";
 
 const userRouter = express.Router();
 
+userRouter.post("/", ensureAdminLoggedIn, async (req, res) => {
+    const userController = await UserController.getInstance();
+    try{
+        const user = userController.create({...req.body});
+        res.json(user);
+    }catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 userRouter.get("/", async (req, res) => {
     const userController = await UserController.getInstance();
     res.json(await userController.getAll());
@@ -11,15 +21,12 @@ userRouter.get("/", async (req, res) => {
 
 userRouter.get("/:userId", async (req, res) => {
     const userId = req.params.userId;
-    if (userId === undefined) {
-        res.status(400).end();
-    }
     const userController = await UserController.getInstance();
     try {
         const user = await userController.getById(userId);
         res.json(user);
     } catch (err) {
-        res.status(404).end();
+        res.status(400).json(err);
     }
 });
 

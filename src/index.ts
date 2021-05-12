@@ -6,6 +6,7 @@ import {buildOrgAppRoutes} from "./organization-app/routes/index.route";
 import {buildAPTRoutes} from "./agir-pour-tous/routes/index.route";
 import {TypeormStore} from "connect-typeorm";
 import {Session} from "./organization-app/models/session.model";
+import {AuthController} from "./organization-app/controllers/auth.controller";
 
 config();
 createConnection({
@@ -19,6 +20,7 @@ createConnection({
     entities: [__dirname + "/**/models/*.ts"],
     synchronize: true
 }).then(() => {
+    //AuthController.getInstance().then(c=>c.register({username:"admin", password:"admin", mail:"admin@admin.com",isAdmin:true,lastname:"admin",firstname:"admin"}))
     const app: Express = express();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: false}));
