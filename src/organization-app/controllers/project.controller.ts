@@ -25,17 +25,15 @@ export class ProjectController {
     }
 
     public async create(props: ProjectProps, user: User): Promise<Project> {
-        const project = this.projectRepository.create({...props});
-        if (!Array.isArray(project.members)) {
-            project.members = [];
-        }
-        const admin = this.projectMembershipRepository.create({member: user, isAdmin: true, project})
-        project.members.push(admin);
+        let project = this.projectRepository.create({...props});
         const err = await validate(project, {validationError: {target: false}});
         if (err.length > 0) {
             throw err;
         }
-        return this.projectRepository.save(project);
+        project = await this.projectRepository.save(project);
+        const membership = this.projectMembershipRepository.create({member: user, isAdmin: true, project})
+        await this.projectMembershipRepository.save(membership);
+        return project
     }
 
     public async delete(id: string) {
@@ -74,6 +72,10 @@ export class ProjectController {
             .add(userId);
     }
 
+    public async addProjectMembers(projectId: string, userIds: string[]): Promise<void> {
+        userIds.forEach(userId => this.addProjectMember(projectId, userId));
+    }
+
     public async removeProjectAdmin(projectId: string, userId: string): Promise<void> {
         await this.projectMembershipRepository.createQueryBuilder()
             .update()
@@ -89,6 +91,10 @@ export class ProjectController {
             .where("project = :projectId", {projectId})
             .andWhere("member = :userId", {userId})
             .execute();
+    }
+
+    public async removeProjectMembers(projectId: string, userIds: string[]): Promise<void> {
+        userIds.forEach(userId => this.removeProjectMember(projectId, userId));
     }
 
     public async getTickets(projectId: string): Promise<Ticket[]> {

@@ -2,7 +2,6 @@ import express from "express";
 import {ProjectController} from "../controllers/project.controller";
 import {ensureAdminLoggedIn} from "../middlewares/auth.middleware";
 import {User} from "../models/user.model";
-import {TicketController} from "../controllers/ticket.controller";
 
 const projectRouter = express.Router();
 
@@ -94,6 +93,17 @@ projectRouter.put("/:projectId/member/:userId", async (req, res) => {
     }
 });
 
+projectRouter.put("/:projectId/member", async (req, res) => {
+    const projectId = req.params.projectId;
+    const userId = req.body.users;
+    const projectController = await ProjectController.getInstance();
+    try {
+        await projectController.addProjectMembers(projectId, userId);
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).end();
+    }
+});
 
 projectRouter.delete("/:projectId/admin/:userId", async (req, res) => {
     const projectId = req.params.projectId;
@@ -113,6 +123,18 @@ projectRouter.delete("/:projectId/member/:userId", async (req, res) => {
     const projectController = await ProjectController.getInstance();
     try {
         await projectController.removeProjectMember(projectId, userId);
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).end();
+    }
+});
+
+projectRouter.delete("/:projectId/member", async (req, res) => {
+    const projectId = req.params.projectId;
+    const userIds = req.body.users;
+    const projectController = await ProjectController.getInstance();
+    try {
+        await projectController.removeProjectMembers(projectId, userIds);
         res.status(204).end();
     } catch (err) {
         res.status(400).end();
