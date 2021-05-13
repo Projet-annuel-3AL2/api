@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
 import {Ticket} from "./ticket.model";
 import {Comment} from "./comment.model";
@@ -40,10 +40,16 @@ export class User {
     @Length(7, 100)
     password: string;
 
+    @Column({select: false, nullable: true})
+    resetToken: string;
+
+    @Column({select: false, nullable: true})
+    resetTokenExpiration: Date;
+
     @Column({nullable: false, default: false})
     isAdmin: boolean;
 
-    @ManyToMany(() => ProjectMembership, projectMembership => projectMembership.project)
+    @OneToMany(() => ProjectMembership, projectMembership => projectMembership.member)
     projects: ProjectMembership[];
 
     @OneToMany(() => Ticket, ticket => ticket.creator)

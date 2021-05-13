@@ -1,4 +1,4 @@
-import {Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Ticket} from "./ticket.model";
 import {Length} from "class-validator";
 import {ProjectMembership} from "./project-membership.model";
@@ -16,7 +16,7 @@ export class Project {
     @Length(5, 100)
     name: string;
 
-    @ManyToMany(() => ProjectMembership, projectMembership => projectMembership.member)
+    @OneToMany(() => ProjectMembership, projectMembership => projectMembership.project)
     members: ProjectMembership[];
 
     @OneToMany(() => Ticket, ticket => ticket.project)
