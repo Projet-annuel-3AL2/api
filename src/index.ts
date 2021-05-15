@@ -6,7 +6,6 @@ import {buildOrgAppRoutes} from "./organization-app/routes/index.route";
 import {buildAPTRoutes} from "./agir-pour-tous/routes/index.route";
 import {TypeormStore} from "connect-typeorm";
 import {Session} from "./organization-app/models/session.model";
-import {AuthController} from "./organization-app/controllers/auth.controller";
 
 config();
 createConnection({

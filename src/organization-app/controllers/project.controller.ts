@@ -48,12 +48,19 @@ export class ProjectController {
         return this.projectRepository.findOneOrFail(id);
     }
 
-    public async getProjectMembers(id: string): Promise<ProjectMembership[]> {
-        return (await this.projectRepository.findOneOrFail(id, {relations: ["members"]})).members;
+    public async getProjectMembers(id: string): Promise<User[]> {
+        return getRepository(User).createQueryBuilder()
+            .leftJoin("User.projects", "ProjectMembership")
+            .where("ProjectMembership.projectId = :id",{id})
+            .getMany();
     }
 
-    public async getProjectAdmins(id: string): Promise<ProjectMembership[]> {
-        return (await this.projectRepository.findOneOrFail(id, {relations: ["admins"]})).members.filter(member => member.isAdmin);
+    public async getProjectAdmins(id: string): Promise<User[]> {
+        return getRepository(User).createQueryBuilder()
+            .leftJoin("User.projects", "ProjectMembership")
+            .where("ProjectMembership.projectId = :id",{id})
+            .andWhere("ProjectMembership.isAdmin = TRUE")
+            .getMany();
     }
 
     public async addProjectAdmin(projectId: string, userId: string): Promise<void> {
@@ -65,15 +72,13 @@ export class ProjectController {
             .execute();
     }
 
-    public async addProjectMember(projectId: string, userId: string): Promise<void> {
+    public async addProjectMember(projectId: string, memberId: string): Promise<void> {
+        console.log(projectId + " "+ memberId)
         await this.projectRepository.createQueryBuilder()
-            .relation(Project, "members")
-            .of(projectId)
-            .add(userId);
-    }
-
-    public async addProjectMembers(projectId: string, userIds: string[]): Promise<void> {
-        userIds.forEach(userId => this.addProjectMember(projectId, userId));
+            .insert()
+            .into(ProjectMembership)
+            .values({memberId, projectId})
+            .execute();
     }
 
     public async removeProjectAdmin(projectId: string, userId: string): Promise<void> {
@@ -91,10 +96,6 @@ export class ProjectController {
             .where("project = :projectId", {projectId})
             .andWhere("member = :userId", {userId})
             .execute();
-    }
-
-    public async removeProjectMembers(projectId: string, userIds: string[]): Promise<void> {
-        userIds.forEach(userId => this.removeProjectMember(projectId, userId));
     }
 
     public async getTickets(projectId: string): Promise<Ticket[]> {

@@ -95,10 +95,12 @@ projectRouter.put("/:projectId/member/:userId", async (req, res) => {
 
 projectRouter.put("/:projectId/member", async (req, res) => {
     const projectId = req.params.projectId;
-    const userId = req.body.users;
+    const userIds = req.body.users;
     const projectController = await ProjectController.getInstance();
     try {
-        await projectController.addProjectMembers(projectId, userId);
+         for (const userId of userIds) {
+             await projectController.addProjectMember(projectId, userId);
+         }
         res.status(204).end();
     } catch (err) {
         res.status(400).end();
@@ -134,7 +136,9 @@ projectRouter.delete("/:projectId/member", async (req, res) => {
     const userIds = req.body.users;
     const projectController = await ProjectController.getInstance();
     try {
-        await projectController.removeProjectMembers(projectId, userIds);
+        for (const userId of userIds) {
+            userIds.forEach(userId => projectController.removeProjectMember(projectId, userId));
+        }
         res.status(204).end();
     } catch (err) {
         res.status(400).end();
