@@ -3,6 +3,7 @@ import {getRepository, Repository} from "typeorm";
 import {validate} from "class-validator";
 import {ProjectMembership} from "../models/project-membership.model";
 import {hash} from "bcrypt";
+import {Project} from "../models/project.model";
 
 export class UserController {
 
@@ -29,8 +30,11 @@ export class UserController {
         return this.userRepository.findOneOrFail(id);
     }
 
-    public async getProjects(id: string): Promise<ProjectMembership[]> {
-        return (await this.userRepository.findOneOrFail(id, {relations: ["projects"]})).projects;
+    public async getProjects(id: string): Promise<Project[]> {
+        return getRepository(Project).createQueryBuilder()
+            .leftJoin("Project.members", "ProjectMembership")
+            .where("ProjectMembership.memberId = :id",{id})
+            .getMany();
     }
     public async delete(id: string) {
         await this.userRepository.delete(id);
@@ -52,7 +56,8 @@ export class UserController {
     }
 
     public async create(props: UserProps): Promise<User> {
-        const encryptedPass = await hash(props.password, 8);
+        const password = require('crypto').randomBytes(20).toString("hex");
+        const encryptedPass = await hash(password, 8);
         const user = this.userRepository.create({...props, password: encryptedPass});
         const err = await validate(user, {validationError: {target: false}});
         if (err.length > 0) {
