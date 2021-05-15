@@ -52,6 +52,7 @@ userRouter.get("/:userId/projects", async (req, res) => {
         const projects = await userController.getProjects(userId);
         res.json(projects);
     } catch (err) {
+        console.log(err)
         res.status(404).end();
     }
 });

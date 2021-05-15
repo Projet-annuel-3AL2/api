@@ -1,4 +1,4 @@
-import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, RelationId} from "typeorm";
 import {Ticket} from "./ticket.model";
 import {User} from "./user.model";
 
@@ -20,7 +20,13 @@ export class Comment implements CommentProps {
 
     @ManyToOne(() => Ticket, ticket => ticket.comments)
     ticket: Ticket;
+    @Column()
+    @RelationId((comment: Comment)=> comment.ticket)
+    ticketId: string;
 
     @ManyToOne(() => User, user => user.comments)
     user: User;
+    @Column()
+    @RelationId((comment: Comment)=> comment.user)
+    userId: string;
 }
