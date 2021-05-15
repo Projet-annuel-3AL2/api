@@ -134,10 +134,11 @@ projectRouter.delete("/:projectId/member/:userId", async (req, res) => {
 projectRouter.delete("/:projectId/member", async (req, res) => {
     const projectId = req.params.projectId;
     const userIds = req.body.users;
+    console.log(userIds)
     const projectController = await ProjectController.getInstance();
     try {
         for (const userId of userIds) {
-            userIds.forEach(userId => projectController.removeProjectMember(projectId, userId));
+            await projectController.removeProjectMember(projectId, userId);
         }
         res.status(204).end();
     } catch (err) {
