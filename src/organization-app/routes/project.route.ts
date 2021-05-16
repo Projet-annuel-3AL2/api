@@ -134,7 +134,6 @@ projectRouter.delete("/:projectId/member/:userId", async (req, res) => {
 projectRouter.delete("/:projectId/member", async (req, res) => {
     const projectId = req.params.projectId;
     const userIds = req.body.users;
-    console.log(userIds)
     const projectController = await ProjectController.getInstance();
     try {
         for (const userId of userIds) {
@@ -161,10 +160,10 @@ projectRouter.post("/:projectId/ticket", async (req, res) => {
     const projectId = req.params.projectId;
     const projectController = await ProjectController.getInstance();
     try {
-        console.log(req.body)
-        const ticket = await projectController.addTicket(projectId, {...req.body});
+        const ticket = await projectController.addTicket(projectId, {...req.body}, (req.user as User).id);
         res.json(ticket);
     } catch (err) {
+        console.log(err)
         res.status(400).end();
     }
 });

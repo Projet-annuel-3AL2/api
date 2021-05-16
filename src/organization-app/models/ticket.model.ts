@@ -48,7 +48,7 @@ export class Ticket implements TicketProps {
     @Column({nullable: true})
     endDate: Date;
 
-    @Column({nullable: false})
+    @Column({nullable: true})
     estimatedDuration: number;
 
     @Column({default: 0})

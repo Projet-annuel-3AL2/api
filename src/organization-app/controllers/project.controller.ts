@@ -102,12 +102,9 @@ export class ProjectController {
         return (await this.projectRepository.findOneOrFail(projectId, {relations: ["tickets"]})).tickets;
     }
 
-    public async addTicket(projectId: any, props: TicketProps) {
-        const ticket = getRepository(Ticket).create({...props});
-        await this.projectRepository.createQueryBuilder()
-            .relation(Ticket, "tickets")
-            .of(projectId)
-            .add(ticket);
+    public async addTicket(projectId: string, props: TicketProps, userId: string) {
+        let ticket = getRepository(Ticket).create({...props, creatorId: userId, assigneeId: userId, projectId: projectId});
+        ticket = await getRepository(Ticket).save(ticket);
         return ticket;
     }
 }
