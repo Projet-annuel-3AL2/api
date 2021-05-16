@@ -21,12 +21,12 @@ export class Comment implements CommentProps {
     @ManyToOne(() => Ticket, ticket => ticket.comments)
     ticket: Ticket;
     @Column()
-    @RelationId((comment: Comment)=> comment.ticket)
+    @RelationId((comment: Comment) => comment.ticket)
     ticketId: string;
 
     @ManyToOne(() => User, user => user.comments)
     user: User;
     @Column()
-    @RelationId((comment: Comment)=> comment.user)
+    @RelationId((comment: Comment) => comment.user)
     userId: string;
 }

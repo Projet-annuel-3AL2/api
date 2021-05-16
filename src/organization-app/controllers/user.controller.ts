@@ -33,9 +33,10 @@ export class UserController {
     public async getProjects(id: string): Promise<Project[]> {
         return getRepository(Project).createQueryBuilder()
             .leftJoin("Project.members", "ProjectMembership")
-            .where("ProjectMembership.memberId = :id",{id})
+            .where("ProjectMembership.memberId = :id", {id})
             .getMany();
     }
+
     public async delete(id: string) {
         await this.userRepository.delete(id);
     }

@@ -17,7 +17,7 @@ authRouter.delete('/logout', ensureLoggedIn, async (req, res) => {
 
 authRouter.get("/forgot-password/:username", ensureLoggedOut, async (req, res) => {
     const username = req.params.username;
-    try{
+    try {
         const authController = await AuthController.getInstance();
         const token = await authController.forgotPassword(username);
         res.send(token);
@@ -32,7 +32,7 @@ authRouter.post("/reset-password/:resetToken", ensureLoggedOut, async (req, res)
         const authController = await AuthController.getInstance();
         await authController.resetPassword(resetToken, req.body.password);
         res.end();
-    } catch (err){
+    } catch (err) {
         res.status(400).json(err);
     }
 });

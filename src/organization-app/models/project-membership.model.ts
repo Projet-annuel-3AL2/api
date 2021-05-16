@@ -6,14 +6,14 @@ import {Project} from "./project.model";
 export class ProjectMembership {
     @ManyToOne(() => User, user => user.projects, {primary: true})
     member: User;
-    @Column({primary:true})
-    @RelationId((projectMembership: ProjectMembership)=> projectMembership.member)
+    @Column({primary: true})
+    @RelationId((projectMembership: ProjectMembership) => projectMembership.member)
     memberId: string;
 
     @ManyToOne(() => Project, project => project.members, {primary: true})
     project: Project;
-    @Column({primary:true})
-    @RelationId((projectMembership: ProjectMembership)=> projectMembership.project)
+    @Column({primary: true})
+    @RelationId((projectMembership: ProjectMembership) => projectMembership.project)
     projectId: string;
 
     @Column({nullable: false, default: false})

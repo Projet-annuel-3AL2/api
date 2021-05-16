@@ -4,7 +4,7 @@ import {CommentController} from "../controllers/comment.controller";
 const commentRouter = express.Router();
 
 
-commentRouter.get("/",async (req, res) => {
+commentRouter.get("/", async (req, res) => {
     const commentController = await CommentController.getInstance();
     try {
         const comments = await commentController.getAll();
@@ -15,7 +15,7 @@ commentRouter.get("/",async (req, res) => {
 });
 
 
-commentRouter.put("/:commentId",async (req, res) => {
+commentRouter.put("/:commentId", async (req, res) => {
     const commentId = req.params.commentId;
     const commentController = await CommentController.getInstance();
     try {

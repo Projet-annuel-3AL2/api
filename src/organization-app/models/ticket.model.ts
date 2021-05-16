@@ -4,7 +4,8 @@ import {
     Entity,
     ManyToOne,
     OneToMany,
-    PrimaryGeneratedColumn, RelationId,
+    PrimaryGeneratedColumn,
+    RelationId,
     UpdateDateColumn
 } from "typeorm";
 import {User} from "./user.model";
@@ -63,13 +64,13 @@ export class Ticket implements TicketProps {
     @ManyToOne(() => User, user => user.createdTickets)
     creator: User;
     @Column()
-    @RelationId((ticket: Ticket)=> ticket.creator)
+    @RelationId((ticket: Ticket) => ticket.creator)
     creatorId: string;
 
     @ManyToOne(() => User, user => user.assignedTickets)
     assignee: User;
     @Column()
-    @RelationId((ticket: Ticket)=> ticket.assignee)
+    @RelationId((ticket: Ticket) => ticket.assignee)
     assigneeId: string;
 
     @OneToMany(() => Comment, comment => comment.ticket)
@@ -78,6 +79,6 @@ export class Ticket implements TicketProps {
     @ManyToOne(() => Project, project => project.tickets)
     project: Project;
     @Column()
-    @RelationId((ticket: Ticket)=> ticket.project)
+    @RelationId((ticket: Ticket) => ticket.project)
     projectId: string;
 }

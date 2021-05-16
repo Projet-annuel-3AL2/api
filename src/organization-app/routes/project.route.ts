@@ -98,9 +98,9 @@ projectRouter.put("/:projectId/member", async (req, res) => {
     const userIds = req.body.users;
     const projectController = await ProjectController.getInstance();
     try {
-         for (const userId of userIds) {
-             await projectController.addProjectMember(projectId, userId);
-         }
+        for (const userId of userIds) {
+            await projectController.addProjectMember(projectId, userId);
+        }
         res.status(204).end();
     } catch (err) {
         res.status(400).end();

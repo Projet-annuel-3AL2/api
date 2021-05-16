@@ -51,14 +51,14 @@ export class ProjectController {
     public async getProjectMembers(id: string): Promise<User[]> {
         return getRepository(User).createQueryBuilder()
             .leftJoin("User.projects", "ProjectMembership")
-            .where("ProjectMembership.projectId = :id",{id})
+            .where("ProjectMembership.projectId = :id", {id})
             .getMany();
     }
 
     public async getProjectAdmins(id: string): Promise<User[]> {
         return getRepository(User).createQueryBuilder()
             .leftJoin("User.projects", "ProjectMembership")
-            .where("ProjectMembership.projectId = :id",{id})
+            .where("ProjectMembership.projectId = :id", {id})
             .andWhere("ProjectMembership.isAdmin = TRUE")
             .getMany();
     }
@@ -73,7 +73,7 @@ export class ProjectController {
     }
 
     public async addProjectMember(projectId: string, memberId: string): Promise<void> {
-        console.log(projectId + " "+ memberId)
+        console.log(projectId + " " + memberId)
         await this.projectRepository.createQueryBuilder()
             .insert()
             .into(ProjectMembership)
@@ -103,7 +103,12 @@ export class ProjectController {
     }
 
     public async addTicket(projectId: string, props: TicketProps, userId: string) {
-        let ticket = getRepository(Ticket).create({...props, creatorId: userId, assigneeId: userId, projectId: projectId});
+        let ticket = getRepository(Ticket).create({
+            ...props,
+            creatorId: userId,
+            assigneeId: userId,
+            projectId: projectId
+        });
         ticket = await getRepository(Ticket).save(ticket);
         return ticket;
     }
