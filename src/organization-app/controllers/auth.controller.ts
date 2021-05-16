@@ -20,13 +20,25 @@ export class AuthController {
         return AuthController.instance;
     }
 
-    public async register(props: UserProps): Promise<User | null> {
-        const encryptedPass = await hash(props.password, 8);
-        const user = this.userRepository.create({...props, password: encryptedPass});
-        const err = await validate(user, {validationError: {target: false}});
-        if (err.length > 0) {
-            throw err;
-        }
-        return this.userRepository.save(user);
+    public async forgotPassword(username: string){
+        const token = require('crypto').randomBytes(30, function(err, buffer) {
+            buffer.toString('hex');
+        });
+        await this.userRepository.createQueryBuilder()
+            .update()
+            .set({ resetToken: token})
+            .set({ resetTokenExpiration: new Date(Date.now() + 600000)})
+            .where('username = :username', {username})
+            .execute();
+    }
+
+    public async resetPassword(resetToken: string, newPassword: string){
+        const encryptedPass = await hash(newPassword, 8);
+        await this.userRepository.createQueryBuilder()
+            .update()
+            .set({ password: encryptedPass})
+            .where('resetToken = :resetToken', {resetToken})
+            .where('resetTokenExpiration < NOW()')
+            .execute();
     }
 }

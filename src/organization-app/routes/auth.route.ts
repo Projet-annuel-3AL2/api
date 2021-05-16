@@ -1,8 +1,7 @@
 import express from "express";
 import passport from "passport";
 import {AuthController} from "../controllers/auth.controller";
-import {User} from "../models/user.model";
-import {ensureAdminLoggedIn, ensureLoggedIn, ensureLoggedOut} from "../middlewares/auth.middleware";
+import {ensureLoggedIn, ensureLoggedOut} from "../middlewares/auth.middleware";
 
 
 const authRouter = express.Router();
@@ -16,14 +15,25 @@ authRouter.delete('/logout', ensureLoggedIn, async (req, res) => {
     res.status(204).end();
 });
 
-authRouter.post('/signup', ensureAdminLoggedIn, async (req, res) => {
-    const authController = await AuthController.getInstance();
+authRouter.get("/forgot-password/:username", ensureLoggedOut, async (req, res) => {
+    const username = req.params.username;
+    try{
+        const authController = await AuthController.getInstance();
+        const token = await authController.forgotPassword(username);
+        res.send(token);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+authRouter.post("/reset-password/:resetToken", ensureLoggedOut, async (req, res) => {
+    const resetToken = req.params.resetToken;
     try {
-        const user: User = new User();
-        await authController.register({...req.body});
-        res.json(user);
-    } catch (error) {
-        res.status(400).json(error).end();
+        const authController = await AuthController.getInstance();
+        await authController.resetPassword(resetToken, req.body.password);
+        res.end();
+    } catch (err){
+        res.status(400).json(err);
     }
 });
 
