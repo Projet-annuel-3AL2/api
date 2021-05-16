@@ -31,13 +31,9 @@ export class TicketController {
         await this.ticketRepository.delete(id);
     }
 
-    public async addComment(id: string, props: CommentProps): Promise<Comment> {
-        const comment = getRepository(Comment).create({...props});
-        await this.ticketRepository.createQueryBuilder()
-        .relation(Comment, "comments")
-        .of(id)
-        .add(comment);
-        return comment;
+    public async addComment(ticketId: string, userId: string, props: CommentProps): Promise<Comment> {
+        const comment = getRepository(Comment).create({...props, ticketId, userId});
+        return getRepository(Comment).save(comment);
     }
 
     public async updateTicket(id: string, props: TicketProps): Promise<Ticket> {

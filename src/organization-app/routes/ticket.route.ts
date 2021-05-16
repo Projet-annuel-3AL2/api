@@ -1,5 +1,6 @@
 import express from "express";
 import {TicketController} from "../controllers/ticket.controller";
+import {User} from "../models/user.model";
 
 const ticketRouter = express.Router();
 
@@ -74,7 +75,7 @@ ticketRouter.post("/:ticketId/comment", async (req, res) => {
     const ticketId = req.params.ticketId;
     const ticketController = await TicketController.getInstance();
     try {
-        const ticket = await ticketController.addComment(ticketId, {...req.body});
+        const ticket = await ticketController.addComment(ticketId, (req.user as User).id, {...req.body});
         res.json(ticket);
     } catch (err) {
         res.status(400).end();
