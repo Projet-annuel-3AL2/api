@@ -7,7 +7,7 @@ const userRouter = express.Router();
 userRouter.post("/", ensureAdminLoggedIn, async (req, res) => {
     const userController = await UserController.getInstance();
     try{
-        const user = userController.create({...req.body});
+        const user = await userController.create({...req.body});
         res.json(user);
     }catch (err) {
         res.status(400).json(err);
@@ -38,7 +38,7 @@ userRouter.put("/set-admin/:userId", ensureAdminLoggedIn, async (req, res) => {
         const user = await userController.setAdmin(userId, admin);
         res.json(user);
     } catch (err) {
-        res.status(400).end();
+        res.status(400).json(err);
     }
 });
 

@@ -48,10 +48,6 @@ export class UserController {
     public async setAdmin(id: string, admin: boolean): Promise<User> {
         const user = await this.userRepository.findOneOrFail(id);
         user.isAdmin = admin;
-        const err = await validate(user, {validationError: {target: false}});
-        if (err.length > 0) {
-            throw err;
-        }
         return this.userRepository.save(user);
     }
 
