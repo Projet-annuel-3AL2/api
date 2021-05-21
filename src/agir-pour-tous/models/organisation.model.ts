@@ -14,6 +14,7 @@ import {Media} from "./media.model";
 import {Conversation} from "./conversation.model";
 import {Post} from "./post.model";
 import {Event} from "./event.model";
+import {Report} from "./report.model";
 
 @Entity()
 export class Organisation {
@@ -35,6 +36,8 @@ export class Organisation {
     conversation: Conversation;
     @OneToMany(() => Post, post => post.organisation)
     posts: Post[];
+    @OneToMany(() => Report, report => report.reportedOrganisation)
+    reported: Report[];
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()

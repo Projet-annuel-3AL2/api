@@ -9,6 +9,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
+import {Report} from "./report.model";
 
 @Entity()
 export class Group {
@@ -20,6 +21,8 @@ export class Group {
     users: User[];
     @OneToMany(() => Post, post => post.group)
     posts: Post[];
+    @OneToMany(() => Report, report => report.reportedGroup)
+    reported: Report[];
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()

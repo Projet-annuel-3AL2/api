@@ -12,6 +12,7 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Category} from "./category.model";
+import {Report} from "./report.model";
 
 @Entity()
 export class Event {
@@ -27,6 +28,8 @@ export class Event {
     posts: Post[];
     @ManyToOne(() => Category, category => category.events)
     category: Category;
+    @OneToMany(() => Report, report => report.reportedEvent)
+    reported: Report[];
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()

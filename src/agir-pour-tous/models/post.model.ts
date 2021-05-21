@@ -14,6 +14,7 @@ import {Organisation} from "./organisation.model";
 import {Group} from "./group.model";
 import {Comment} from "./comment.model";
 import {Event} from "./event.model";
+import {Report} from "./report.model";
 
 @Entity()
 export class Post {
@@ -35,6 +36,8 @@ export class Post {
     likes: User[];
     @OneToMany(() => Comment, comment => comment.post)
     comments: Comment[];
+    @OneToMany(() => Report, report => report.reportedPost)
+    reported: Report[];
     @Column()
     text: string;
     @OneToMany(() => Media, media => media.post)

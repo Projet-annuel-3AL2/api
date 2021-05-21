@@ -3,6 +3,7 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    JoinTable,
     ManyToMany,
     OneToMany,
     OneToOne,
@@ -18,6 +19,7 @@ import {Media} from "./media.model";
 import {Group} from "./group.model";
 import {Comment} from "./comment.model";
 import {Event} from "./event.model";
+import {Report} from "./report.model";
 
 export enum UserType {
     USER,
@@ -42,14 +44,18 @@ export class User {
     @Column({type: "enum", enum: UserType, unique: true, nullable: false})
     userType: UserType;
     @ManyToMany(() => User, user => user.friends)
+    @JoinTable()
     friends: User[];
     @ManyToMany(() => User, user => user.blockedUsers)
     blockers: User[];
     @ManyToMany(() => User, user => user.blockers)
+    @JoinTable()
     blockedUsers: User[];
     @ManyToMany(() => Post, post => post.likes)
+    @JoinTable()
     likedPosts: Post[];
     @ManyToMany(() => Post, post => post.creator)
+    @JoinTable()
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator)
     comments: Comment[];
@@ -62,21 +68,32 @@ export class User {
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
     @ManyToMany(() => Group, group => group.users)
+    @JoinTable()
     groups: Group[];
     @ManyToMany(() => Group, group => group.admins)
+    @JoinTable()
     administratedGroups: Group[];
     @ManyToMany(() => Event, event => event.user)
+    @JoinTable()
     createdEvents: Event[];
     @ManyToMany(() => Event, event => event.participants)
+    @JoinTable()
     eventsParticipation: Event[];
     @ManyToMany(() => Organisation, organisation => organisation.members)
+    @JoinTable()
     organisations: Organisation[];
     @ManyToMany(() => Organisation, organisation => organisation.admins)
+    @JoinTable()
     administratedOrganisations: Organisation[];
     @ManyToMany(() => Conversation, conversation => conversation.members)
+    @JoinTable()
     conversations: Conversation[];
     @OneToMany(() => Message, message => message.user)
     messages: Message[];
+    @OneToMany(() => Report, report => report.userReporter)
+    reports: Report[];
+    @OneToMany(() => Report, report => report.reportedUser)
+    reported: Report[];
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()
