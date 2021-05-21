@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
 import {AuthController} from "../controllers/auth.controller";
-import {ensureLoggedIn, ensureLoggedOut} from "../middlewares/auth.middleware";
+import {ensureLoggedIn, ensureLoggedOut} from "../../common/middlewares/auth.middleware";
 
 
 const authRouter = express.Router();
