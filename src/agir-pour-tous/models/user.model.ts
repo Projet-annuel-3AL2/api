@@ -11,15 +11,15 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Post} from "./post.model";
-import {Organisation} from "./organisation.model";
 import {Conversation} from "./conversation.model";
 import {Message} from "./message.model";
 import {Certification} from "./certification.model";
 import {Media} from "./media.model";
-import {Group} from "./group.model";
 import {Comment} from "./comment.model";
 import {Event} from "./event.model";
 import {Report} from "./report.model";
+import {GroupMembership} from "./group-membership.model";
+import {OrganisationMembership} from "./organisation_membership.model";
 
 export enum UserType {
     USER,
@@ -54,8 +54,7 @@ export class User {
     @ManyToMany(() => Post, post => post.likes)
     @JoinTable()
     likedPosts: Post[];
-    @ManyToMany(() => Post, post => post.creator)
-    @JoinTable()
+    @OneToMany(() => Post, post => post.creator)
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator)
     comments: Comment[];
@@ -67,24 +66,15 @@ export class User {
     certification: Certification;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
-    @ManyToMany(() => Group, group => group.users)
-    @JoinTable()
-    groups: Group[];
-    @ManyToMany(() => Group, group => group.admins)
-    @JoinTable()
-    administratedGroups: Group[];
-    @ManyToMany(() => Event, event => event.user)
-    @JoinTable()
+    @OneToMany(() => GroupMembership, group => group.user)
+    groups: GroupMembership[];
+    @OneToMany(() => Event, event => event.user)
     createdEvents: Event[];
     @ManyToMany(() => Event, event => event.participants)
     @JoinTable()
     eventsParticipation: Event[];
-    @ManyToMany(() => Organisation, organisation => organisation.members)
-    @JoinTable()
-    organisations: Organisation[];
-    @ManyToMany(() => Organisation, organisation => organisation.admins)
-    @JoinTable()
-    administratedOrganisations: Organisation[];
+    @OneToMany(() => OrganisationMembership, organisation => organisation.user)
+    organisations: OrganisationMembership[];
     @ManyToMany(() => Conversation, conversation => conversation.members)
     @JoinTable()
     conversations: Conversation[];

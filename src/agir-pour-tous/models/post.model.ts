@@ -4,6 +4,7 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    ManyToMany,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
@@ -32,7 +33,7 @@ export class Post {
     sharedPosts: Post[];
     @ManyToOne(() => Post, post => post.sharedPosts)
     sharesPost: Post;
-    @ManyToOne(() => User, user => user.likedPosts)
+    @ManyToMany(() => User, user => user.likedPosts)
     likes: User[];
     @OneToMany(() => Comment, comment => comment.post)
     comments: Comment[];

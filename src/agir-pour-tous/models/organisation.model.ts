@@ -9,12 +9,12 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
-import {User} from "./user.model";
 import {Media} from "./media.model";
 import {Conversation} from "./conversation.model";
 import {Post} from "./post.model";
 import {Event} from "./event.model";
 import {Report} from "./report.model";
+import {OrganisationMembership} from "./organisation_membership.model";
 
 @Entity()
 export class Organisation {
@@ -22,10 +22,8 @@ export class Organisation {
     id: string;
     @Column({nullable: false, unique: true})
     name: string;
-    @ManyToMany(() => User, user => user.administratedOrganisations)
-    admins: User[];
-    @ManyToMany(() => User, user => user.organisations)
-    members: User[];
+    @ManyToMany(() => OrganisationMembership, user => user.organisation)
+    members: OrganisationMembership[];
     @OneToMany(() => Event, user => user.organisation)
     events: Event[];
     @OneToOne(() => Media, media => media.organisationProfilePicture)
