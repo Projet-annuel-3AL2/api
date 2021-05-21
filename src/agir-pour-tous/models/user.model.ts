@@ -1,4 +1,5 @@
 import {
+    BeforeInsert,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
@@ -21,6 +22,7 @@ import {Report} from "./report.model";
 import {GroupMembership} from "./group-membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
+import {hash} from "bcrypt";
 
 export enum UserType {
     USER,
@@ -45,7 +47,7 @@ export class User {
     mail: string;
     @Column({unique: true, nullable: false})
     password: string;
-    @Column({type: "enum", enum: UserType, unique: true, default: UserType.USER, nullable: false})
+    @Column({type: "enum", enum: UserType, default: UserType.USER, nullable: false})
     userType: UserType;
     @ManyToMany(() => User, user => user.friends)
     @JoinTable()
@@ -94,4 +96,9 @@ export class User {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
+    @BeforeInsert()
+    async setPassword(password: string) {
+        this.password = await hash(password || this.password, 10)
+    }
 }
