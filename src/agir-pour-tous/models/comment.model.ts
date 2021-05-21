@@ -6,7 +6,8 @@ import {
     DeleteDateColumn,
     Entity,
     ManyToMany,
-    ManyToOne, OneToMany,
+    ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -16,13 +17,13 @@ import {Media} from "./media.model";
 export class Comment {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @ManyToOne(()=> User, user => user.comments)
+    @ManyToOne(() => User, user => user.comments)
     creator: User;
-    @ManyToMany(()=> Post, post=>post.comments)
+    @ManyToMany(() => Post, post => post.comments)
     post: Post;
     @Column()
     text: string;
-    @OneToMany(()=> Media, media=>media.comments)
+    @OneToMany(() => Media, media => media.comments)
     medias: Media[];
     @CreateDateColumn()
     createdAt: Date;

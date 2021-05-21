@@ -26,7 +26,7 @@ export class Media {
     organisationProfilePicture: Organisation;
     @OneToOne(() => Organisation, organisation => organisation.bannerPicture)
     organisationBannerPicture: Organisation;
-    @ManyToOne(()=> Comment, comment=> comment.medias)
+    @ManyToOne(() => Comment, comment => comment.medias)
     comments: Comment[];
     @CreateDateColumn()
     createdAt: Date;
