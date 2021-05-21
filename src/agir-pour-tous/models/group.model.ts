@@ -1,12 +1,24 @@
 import {Post} from "./post.model";
-import {CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn
+} from "typeorm";
 import {Report} from "./report.model";
 import {GroupMembership} from "./group-membership.model";
+import {Length} from "class-validator";
 
 @Entity()
 export class Group {
     @PrimaryGeneratedColumn("uuid")
     id: string;
+    @Length(5,30)
+    @Column({nullable:false, unique:true})
+    name: string;
     @OneToMany(() => GroupMembership, user => user.group)
     members: GroupMembership[];
     @OneToMany(() => Post, post => post.group)

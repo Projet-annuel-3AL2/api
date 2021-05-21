@@ -8,7 +8,7 @@ export class GroupMembership {
     user: User;
     @ManyToOne(() => Group, group => group.members, {primary: true})
     group: Group;
-    @Column()
+    @Column({default: false, nullable: false})
     isAdmin: boolean;
     @CreateDateColumn()
     createdAt: Date;

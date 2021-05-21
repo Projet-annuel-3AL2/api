@@ -13,6 +13,7 @@ import {Organisation} from "./organisation.model";
 import {Group} from "./group.model";
 import {Post} from "./post.model";
 import {Event} from "./event.model";
+import {IsNotEmpty, Length} from "class-validator";
 
 @Entity()
 export class Report {
@@ -20,7 +21,9 @@ export class Report {
     id: string;
     @ManyToOne(() => User, user => user.reports)
     userReporter: User;
-    @Column()
+    @IsNotEmpty()
+    @Length(5,500)
+    @Column({length:500,nullable: false})
     text: string;
     @OneToMany(() => User, user => user.reported)
     reportedUser: User;

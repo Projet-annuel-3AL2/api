@@ -20,6 +20,7 @@ import {Event} from "./event.model";
 import {Report} from "./report.model";
 import {GroupMembership} from "./group-membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
+import {IsEmail, IsNotEmpty, Length} from "class-validator";
 
 export enum UserType {
     USER,
@@ -31,17 +32,20 @@ export enum UserType {
 export class User {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @Column({unique: true, nullable: false})
+    @Length(5,20)
+    @IsNotEmpty()
+    @Column({unique: true, nullable: false, length: 20})
     username: string;
     @Column({unique: false, nullable: true})
     firstname: string;
     @Column({unique: false, nullable: true})
     lastname: string;
+    @IsEmail()
     @Column({unique: true, nullable: false})
     mail: string;
     @Column({unique: true, nullable: false})
     password: string;
-    @Column({type: "enum", enum: UserType, unique: true, nullable: false})
+    @Column({type: "enum", enum: UserType, unique: true, default: UserType.USER, nullable: false})
     userType: UserType;
     @ManyToMany(() => User, user => user.friends)
     @JoinTable()
@@ -58,9 +62,9 @@ export class User {
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator)
     comments: Comment[];
-    @OneToOne(() => Media, media => media.userProfilePicture)
+    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true})
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.userBanner)
+    @OneToOne(() => Media, media => media.userBanner, {nullable: true})
     bannerPicture: Media;
     @OneToOne(() => Certification, certification => certification.user, {eager: true})
     certification: Certification;

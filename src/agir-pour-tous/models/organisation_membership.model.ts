@@ -8,7 +8,7 @@ export class OrganisationMembership {
     user: User;
     @ManyToOne(() => Organisation, organisation => organisation.members, {primary: true})
     organisation: Organisation;
-    @Column()
+    @Column({default: false, nullable: false})
     isAdmin: boolean;
     @CreateDateColumn()
     createdAt: Date;

@@ -2,6 +2,7 @@ import {Organisation} from "./organisation.model";
 import {Post} from "./post.model";
 import {User} from "./user.model";
 import {
+    Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
@@ -11,11 +12,15 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Comment} from "./comment.model";
+import {IsUrl} from "class-validator";
 
 @Entity()
 export class Media {
     @PrimaryGeneratedColumn("uuid")
     id: string;
+    @IsUrl()
+    @Column({nullable:false})
+    link: string;
     @OneToOne(() => User, user => user.profilePicture)
     userProfilePicture: User;
     @OneToOne(() => User, user => user.bannerPicture)

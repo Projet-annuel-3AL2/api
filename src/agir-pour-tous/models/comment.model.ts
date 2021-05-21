@@ -21,7 +21,7 @@ export class Comment {
     creator: User;
     @ManyToMany(() => Post, post => post.comments)
     post: Post;
-    @Column()
+    @Column({nullable: true})
     text: string;
     @OneToMany(() => Media, media => media.comments)
     medias: Media[];
