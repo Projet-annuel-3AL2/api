@@ -8,6 +8,7 @@ import {authRouter} from "./auth.route";
 import {userRouter} from "./user.route";
 import {categoryRouter} from "./category.route";
 import {groupRouter} from "./group.route";
+import {organisationRouter} from "./organisation.route";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -28,5 +29,6 @@ export function buildAPTRoutes() {
     router.use("/user", userRouter);
     router.use("/category", categoryRouter);
     router.use("/group", groupRouter);
+    router.use("/organisation", organisationRouter);
     return router;
 }

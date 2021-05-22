@@ -18,6 +18,10 @@ import {Report} from "./report.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsNotEmpty, Length} from "class-validator";
 
+export interface OrganisationProps {
+    name: string;
+}
+
 @Entity()
 export class Organisation {
     @PrimaryGeneratedColumn("uuid")
