@@ -1,16 +1,18 @@
 import {Post} from "./post.model";
 import {
+    BeforeInsert,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    OneToMany,
+    OneToMany, OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
 import {Report} from "./report.model";
 import {GroupMembership} from "./group_membership.model";
 import {Length} from "class-validator";
+import {Conversation} from "./conversation.model";
 
 @Entity()
 export class Group {
@@ -25,10 +27,16 @@ export class Group {
     posts: Post[];
     @OneToMany(() => Report, report => report.reportedGroup)
     reported: Report[];
+    @OneToOne(() => Conversation, conversation => conversation.group)
+    conversation: Conversation;
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+    @BeforeInsert()
+    async setConversation() {
+        this.conversation = new Conversation();
+    }
 }
