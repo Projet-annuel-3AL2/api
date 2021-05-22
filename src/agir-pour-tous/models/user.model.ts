@@ -30,6 +30,15 @@ export enum UserType {
     SUPER_ADMIN="SUPER_ADMIN"
 }
 
+export interface UserProps {
+    username: string;
+    lastname: string;
+    firstname: string;
+    mail: string;
+    password: string;
+    userType?: UserType;
+}
+
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")

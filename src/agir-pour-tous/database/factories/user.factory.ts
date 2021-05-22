@@ -1,15 +1,15 @@
 import * as Faker from "faker"
 import { define } from "typeorm-seeding"
-import {User, UserType} from "../../models/user.model";
+import {User, UserProps, UserType} from "../../models/user.model";
 
-define(User, (faker: typeof Faker) => {
+define(User, (faker: typeof Faker, props: UserProps): User => {
     const user = new User()
     const randomRole: UserType = faker.random.arrayElement(Object.values(UserType)) as UserType;
-    user.username = faker.lorem.word(20);
-    user.firstname = faker.name.firstName();
-    user.lastname = faker.name.lastName();
-    user.password = faker.random.word();
-    user.mail = faker.random.word();
-    user.userType = randomRole;
-    return user
+    user.username = props.username || faker.lorem.word(20);
+    user.firstname = props.firstname ||  faker.name.firstName();
+    user.lastname = props.lastname ||  faker.name.lastName();
+    user.password = props.password ||  faker.random.word();
+    user.mail = props.mail ||  faker.random.word();
+    user.userType = props.userType ||  randomRole;
+    return user;
 });
