@@ -5,10 +5,10 @@ import {Group, GroupProps} from "../models/group.model";
 export class GroupController {
     private static instance: GroupController;
 
-    private userRepository: Repository<Group>;
+    private groupRepository: Repository<Group>;
 
     private constructor() {
-        this.userRepository = getRepository(Group);
+        this.groupRepository = getRepository(Group);
     }
 
     public static getInstance(): GroupController {
@@ -19,19 +19,19 @@ export class GroupController {
     }
 
     public async getByGroupName(groupName: string): Promise<Group> {
-        return await this.userRepository.findOneOrFail(groupName);
+        return await this.groupRepository.findOneOrFail(groupName);
     }
 
     public async getAll(): Promise<Group[]> {
-        return await this.userRepository.find();
+        return await this.groupRepository.find();
     }
 
     public async delete(groupName: string): Promise<void> {
-        await this.userRepository.softDelete(groupName);
+        await this.groupRepository.softDelete(groupName);
     }
 
     public async update(groupName: string, props: GroupProps): Promise<Group> {
-        await this.userRepository.update(groupName, props);
+        await this.groupRepository.update(groupName, props);
         return this.getByGroupName(groupName);
     }
 
