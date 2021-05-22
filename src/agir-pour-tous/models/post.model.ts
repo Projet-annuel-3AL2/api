@@ -34,16 +34,16 @@ export class Post {
     sharedPosts: Post[];
     @ManyToOne(() => Post, post => post.sharedPosts)
     sharesPost: Post;
-    @ManyToMany(() => User, user => user.likedPosts)
+    @ManyToMany(() => User, user => user.likedPosts, {cascade: true})
     likes: User[];
-    @OneToMany(() => Comment, comment => comment.post)
+    @OneToMany(() => Comment, comment => comment.post, {cascade: true})
     comments: Comment[];
-    @OneToMany(() => Report, report => report.reportedPost)
+    @OneToMany(() => Report, report => report.reportedPost, {cascade: true})
     reported: Report[];
     @Length(0,512)
     @Column({nullable:true, length:512})
     text: string;
-    @OneToMany(() => Media, media => media.post)
+    @OneToMany(() => Media, media => media.post, {cascade: true})
     medias: Media[];
     @CreateDateColumn()
     createdAt: Date;

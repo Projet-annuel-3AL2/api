@@ -28,17 +28,17 @@ export class Organisation {
     name: string;
     @ManyToMany(() => OrganisationMembership, user => user.organisation)
     members: OrganisationMembership[];
-    @OneToMany(() => Event, user => user.organisation)
+    @OneToMany(() => Event, user => user.organisation, {cascade: true})
     events: Event[];
-    @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true})
+    @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, cascade: true})
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true})
+    @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true, cascade: true})
     bannerPicture: Media;
-    @OneToOne(() => Conversation, conversation => conversation.organisation, {nullable: false})
+    @OneToOne(() => Conversation, conversation => conversation.organisation, {nullable: false, cascade: true})
     conversation: Conversation;
-    @OneToMany(() => Post, post => post.organisation)
+    @OneToMany(() => Post, post => post.organisation, {cascade: true})
     posts: Post[];
-    @OneToMany(() => Report, report => report.reportedOrganisation)
+    @OneToMany(() => Report, report => report.reportedOrganisation, {cascade: true})
     reported: Report[];
     @CreateDateColumn()
     createdAt: Date;
