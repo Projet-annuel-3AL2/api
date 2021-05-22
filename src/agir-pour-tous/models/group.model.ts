@@ -1,5 +1,6 @@
 import {Post} from "./post.model";
 import {
+    BeforeInsert,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
@@ -34,4 +35,8 @@ export class Group {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+    @BeforeInsert()
+    async setConversation() {
+        this.conversation = new Conversation();
+    }
 }
