@@ -46,7 +46,7 @@ categoryRouter.delete("/:categoryId", async (req, res) => {
     }
 });
 
-categoryRouter.delete("/:categoryId/events", async (req, res) => {
+categoryRouter.get("/:categoryId/events", async (req, res) => {
     try {
         const categoryId = req.params.categoryId;
         const categoryController = CategoryController.getInstance();
