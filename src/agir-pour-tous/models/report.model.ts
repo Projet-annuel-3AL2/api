@@ -4,7 +4,6 @@ import {
     DeleteDateColumn,
     Entity,
     ManyToOne,
-    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -25,15 +24,15 @@ export class Report {
     @Length(5,500)
     @Column({length:500,nullable: false})
     text: string;
-    @OneToMany(() => User, user => user.reported)
+    @ManyToOne(() => User, user => user.reported)
     reportedUser: User;
-    @OneToMany(() => Organisation, organisation => organisation.reported)
+    @ManyToOne(() => Organisation, organisation => organisation.reported)
     reportedOrganisation: Organisation;
-    @OneToMany(() => Group, group => group.reported)
+    @ManyToOne(() => Group, group => group.reported)
     reportedGroup: Group;
-    @OneToMany(() => Post, post => post.reported)
+    @ManyToOne(() => Post, post => post.reported)
     reportedPost: Post;
-    @OneToMany(() => Event, event => event.reported)
+    @ManyToOne(() => Event, event => event.reported)
     reportedEvent: Event;
     @CreateDateColumn()
     createdAt: Date;

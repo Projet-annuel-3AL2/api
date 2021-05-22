@@ -16,6 +16,16 @@ import {Category} from "./category.model";
 import {Report} from "./report.model";
 import {IsLatitude, IsLongitude, Length} from "class-validator";
 
+export interface EventProps {
+    name: string;
+    startDate: Date;
+    endDate: Date;
+    latitude: number;
+    longitude: number;
+    organisation?: Organisation;
+    user: User;
+}
+
 @Entity()
 export class Event {
     @PrimaryGeneratedColumn("uuid")
@@ -28,10 +38,10 @@ export class Event {
     @Column({nullable: false})
     endDate: Date;
     @IsLatitude()
-    @Column({nullable: false})
+    @Column({type:"float",nullable: false})
     latitude: number;
     @IsLongitude()
-    @Column({nullable: false})
+    @Column({type:"float",nullable: false})
     longitude: number;
     @ManyToOne(() => Organisation, organisation => organisation.events)
     organisation: Organisation;
