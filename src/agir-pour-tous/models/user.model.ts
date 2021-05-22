@@ -1,5 +1,4 @@
 import {
-    BeforeInsert,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
@@ -19,10 +18,11 @@ import {Media} from "./media.model";
 import {Comment} from "./comment.model";
 import {Event} from "./event.model";
 import {Report} from "./report.model";
-import {GroupMembership} from "./group-membership.model";
+import {GroupMembership} from "./group_membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
 import {hash} from "bcrypt";
+import {Friendship} from "./friendship.model";
 
 export enum UserType {
     USER="USER",
@@ -58,9 +58,8 @@ export class User {
     password: string;
     @Column({type: "enum", enum: UserType, default: UserType.USER, nullable: false})
     userType: UserType;
-    @ManyToMany(() => User, user => user.friends)
-    @JoinTable()
-    friends: User[];
+    @OneToMany(() => User, user => user.friends)
+    friends: Friendship[];
     @ManyToMany(() => User, user => user.blockedUsers)
     blockers: User[];
     @ManyToMany(() => User, user => user.blockers)
