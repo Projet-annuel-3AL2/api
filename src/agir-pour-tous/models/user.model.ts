@@ -18,7 +18,7 @@ import {Media} from "./media.model";
 import {Comment} from "./comment.model";
 import {Event} from "./event.model";
 import {Report} from "./report.model";
-import {GroupMembership} from "./group-membership.model";
+import {GroupMembership} from "./group_membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
 
