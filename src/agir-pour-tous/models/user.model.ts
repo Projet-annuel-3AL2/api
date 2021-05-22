@@ -73,7 +73,7 @@ export class User implements UserProps {
     profilePicture: Media;
     @OneToOne(() => Media, media => media.userBanner, {nullable: true})
     bannerPicture: Media;
-    @OneToOne(() => Certification, certification => certification.user, {eager: true})
+    @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade:true})
     certification: Certification;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
@@ -86,7 +86,7 @@ export class User implements UserProps {
     eventsParticipation: Event[];
     @OneToMany(() => OrganisationMembership, organisation => organisation.user)
     organisations: OrganisationMembership[];
-    @ManyToMany(() => Conversation, conversation => conversation.members)
+    @ManyToMany(() => Conversation, conversation => conversation.members, {cascade:true})
     @JoinTable()
     conversations: Conversation[];
     @OneToMany(() => Message, message => message.user)
