@@ -69,9 +69,9 @@ export class User {
     @ManyToMany(() => Post, post => post.likes)
     @JoinTable()
     likedPosts: Post[];
-    @OneToMany(() => Post, post => post.creator)
+    @OneToMany(() => Post, post => post.creator, {cascade: true})
     createdPosts: Post[];
-    @OneToMany(() => Comment, comment => comment.creator)
+    @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
     comments: Comment[];
     @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true})
     profilePicture: Media;

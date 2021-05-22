@@ -30,7 +30,7 @@ export interface EventProps {
 export class Event {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @Length(5, 30)
+    @Length(5, 50)
     @Column({nullable: false, length: 50})
     name: string;
     @Column({nullable: false})
@@ -51,7 +51,7 @@ export class Event {
     participants: User[];
     @OneToMany(() => Post, post => post.sharedEvent)
     posts: Post[];
-    @ManyToOne(() => Category, category => category.events)
+    @ManyToOne(() => Category, category => category.events, {nullable: false})
     category: Category;
     @OneToMany(() => Report, report => report.reportedEvent)
     reported: Report[];

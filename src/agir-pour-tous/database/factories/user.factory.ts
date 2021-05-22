@@ -3,7 +3,7 @@ import {define} from "typeorm-seeding";
 import {User, UserProps, UserType} from "../../models/user.model";
 
 define(User, (faker: typeof Faker, context: UserProps) => {
-    const user = new User()
+    const user = new User();
     const randomRole = faker.random.objectElement<UserType>(UserType);
     user.username = context.username || faker.random.alphaNumeric(20);
     user.firstname = context.firstname || faker.name.firstName();

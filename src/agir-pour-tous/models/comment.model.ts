@@ -23,7 +23,7 @@ export interface CommentProps {
 export class Comment {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @ManyToOne(() => User, user => user.comments)
+    @ManyToOne(() => User, user => user.comments, {nullable: false})
     creator: User;
     @ManyToOne(() => Post, post => post.comments)
     post: Post;
