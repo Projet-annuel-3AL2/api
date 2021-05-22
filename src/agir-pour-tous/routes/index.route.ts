@@ -4,6 +4,7 @@ import {TypeormStore} from "connect-typeorm";
 import {getRepository} from "typeorm";
 import {Session} from "../models/session.model";
 import {configure} from "../config/passport.config";
+import {postRouter} from "./post.route";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -20,6 +21,6 @@ export function buildAPTRoutes() {
             ttl: 259200
         }).connect(getRepository(Session)),
     }));
-
+    router.use("/post", postRouter);
     return router;
 }
