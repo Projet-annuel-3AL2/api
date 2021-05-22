@@ -2,8 +2,20 @@ import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {isAskedUser} from "../middlewares/user.middleware";
 import {GroupController} from "../controllers/group.controller";
+import {User} from "../models/user.model";
 
 const groupRouter = express.Router();
+
+groupRouter.post('/',  async (req, res) => {
+    try {
+        const groupController = GroupController.getInstance();
+        const group = await groupController.create(req.user as User, req.body);
+        res.json(group);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 
 groupRouter.get('/',  async (req, res) => {
     try {
