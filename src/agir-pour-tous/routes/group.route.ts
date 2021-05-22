@@ -6,7 +6,7 @@ import {User} from "../models/user.model";
 
 const groupRouter = express.Router();
 
-groupRouter.post('/',  async (req, res) => {
+groupRouter.post('/', ensureLoggedIn, async (req, res) => {
     try {
         const groupController = GroupController.getInstance();
         const group = await groupController.create(req.user as User, req.body);

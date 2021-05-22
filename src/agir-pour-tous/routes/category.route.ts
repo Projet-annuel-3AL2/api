@@ -1,9 +1,10 @@
 import express from "express";
 import {CategoryController} from "../controllers/category.controller";
+import {ensureLoggedIn} from "../middlewares/auth.middleware";
 
 const categoryRouter = express.Router();
 
-categoryRouter.post("/", async (req, res) => {
+categoryRouter.post("/", ensureLoggedIn, async (req, res) => {
     try {
         const categoryController = CategoryController.getInstance();
         const category = categoryController.create(req.body);
