@@ -19,10 +19,10 @@ export class AuthController {
         return AuthController.instance;
     }
 
-    public async register(props: UserProps): Promise<User>{
+    public async register(props: UserProps): Promise<User> {
         const user = this.userRepository.create({...props});
         const err = await validate(user);
-        if(err.length > 0 ){
+        if (err.length > 0) {
             throw err;
         }
         return await this.userRepository.save(user);

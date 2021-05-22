@@ -23,19 +23,19 @@ export class UserController {
         return UserController.instance;
     }
 
-    public async getByUsername(username: string): Promise<User>{
+    public async getByUsername(username: string): Promise<User> {
         return await this.userRepository.findOneOrFail(username);
     }
 
-    public async getAll(): Promise<User[]>{
+    public async getAll(): Promise<User[]> {
         return await this.userRepository.find();
     }
 
-    public async delete(username: string): Promise<void>{
+    public async delete(username: string): Promise<void> {
         await this.userRepository.softDelete(username);
     }
 
-    public async update(username: string, props: UserProps): Promise<User>{
+    public async update(username: string, props: UserProps): Promise<User> {
         await this.userRepository.update(username, props);
         return this.getByUsername(username);
     }
@@ -44,7 +44,7 @@ export class UserController {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoin("Post.user", "User")
-            .where("User.username=:username",{username})
+            .where("User.username=:username", {username})
             .getMany();
     }
 
@@ -52,16 +52,16 @@ export class UserController {
         return await getRepository(Conversation)
             .createQueryBuilder()
             .leftJoin("Conversation.members", "User")
-            .where("User.username=:username",{username})
+            .where("User.username=:username", {username})
             .getMany();
     }
 
     public async getGroups(username: string): Promise<GroupMembership[]> {
         return await getRepository(GroupMembership)
             .createQueryBuilder()
-            .leftJoinAndMapMany("GroupMembership.group", "GroupMembership.group","Group")
-            .leftJoin("GroupMembership.member","User")
-            .where("User.username=:username",{username})
+            .leftJoinAndMapMany("GroupMembership.group", "GroupMembership.group", "Group")
+            .leftJoin("GroupMembership.member", "User")
+            .where("User.username=:username", {username})
             .getMany();
     }
 
@@ -69,7 +69,7 @@ export class UserController {
         return await getRepository(Event)
             .createQueryBuilder()
             .leftJoin("Event.participants", "User")
-            .where("User.username=:username",{username})
+            .where("User.username=:username", {username})
             .getMany();
     }
 }

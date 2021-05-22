@@ -40,8 +40,8 @@ export class Post {
     comments: Comment[];
     @OneToMany(() => Report, report => report.reportedPost)
     reported: Report[];
-    @Length(0,512)
-    @Column({nullable:true, length:512})
+    @Length(0, 512)
+    @Column({nullable: true, length: 512})
     text: string;
     @OneToMany(() => Media, media => media.post)
     medias: Media[];

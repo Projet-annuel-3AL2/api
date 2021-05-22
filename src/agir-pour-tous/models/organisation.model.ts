@@ -22,7 +22,7 @@ export class Organisation {
     @PrimaryGeneratedColumn("uuid")
     id: string;
     @IsNotEmpty()
-    @Length(5,30)
+    @Length(5, 30)
     @Column({nullable: false, unique: true})
     name: string;
     @ManyToMany(() => OrganisationMembership, user => user.organisation)

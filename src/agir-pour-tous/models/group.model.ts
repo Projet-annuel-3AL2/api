@@ -16,8 +16,8 @@ import {Length} from "class-validator";
 export class Group {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @Length(5,30)
-    @Column({nullable:false, unique:true})
+    @Length(5, 30)
+    @Column({nullable: false, unique: true})
     name: string;
     @OneToMany(() => GroupMembership, user => user.group)
     members: GroupMembership[];

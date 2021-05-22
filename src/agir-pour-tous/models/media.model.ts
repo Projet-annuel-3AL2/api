@@ -19,7 +19,7 @@ export class Media {
     @PrimaryGeneratedColumn("uuid")
     id: string;
     @IsUrl()
-    @Column({nullable:false})
+    @Column({nullable: false})
     link: string;
     @OneToOne(() => User, user => user.profilePicture)
     userProfilePicture: User;

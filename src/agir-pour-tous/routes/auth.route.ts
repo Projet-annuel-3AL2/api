@@ -10,11 +10,11 @@ authRouter.post('/login', ensureLoggedOut, passport.authenticate('local-agir-pou
 });
 
 authRouter.post('/register', ensureLoggedOut, async (req, res) => {
-    try{
+    try {
         const authController = AuthController.getInstance();
         const user = await authController.register({...req.body});
         res.json(user);
-    }catch (err) {
+    } catch (err) {
         res.status(400).json(err);
     }
 });

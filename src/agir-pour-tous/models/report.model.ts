@@ -22,8 +22,8 @@ export class Report {
     @ManyToOne(() => User, user => user.reports)
     userReporter: User;
     @IsNotEmpty()
-    @Length(5,500)
-    @Column({length:500,nullable: false})
+    @Length(5, 500)
+    @Column({length: 500, nullable: false})
     text: string;
     @OneToMany(() => User, user => user.reported)
     reportedUser: User;
