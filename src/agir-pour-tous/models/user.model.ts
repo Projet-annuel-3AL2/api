@@ -28,8 +28,15 @@ export enum UserType {
     SUPER_ADMIN
 }
 
+export interface UserProps {
+    username: string;
+    mail: string;
+    password: string;
+    userType?: UserType;
+}
+
 @Entity()
-export class User {
+export class User implements UserProps {
     @PrimaryGeneratedColumn("uuid")
     id: string;
     @Length(5,20)
@@ -43,7 +50,7 @@ export class User {
     @IsEmail()
     @Column({unique: true, nullable: false})
     mail: string;
-    @Column({unique: true, nullable: false})
+    @Column({unique: true, nullable: false, select: false})
     password: string;
     @Column({type: "enum", enum: UserType, unique: true, default: UserType.USER, nullable: false})
     userType: UserType;

@@ -1,6 +1,5 @@
-import {User} from "../models/user.model";
+import {User, UserProps} from "../models/user.model";
 import {getRepository, Repository} from "typeorm";
-import {UserProps} from "../../organization-app/models/user.model";
 import {validate} from "class-validator";
 
 export class AuthController {
@@ -13,7 +12,7 @@ export class AuthController {
         this.userRepository = getRepository(User);
     }
 
-    public static  getInstance(): AuthController {
+    public static getInstance(): AuthController {
         if (AuthController.instance === undefined) {
             AuthController.instance = new AuthController();
         }
