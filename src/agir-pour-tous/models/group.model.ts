@@ -14,6 +14,10 @@ import {GroupMembership} from "./group_membership.model";
 import {Length} from "class-validator";
 import {Conversation} from "./conversation.model";
 
+export interface GroupProps {
+    name: string;
+}
+
 @Entity()
 export class Group {
     @PrimaryGeneratedColumn("uuid")
