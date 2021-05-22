@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {UserController} from "../controllers/user.controller";
+import {isAskedUser} from "../middlewares/user.middleware";
 
 const userRouter = express.Router();
 
@@ -26,7 +27,7 @@ userRouter.get('/:username', async (req, res) => {
     }
 });
 
-userRouter.delete('/:username', ensureLoggedIn, async (req, res) => {
+userRouter.delete('/:username', ensureLoggedIn, isAskedUser, async (req, res) => {
     try{
         const username= req.params.username;
         const userController = UserController.getInstance();
@@ -37,7 +38,7 @@ userRouter.delete('/:username', ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.put('/:username', ensureLoggedIn, async (req, res) => {
+userRouter.put('/:username', ensureLoggedIn, isAskedUser, async (req, res) => {
     try{
         const username= req.params.username;
         const userController = UserController.getInstance();
@@ -59,7 +60,7 @@ userRouter.get("/:username/posts", async (req, res) => {
     }
 });
 
-userRouter.get("/:username/conversations", ensureLoggedIn, async (req, res) => {
+userRouter.get("/:username/conversations", ensureLoggedIn, isAskedUser, async (req, res) => {
     try{
         const username = req.params.username;
         const userController = UserController.getInstance();
