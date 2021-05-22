@@ -5,7 +5,6 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    ManyToMany,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
@@ -26,7 +25,7 @@ export class Comment {
     id: string;
     @ManyToOne(() => User, user => user.comments)
     creator: User;
-    @ManyToMany(() => Post, post => post.comments)
+    @ManyToOne(() => Post, post => post.comments)
     post: Post;
     @Column({nullable: true})
     text: string;
