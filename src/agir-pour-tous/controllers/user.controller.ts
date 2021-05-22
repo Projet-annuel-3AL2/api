@@ -3,7 +3,7 @@ import {getRepository, Repository} from "typeorm";
 import {Post} from "../models/post.model";
 import {Conversation} from "../models/conversation.model";
 import {Group} from "../models/group.model";
-import {GroupMembership} from "../models/group-membership.model";
+import {GroupMembership} from "../models/group_membership.model";
 import {Event} from "../models/event.model";
 
 export class UserController {
