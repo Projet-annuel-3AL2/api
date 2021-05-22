@@ -3,6 +3,16 @@ import {CategoryController} from "../controllers/category.controller";
 
 const categoryRouter = express.Router();
 
+categoryRouter.post("/", async (req, res) => {
+    try {
+        const categoryController = CategoryController.getInstance();
+        const category = categoryController.create(req.body);
+        res.json(category);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
 categoryRouter.get("/", async (req, res) => {
     try {
         const categoryController = CategoryController.getInstance();

@@ -1,6 +1,7 @@
 import {getRepository, Repository} from "typeorm";
 import {Event} from "../models/event.model";
 import {Category, CategoryProps} from "../models/category.model";
+import {validate} from "class-validator";
 
 export class CategoryController {
 
@@ -41,5 +42,14 @@ export class CategoryController {
             .leftJoin("Event.category", "Category")
             .where("Category.id=:categoryId", {categoryId})
             .getMany();
+    }
+
+    public async create(props: CategoryProps): Promise<Category> {
+        const category = this.categoryRepository.create({...props});
+        const err = await validate(category);
+        if(err.length > 0) {
+            throw err;
+        }
+        return this.categoryRepository.save(category);
     }
 }
