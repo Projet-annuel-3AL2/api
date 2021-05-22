@@ -26,9 +26,9 @@ import {hash} from "bcrypt";
 import {Friendship} from "./friendship.model";
 
 export enum UserType {
-    USER="USER",
-    ADMIN="ADMIN",
-    SUPER_ADMIN="SUPER_ADMIN"
+    USER = "USER",
+    ADMIN = "ADMIN",
+    SUPER_ADMIN = "SUPER_ADMIN"
 }
 
 export interface UserProps {
@@ -44,7 +44,7 @@ export interface UserProps {
 export class User {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @Length(5,20)
+    @Length(5, 20)
     @IsNotEmpty()
     @Column({unique: true, nullable: false, length: 20})
     username: string;

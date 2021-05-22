@@ -5,7 +5,8 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    OneToMany, OneToOne,
+    OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -18,8 +19,8 @@ import {Conversation} from "./conversation.model";
 export class Group {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @Length(5,30)
-    @Column({nullable:false, unique:true})
+    @Length(5, 30)
+    @Column({nullable: false, unique: true})
     name: string;
     @OneToMany(() => GroupMembership, user => user.group)
     members: GroupMembership[];
@@ -35,6 +36,7 @@ export class Group {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
     @BeforeInsert()
     async setConversation() {
         this.conversation = new Conversation();

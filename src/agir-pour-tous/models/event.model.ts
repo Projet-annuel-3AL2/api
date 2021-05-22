@@ -32,16 +32,16 @@ export class Event {
     id: string;
     @Length(5, 30)
     @Column({nullable: false, length: 50})
-    name:string;
+    name: string;
     @Column({nullable: false})
     startDate: Date;
     @Column({nullable: false})
     endDate: Date;
     @IsLatitude()
-    @Column({type:"float",nullable: false})
+    @Column({type: "float", nullable: false})
     latitude: number;
     @IsLongitude()
-    @Column({type:"float",nullable: false})
+    @Column({type: "float", nullable: false})
     longitude: number;
     @ManyToOne(() => Organisation, organisation => organisation.events)
     organisation: Organisation;
