@@ -9,7 +9,7 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Report} from "./report.model";
-import {GroupMembership} from "./group-membership.model";
+import {GroupMembership} from "./group_membership.model";
 import {Length} from "class-validator";
 
 @Entity()
