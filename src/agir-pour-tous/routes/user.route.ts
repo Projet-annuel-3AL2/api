@@ -1,12 +1,11 @@
 import express from "express";
-import passport from "passport";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {UserController} from "../controllers/user.controller";
 import {isAskedUser} from "../middlewares/user.middleware";
 
 const userRouter = express.Router();
 
-userRouter.get('/', passport.authenticate('local-agir-pour-tous'), async (req, res) => {
+userRouter.get('/', async (req, res) => {
     try {
         const userController = UserController.getInstance();
         const user = userController.getAll();
