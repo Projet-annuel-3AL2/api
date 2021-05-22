@@ -18,6 +18,10 @@ import {Event} from "./event.model";
 import {Report} from "./report.model";
 import {Length} from "class-validator";
 
+export interface PostProps {
+    text: string;
+}
+
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn("uuid")
