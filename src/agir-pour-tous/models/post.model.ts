@@ -18,6 +18,15 @@ import {Event} from "./event.model";
 import {Report} from "./report.model";
 import {Length} from "class-validator";
 
+export interface PostProps {
+    text: string;
+    creator: User;
+    group?: Group;
+    organisation?: Organisation;
+    sharedEvent?: Event;
+    sharedPost?: Post;
+}
+
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn("uuid")
@@ -28,7 +37,7 @@ export class Post {
     organisation: Organisation;
     @ManyToOne(() => Group, group => group.posts)
     group: Group;
-    @OneToMany(() => Event, event => event.posts)
+    @ManyToOne(() => Event, event => event.posts)
     sharedEvent: Event;
     @OneToMany(() => Post, post => post.sharesPost)
     sharedPosts: Post[];

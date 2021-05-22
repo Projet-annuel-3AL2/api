@@ -17,6 +17,12 @@ import {Event} from "./event.model";
 import {Report} from "./report.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsNotEmpty, Length} from "class-validator";
+import {User} from "./user.model";
+
+export interface OrganisationProps {
+    name: string;
+    owner: User;
+}
 
 @Entity()
 export class Organisation {

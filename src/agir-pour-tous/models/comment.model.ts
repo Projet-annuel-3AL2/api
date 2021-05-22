@@ -13,6 +13,13 @@ import {
 } from "typeorm";
 import {Media} from "./media.model";
 
+export interface CommentProps {
+    creator: User;
+    post: Post;
+    text: string;
+    medias: Media[];
+}
+
 @Entity()
 export class Comment {
     @PrimaryGeneratedColumn("uuid")
