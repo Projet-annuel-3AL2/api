@@ -27,7 +27,7 @@ export class UserController {
     }
 
     public async delete(id: string): Promise<void>{
-        await this.userRepository.delete(id);
+        await this.userRepository.softDelete(id);
     }
 
     public async update(id: string, props: UserProps): Promise<User>{

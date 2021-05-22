@@ -5,6 +5,7 @@ import {getRepository} from "typeorm";
 import {Session} from "../models/session.model";
 import {configure} from "../config/passport.config";
 import {authRouter} from "./auth.route";
+import {userRouter} from "./user.route";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -22,5 +23,6 @@ export function buildAPTRoutes() {
         }).connect(getRepository(Session)),
     }));
     router.use("/auth", authRouter);
+    router.use("/user", userRouter);
     return router;
 }
