@@ -6,7 +6,7 @@ import {OrganisationController} from "../controllers/organisation.controller";
 
 const organisationRouter = express.Router();
 
-organisationRouter.post('/',  async (req, res) => {
+organisationRouter.post('/', async (req, res) => {
     try {
         const organisationController = OrganisationController.getInstance();
         const group = await organisationController.create(req.user as User, req.body);
@@ -17,7 +17,7 @@ organisationRouter.post('/',  async (req, res) => {
 });
 
 
-organisationRouter.get('/',  async (req, res) => {
+organisationRouter.get('/', async (req, res) => {
     try {
         const organisationController = OrganisationController.getInstance();
         const organisations = await organisationController.getAll();

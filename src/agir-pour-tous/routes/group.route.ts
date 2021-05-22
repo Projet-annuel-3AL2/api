@@ -17,7 +17,7 @@ groupRouter.post('/', ensureLoggedIn, async (req, res) => {
 });
 
 
-groupRouter.get('/',  async (req, res) => {
+groupRouter.get('/', async (req, res) => {
     try {
         const groupController = GroupController.getInstance();
         const groups = await groupController.getAll();

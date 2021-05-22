@@ -5,7 +5,8 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    OneToMany, OneToOne,
+    OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -39,6 +40,7 @@ export class Group {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
     @BeforeInsert()
     async setConversation() {
         this.conversation = new Conversation();

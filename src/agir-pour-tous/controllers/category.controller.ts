@@ -47,7 +47,7 @@ export class CategoryController {
     public async create(props: CategoryProps): Promise<Category> {
         const category = this.categoryRepository.create({...props});
         const err = await validate(category);
-        if(err.length > 0) {
+        if (err.length > 0) {
             throw err;
         }
         return this.categoryRepository.save(category);

@@ -26,7 +26,7 @@ export class GroupController {
         const creatorMembership = getRepository(GroupMembership).create({group, user});
         group.members = [creatorMembership];
         const err = await validate(group);
-        if(err.length > 0) {
+        if (err.length > 0) {
             throw err;
         }
         return this.groupRepository.save(group);

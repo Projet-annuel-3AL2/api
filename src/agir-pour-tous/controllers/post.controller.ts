@@ -23,7 +23,7 @@ export class PostController {
     public async create(user: User, props: PostProps): Promise<Post> {
         const post = this.postRepository.create({...props, creator: user});
         const err = await validate(post);
-        if(err.length > 0) {
+        if (err.length > 0) {
             throw err;
         }
         return this.postRepository.save(post);

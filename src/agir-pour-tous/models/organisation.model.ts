@@ -50,6 +50,7 @@ export class Organisation {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
     @BeforeInsert()
     async setConversation() {
         this.conversation = new Conversation();

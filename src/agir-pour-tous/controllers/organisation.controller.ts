@@ -26,7 +26,7 @@ export class OrganisationController {
         const creatorMembership = getRepository(OrganisationMembership).create({organisation, user});
         organisation.members = [creatorMembership];
         const err = await validate(organisation);
-        if(err.length > 0) {
+        if (err.length > 0) {
             throw err;
         }
         return this.organisationRepository.save(organisation);

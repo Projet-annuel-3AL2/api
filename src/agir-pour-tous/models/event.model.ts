@@ -22,7 +22,7 @@ export class Event {
     id: string;
     @Length(5, 30)
     @Column({nullable: false, length: 50})
-    name:string;
+    name: string;
     @Column({nullable: false})
     startDate: Date;
     @Column({nullable: false})
