@@ -6,6 +6,8 @@ import {Session} from "../models/session.model";
 import {configure} from "../config/passport.config";
 import {authRouter} from "./auth.route";
 import {userRouter} from "./user.route";
+import {categoryRouter} from "./category.route";
+import {groupRouter} from "./group.route";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -24,5 +26,7 @@ export function buildAPTRoutes() {
     }));
     router.use("/auth", authRouter);
     router.use("/user", userRouter);
+    router.use("/category", categoryRouter);
+    router.use("/group", groupRouter);
     return router;
 }
