@@ -21,11 +21,21 @@ import {Report} from "./report.model";
 import {GroupMembership} from "./group_membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
+import {Friendship} from "./friendship.model";
 
 export enum UserType {
     USER,
     ADMIN,
     SUPER_ADMIN
+}
+
+export interface UserProps {
+    username: string;
+    firstname: string;
+    lastname: string;
+    mail: string;
+    password: string;
+    userType?: UserType;
 }
 
 @Entity()
@@ -47,9 +57,8 @@ export class User {
     password: string;
     @Column({type: "enum", enum: UserType, unique: true, default: UserType.USER, nullable: false})
     userType: UserType;
-    @ManyToMany(() => User, user => user.friends)
-    @JoinTable()
-    friends: User[];
+    @OneToMany(() => User, user => user.friends)
+    friends: Friendship[];
     @ManyToMany(() => User, user => user.blockedUsers)
     blockers: User[];
     @ManyToMany(() => User, user => user.blockers)
