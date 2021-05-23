@@ -61,9 +61,9 @@ export class User implements UserProps {
     friendsOne: Friendship[];
     @OneToMany(() => Friendship, friendship => friendship.friendTwo, {cascade: true})
     friendsTwo: Friendship[];
-    @OneToMany(()=>FriendRequest, friendRequest => friendRequest.user)
+    @OneToMany(() => FriendRequest, friendRequest => friendRequest.user)
     friendRequests: FriendRequest[];
-    @OneToMany(()=>FriendRequest, friendRequest => friendRequest.sender)
+    @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender)
     requestedFriends: FriendRequest[];
     @ManyToMany(() => User, user => user.blockedUsers)
     blockers: User[];

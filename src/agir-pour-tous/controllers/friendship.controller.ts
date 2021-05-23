@@ -22,30 +22,30 @@ export class FriendshipController {
     }
 
     public async sendFriendRequest(sender: User, user: User): Promise<FriendRequest> {
-        const friendRequest = this.friendRequestRepository.create({sender,user});
+        const friendRequest = this.friendRequestRepository.create({sender, user});
         return this.friendRequestRepository.save(friendRequest);
     }
 
     public async cancelFriendRequest(senderUsername: string, username: string): Promise<void> {
         await this.friendRequestRepository.createQueryBuilder()
             .leftJoin("FriendRequest.user", "User")
-            .where("User.username=:username",{username})
-            .leftJoin("FriendRequest.sender","Sender")
+            .where("User.username=:username", {username})
+            .leftJoin("FriendRequest.sender", "Sender")
             .andWhere("Sender.username=:senderUsername", {senderUsername})
             .softDelete()
             .execute();
     }
 
     public async acceptFriendRequest(friendOne: User, friendTwo: User): Promise<Friendship> {
-        const friendRequest = this.friendshipRepository.create({friendOne,friendTwo});
+        const friendRequest = this.friendshipRepository.create({friendOne, friendTwo});
         return this.friendshipRepository.save(friendRequest);
     }
 
     public async removeFriendship(friendOneUsername: string, friendTwoUsername: string): Promise<void> {
         await this.friendshipRepository.createQueryBuilder()
             .leftJoin("Friendship.friendOne", "FriendOne")
-            .where("FriendOne.username=:friendOneUsername",{friendOneUsername})
-            .leftJoin("FriendRequest.friendTwo","FriendTwo")
+            .where("FriendOne.username=:friendOneUsername", {friendOneUsername})
+            .leftJoin("FriendRequest.friendTwo", "FriendTwo")
             .andWhere("FriendTwo.username=:friendTwoUsername", {friendTwoUsername})
             .softDelete()
             .execute();

@@ -36,7 +36,7 @@ export class ConversationController {
     public async sendMessage(user: User, conversation: Conversation, props: MessageProps): Promise<Message> {
         const message = this.messageRepository.create({...props, user, conversation});
         const err = await validate(message);
-        if(err.length > 0) {
+        if (err.length > 0) {
             throw err;
         }
         return this.messageRepository.save(message);

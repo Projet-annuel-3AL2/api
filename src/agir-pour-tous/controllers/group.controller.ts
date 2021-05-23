@@ -60,7 +60,7 @@ export class GroupController {
     public async addPost(group: Group, creator: User, props: PostProps): Promise<Post> {
         const post = getRepository(Post).create({...props, creator, group});
         const err = await validate(post);
-        if(err.length > 0){
+        if (err.length > 0) {
             throw err;
         }
         return getRepository(Post).save(post);
