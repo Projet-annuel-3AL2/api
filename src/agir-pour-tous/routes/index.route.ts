@@ -16,8 +16,6 @@ import {conversationRouter} from "./conversation.route";
 export function buildAPTRoutes() {
     const router = Router();
     configure();
-    router.use(passport.initialize());
-    router.use(passport.session());
     router.use(require('express-session')({
         secret: process.env.ORG_APP_SECRET,
         resave: true,
@@ -28,6 +26,8 @@ export function buildAPTRoutes() {
             ttl: 259200
         }).connect(getRepository(Session)),
     }));
+    router.use(passport.initialize());
+    router.use(passport.session());
     router.use("/auth", authRouter);
     router.use("/user", userRouter);
     router.use("/category", categoryRouter);
