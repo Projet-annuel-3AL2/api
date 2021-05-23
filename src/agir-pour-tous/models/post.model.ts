@@ -18,32 +18,36 @@ import {Event} from "./event.model";
 import {Report} from "./report.model";
 import {Length} from "class-validator";
 
+export interface PostProps {
+    text: string;
+}
+
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @ManyToOne(() => User, user => user.createdPosts)
+    @ManyToOne(() => User, user => user.createdPosts, {eager: true})
     creator: User;
-    @ManyToOne(() => Organisation, organisation => organisation.posts)
+    @ManyToOne(() => Organisation, organisation => organisation.posts, {eager: true})
     organisation: Organisation;
-    @ManyToOne(() => Group, group => group.posts)
+    @ManyToOne(() => Group, group => group.posts, {eager: true})
     group: Group;
-    @OneToMany(() => Event, event => event.posts)
+    @OneToMany(() => Event, event => event.posts, {eager: true})
     sharedEvent: Event;
     @OneToMany(() => Post, post => post.sharesPost)
     sharedPosts: Post[];
-    @ManyToOne(() => Post, post => post.sharedPosts)
+    @ManyToOne(() => Post, post => post.sharedPosts, {eager: true})
     sharesPost: Post;
     @ManyToMany(() => User, user => user.likedPosts)
     likes: User[];
-    @OneToMany(() => Comment, comment => comment.post)
+    @OneToMany(() => Comment, comment => comment.post, {cascade: true})
     comments: Comment[];
-    @OneToMany(() => Report, report => report.reportedPost)
+    @OneToMany(() => Report, report => report.reportedPost, {cascade: true})
     reported: Report[];
-    @Length(0,512)
-    @Column({nullable:true, length:512})
+    @Length(0, 512)
+    @Column({nullable: true, length: 512})
     text: string;
-    @OneToMany(() => Media, media => media.post)
+    @OneToMany(() => Media, media => media.post, {cascade: true})
     medias: Media[];
     @CreateDateColumn()
     createdAt: Date;
