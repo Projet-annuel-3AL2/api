@@ -34,7 +34,7 @@ export class Post {
     sharedPosts: Post[];
     @ManyToOne(() => Post, post => post.sharedPosts, {eager: true})
     sharesPost: Post;
-    @ManyToMany(() => User, user => user.likedPosts, {cascade: true})
+    @ManyToMany(() => User, user => user.likedPosts)
     likes: User[];
     @OneToMany(() => Comment, comment => comment.post, {cascade: true})
     comments: Comment[];
