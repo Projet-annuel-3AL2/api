@@ -11,7 +11,6 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Post} from "./post.model";
-import {Conversation} from "./conversation.model";
 import {Message} from "./message.model";
 import {Certification} from "./certification.model";
 import {Media} from "./media.model";
@@ -22,6 +21,7 @@ import {GroupMembership} from "./group_membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
 import {Friendship} from "./friendship.model";
+import {FriendRequest} from "./friend_request.model";
 
 export enum UserType {
     USER,
@@ -57,41 +57,44 @@ export class User {
     password: string;
     @Column({type: "enum", enum: UserType, unique: true, default: UserType.USER, nullable: false})
     userType: UserType;
-    @OneToMany(() => User, user => user.friends)
-    friends: Friendship[];
+    @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true})
+    friendsOne: Friendship[];
+    @OneToMany(() => Friendship, friendship => friendship.friendTwo, {cascade: true})
+    friendsTwo: Friendship[];
+    @OneToMany(()=>FriendRequest, friendRequest => friendRequest.user)
+    friendRequests: FriendRequest[];
+    @OneToMany(()=>FriendRequest, friendRequest => friendRequest.sender)
+    requestedFriends: FriendRequest[];
     @ManyToMany(() => User, user => user.blockedUsers)
     blockers: User[];
-    @ManyToMany(() => User, user => user.blockers)
+    @ManyToMany(() => User, user => user.blockers, {cascade: true})
     @JoinTable()
     blockedUsers: User[];
-    @ManyToMany(() => Post, post => post.likes)
+    @ManyToMany(() => Post, post => post.likes, {cascade: true})
     @JoinTable()
     likedPosts: Post[];
-    @OneToMany(() => Post, post => post.creator)
+    @OneToMany(() => Post, post => post.creator, {cascade: true})
     createdPosts: Post[];
-    @OneToMany(() => Comment, comment => comment.creator)
+    @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
     comments: Comment[];
-    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true})
+    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true})
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.userBanner, {nullable: true})
+    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true})
     bannerPicture: Media;
-    @OneToOne(() => Certification, certification => certification.user, {eager: true})
+    @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
     certification: Certification;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
-    @OneToMany(() => GroupMembership, group => group.user)
+    @OneToMany(() => GroupMembership, group => group.user, {cascade: true})
     groups: GroupMembership[];
     @OneToMany(() => Event, event => event.user)
     createdEvents: Event[];
-    @ManyToMany(() => Event, event => event.participants)
+    @ManyToMany(() => Event, event => event.participants, {cascade: true})
     @JoinTable()
     eventsParticipation: Event[];
-    @OneToMany(() => OrganisationMembership, organisation => organisation.user)
+    @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true})
     organisations: OrganisationMembership[];
-    @ManyToMany(() => Conversation, conversation => conversation.members)
-    @JoinTable()
-    conversations: Conversation[];
-    @OneToMany(() => Message, message => message.user)
+    @OneToMany(() => Message, message => message.user, {cascade: true})
     messages: Message[];
     @OneToMany(() => Report, report => report.userReporter)
     reports: Report[];
