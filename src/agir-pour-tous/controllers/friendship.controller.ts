@@ -35,4 +35,19 @@ export class FriendshipController {
             .softDelete()
             .execute();
     }
+
+    public async acceptFriendRequest(friendOne: User, friendTwo: User): Promise<Friendship> {
+        const friendRequest = this.friendshipRepository.create({friendOne,friendTwo});
+        return this.friendshipRepository.save(friendRequest);
+    }
+
+    public async removeFriendship(friendOneUsername: string, friendTwoUsername: string): Promise<void> {
+        await this.friendshipRepository.createQueryBuilder()
+            .leftJoin("Friendship.friendOne", "FriendOne")
+            .where("FriendOne.username=:friendOneUsername",{friendOneUsername})
+            .leftJoin("FriendRequest.friendTwo","FriendTwo")
+            .andWhere("FriendTwo.username=:friendTwoUsername", {friendTwoUsername})
+            .softDelete()
+            .execute();
+    }
 }
