@@ -16,7 +16,18 @@ conversationRouter.get("/:conversationId", ensureLoggedIn, async (req, res) => {
     }
 });
 
-conversationRouter.post("/:conversationId", ensureLoggedIn, async (req, res) => {
+conversationRouter.get("/:conversationId/message", ensureLoggedIn, async (req, res) => {
+    try {
+        const conversationId = req.params.conversationId;
+        const conversationController = ConversationController.getInstance();
+        const conversation = await conversationController.getById(conversationId);
+        res.json(conversation);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+conversationRouter.post("/:conversationId/message", ensureLoggedIn, async (req, res) => {
     try {
         const conversationId = req.params.conversationId;
         const conversationController = ConversationController.getInstance();

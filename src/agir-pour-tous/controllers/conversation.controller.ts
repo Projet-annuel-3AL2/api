@@ -26,6 +26,13 @@ export class ConversationController {
         return this.conversationRepository.findOneOrFail(id);
     }
 
+    public async getMessages(id: string): Promise<Message[]> {
+        return this.messageRepository.createQueryBuilder()
+            .leftJoin("Message.conversation", "Conversation")
+            .where("Conversation.id=:id", {id})
+            .getMany();
+    }
+
     public async sendMessage(user: User, conversation: Conversation, props: MessageProps): Promise<Message> {
         const message = this.messageRepository.create({...props, user, conversation});
         const err = await validate(message);
