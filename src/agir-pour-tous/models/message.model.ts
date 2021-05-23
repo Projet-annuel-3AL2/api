@@ -10,6 +10,12 @@ import {
     UpdateDateColumn
 } from "typeorm";
 
+export interface MessageProps {
+    text: string;
+    user: User;
+    conversation: Conversation;
+}
+
 @Entity()
 export class Message {
     @PrimaryGeneratedColumn("uuid")

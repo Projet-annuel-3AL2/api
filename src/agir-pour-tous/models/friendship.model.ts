@@ -4,11 +4,10 @@ import {Conversation} from "./conversation.model";
 
 @Entity()
 export class Friendship {
-    @ManyToOne(() => User, user => user.friends, {primary: true})
+    @ManyToOne(() => User, user => user.friendsOne, {primary: true})
     friendOne: User;
-    @ManyToOne(() => User, user => user.friends, {primary: true})
+    @ManyToOne(() => User, user => user.friendsTwo, {primary: true})
     friendTwo: User;
-
     @OneToOne(() => Conversation, conversation => conversation, {cascade: true})
     conversation: Conversation;
 

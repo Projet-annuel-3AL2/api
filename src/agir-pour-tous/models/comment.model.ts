@@ -11,6 +11,7 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Media} from "./media.model";
+import {Length} from "class-validator";
 
 export interface CommentProps {
     creator: User;
@@ -27,9 +28,10 @@ export class Comment {
     creator: User;
     @ManyToOne(() => Post, post => post.comments)
     post: Post;
-    @Column({nullable: true})
+    @Length(0, 512)
+    @Column()
     text: string;
-    @OneToMany(() => Media, media => media.comments)
+    @OneToMany(() => Media, media => media.comments, {cascade: true})
     medias: Media[];
     @CreateDateColumn()
     createdAt: Date;

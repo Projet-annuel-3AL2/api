@@ -9,12 +9,14 @@ import {
     ManyToMany,
     ManyToOne,
     OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
 import {Category} from "./category.model";
 import {Report} from "./report.model";
 import {IsLatitude, IsLongitude, Length} from "class-validator";
+import {Media} from "./media.model";
 
 export interface EventProps {
     name: string;
@@ -53,6 +55,8 @@ export class Event {
     posts: Post[];
     @ManyToOne(() => Category, category => category.events, {nullable: false})
     category: Category;
+    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true})
+    picture: Media;
     @OneToMany(() => Report, report => report.reportedEvent)
     reported: Report[];
     @CreateDateColumn()
