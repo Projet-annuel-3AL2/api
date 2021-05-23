@@ -21,6 +21,7 @@ import {GroupMembership} from "./group_membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
 import {Friendship} from "./friendship.model";
+import {FriendRequest} from "./friend_request.model";
 
 export enum UserType {
     USER,
@@ -56,8 +57,14 @@ export class User {
     password: string;
     @Column({type: "enum", enum: UserType, unique: true, default: UserType.USER, nullable: false})
     userType: UserType;
-    @OneToMany(() => User, user => user.friends, {cascade: true})
-    friends: Friendship[];
+    @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true})
+    friendsOne: Friendship[];
+    @OneToMany(() => Friendship, friendship => friendship.friendTwo, {cascade: true})
+    friendsTwo: Friendship[];
+    @OneToMany(()=>FriendRequest, friendRequest => friendRequest.user)
+    friendRequests: FriendRequest[];
+    @OneToMany(()=>FriendRequest, friendRequest => friendRequest.sender)
+    requestedFriends: FriendRequest[];
     @ManyToMany(() => User, user => user.blockedUsers)
     blockers: User[];
     @ManyToMany(() => User, user => user.blockers, {cascade: true})
