@@ -20,6 +20,11 @@ import {Length} from "class-validator";
 
 export interface PostProps {
     text: string;
+    creator: User;
+    group?: Group;
+    organisation?: Organisation;
+    sharedEvent?: Event;
+    sharedPost?: Post;
 }
 
 @Entity()
