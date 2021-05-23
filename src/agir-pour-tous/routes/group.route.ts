@@ -31,7 +31,7 @@ groupRouter.get('/:groupName', async (req, res) => {
     try {
         const groupName = req.params.groupName;
         const groupController = GroupController.getInstance();
-        const group = await groupController.getByGroupName(groupName);
+        const group = await groupController.getByName(groupName);
         res.json(group);
     } catch (err) {
         res.status(404).json(err);
@@ -75,7 +75,7 @@ groupRouter.post("/:groupName/posts", async (req, res) => {
     try {
         const groupName = req.params.groupName;
         const groupController = GroupController.getInstance();
-        const group = await groupController.getByGroupName(groupName);
+        const group = await groupController.getByName(groupName);
         const post = await groupController.addPost(group, req.user as User, req.body)
         res.json(post);
     } catch (err) {

@@ -32,7 +32,7 @@ export class GroupController {
         return this.groupRepository.save(group);
     }
 
-    public async getByGroupName(groupName: string): Promise<Group> {
+    public async getByName(groupName: string): Promise<Group> {
         return await this.groupRepository.findOneOrFail(groupName);
     }
 
@@ -46,7 +46,7 @@ export class GroupController {
 
     public async update(groupName: string, props: GroupProps): Promise<Group> {
         await this.groupRepository.update(groupName, props);
-        return this.getByGroupName(groupName);
+        return this.getByName(groupName);
     }
 
     public async getPosts(groupName: string): Promise<Post[]> {

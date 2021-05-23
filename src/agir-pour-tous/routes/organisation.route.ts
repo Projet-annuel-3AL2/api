@@ -72,7 +72,6 @@ organisationRouter.get("/:organisationName/posts", async (req, res) => {
     }
 });
 
-
 groupRouter.post("/:groupName/posts", async (req, res) => {
     try {
         const organisationName = req.params.groupName;
