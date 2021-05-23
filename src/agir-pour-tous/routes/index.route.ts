@@ -11,6 +11,7 @@ import {groupRouter} from "./group.route";
 import {organisationRouter} from "./organisation.route";
 import {friendshipRouter} from "./friendship.route";
 import {postRouter} from "./post.route";
+import {conversationRouter} from "./conversation.route";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -34,5 +35,6 @@ export function buildAPTRoutes() {
     router.use("/organisation", organisationRouter);
     router.use("/post", postRouter);
     router.use("/friendship", friendshipRouter);
+    router.use("/conversation", conversationRouter);
     return router;
 }
