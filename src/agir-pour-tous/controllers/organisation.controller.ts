@@ -1,5 +1,5 @@
 import {getRepository, Repository} from "typeorm";
-import {Post} from "../models/post.model";
+import {Post, PostProps} from "../models/post.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {Organisation, OrganisationProps} from "../models/organisation.model";
@@ -55,5 +55,14 @@ export class OrganisationController {
             .leftJoin("Post.organisation", "Organisation")
             .where("Organisation.name=:groupName", {organisationName})
             .getMany();
+    }
+
+    public async addPost(organisation: Organisation, creator: User, props: PostProps): Promise<Post> {
+        const post = getRepository(Post).create({...props, creator, organisation});
+        const err = await validate(post);
+        if(err.length > 0){
+            throw err;
+        }
+        return getRepository(Post).save(post);
     }
 }
