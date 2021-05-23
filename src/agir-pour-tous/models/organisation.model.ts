@@ -18,12 +18,16 @@ import {Report} from "./report.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsNotEmpty, Length} from "class-validator";
 
+export interface OrganisationProps {
+    name: string;
+}
+
 @Entity()
 export class Organisation {
     @PrimaryGeneratedColumn("uuid")
     id: string;
     @IsNotEmpty()
-    @Length(5,30)
+    @Length(5, 30)
     @Column({nullable: false, unique: true})
     name: string;
     @ManyToMany(() => OrganisationMembership, user => user.organisation)
@@ -46,6 +50,7 @@ export class Organisation {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
     @BeforeInsert()
     async setConversation() {
         this.conversation = new Conversation();

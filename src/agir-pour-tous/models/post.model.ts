@@ -18,6 +18,10 @@ import {Event} from "./event.model";
 import {Report} from "./report.model";
 import {Length} from "class-validator";
 
+export interface PostProps {
+    text: string;
+}
+
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn("uuid")
@@ -40,8 +44,8 @@ export class Post {
     comments: Comment[];
     @OneToMany(() => Report, report => report.reportedPost, {cascade: true})
     reported: Report[];
-    @Length(0,512)
-    @Column({nullable:true, length:512})
+    @Length(0, 512)
+    @Column({nullable: true, length: 512})
     text: string;
     @OneToMany(() => Media, media => media.post, {cascade: true})
     medias: Media[];

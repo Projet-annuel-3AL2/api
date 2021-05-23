@@ -39,10 +39,10 @@ export interface UserProps {
 }
 
 @Entity()
-export class User {
+export class User implements UserProps {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @Length(5,20)
+    @Length(5, 20)
     @IsNotEmpty()
     @Column({unique: true, nullable: false, length: 20})
     username: string;
@@ -53,7 +53,7 @@ export class User {
     @IsEmail()
     @Column({unique: true, nullable: false})
     mail: string;
-    @Column({unique: true, nullable: false})
+    @Column({unique: true, nullable: false, select: false})
     password: string;
     @Column({type: "enum", enum: UserType, unique: true, default: UserType.USER, nullable: false})
     userType: UserType;
