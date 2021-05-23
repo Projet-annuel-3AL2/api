@@ -7,11 +7,10 @@
     "start": "ts-node src/index.ts",
     "build": "tsc -p .",
     "dev": "nodemon --watch src/*.ts --exec ts-node src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
     "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
     "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
-    "schema:sync": "ts-node ./node_modules/typeorm/cli.js schema:sync"
+    "schema:sync": "ts-node ./node_modules/typeorm/cli.js schema:sync",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch"
@@ -53,7 +52,7 @@
     "@types/express-session": "^1.17.3",
     "@types/faker": "^5.5.3",
     "faker": "^5.5.3",
-    "typeorm-seeding": "^1.6.1"
+    "typeorm-seeding": "^1.6.1",
     "@types/jest": "^26.0.23",
     "@types/node": "^14.14.43",
     "@types/passport": "^1.0.6",
