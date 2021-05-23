@@ -3,6 +3,7 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {isAskedUser} from "../middlewares/user.middleware";
 import {User} from "../models/user.model";
 import {OrganisationController} from "../controllers/organisation.controller";
+import {groupRouter} from "./group.route";
 
 const organisationRouter = express.Router();
 
@@ -66,6 +67,18 @@ organisationRouter.get("/:organisationName/posts", async (req, res) => {
         const organisationController = OrganisationController.getInstance();
         const posts = organisationController.getPosts(organisationName)
         res.json(posts);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+groupRouter.post("/:groupName/posts", async (req, res) => {
+    try {
+        const organisationName = req.params.groupName;
+        const organisationController = OrganisationController.getInstance();
+        const organisation = await organisationController.getByName(organisationName);
+        const post = await organisationController.addPost(organisation, req.user as User, req.body)
+        res.json(post);
     } catch (err) {
         res.status(400).json(err);
     }
