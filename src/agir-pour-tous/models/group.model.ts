@@ -30,9 +30,9 @@ export class Group {
     members: GroupMembership[];
     @OneToMany(() => Post, post => post.group)
     posts: Post[];
-    @OneToMany(() => Report, report => report.reportedGroup)
+    @OneToMany(() => Report, report => report.reportedGroup, {cascade: true})
     reported: Report[];
-    @OneToOne(() => Conversation, conversation => conversation.group)
+    @OneToOne(() => Conversation, conversation => conversation.group, {cascade: true})
     conversation: Conversation;
     @CreateDateColumn()
     createdAt: Date;

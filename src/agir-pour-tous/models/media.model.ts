@@ -13,6 +13,7 @@ import {
 } from "typeorm";
 import {Comment} from "./comment.model";
 import {IsUrl} from "class-validator";
+import {Event} from "./event.model";
 
 @Entity()
 export class Media {
@@ -33,6 +34,8 @@ export class Media {
     organisationBannerPicture: Organisation;
     @ManyToOne(() => Comment, comment => comment.medias)
     comments: Comment[];
+    @OneToOne(() => Event, event => event.picture)
+    eventPicture: Media;
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()
