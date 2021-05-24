@@ -11,9 +11,9 @@
     "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
     "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
     "schema:sync": "ts-node ./node_modules/typeorm/cli.js schema:sync",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test": "jest --detectOpenHandles",
+    "test:coverage": "jest --detectOpenHandles --coverage",
+    "test:watch": "jest --detectOpenHandles --watch"
   },
   "repository": {
     "type": "git",
