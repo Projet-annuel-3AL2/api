@@ -5,12 +5,14 @@ import {config} from "dotenv";
 import {factory, tearDownDatabase, useRefreshDatabase, useSeeding} from "typeorm-seeding";
 import {User} from "../src/agir-pour-tous/models/user.model";
 import bodyParser from "body-parser";
-import session from "supertest-session";
 import * as faker from 'faker';
+import supertest from "supertest-session";
 
 config();
 const app = express();
 describe("Auth", () => {
+    let request;
+    let server;
     beforeAll(async done => {
         await createConnection();
         await useSeeding()
@@ -18,26 +20,26 @@ describe("Auth", () => {
         app.use(bodyParser.urlencoded({extended: false}));
         app.use(require('cookie-parser')());
         app.use("/", buildAPTRoutes());
-        await useRefreshDatabase()
+        await useRefreshDatabase();
+        server = app.listen(done);
+        request = supertest(server);
         done();
     });
     describe("Login", () => {
-        let testSession;
         let user: User;
         beforeAll(async done => {
             user = await factory(User)({"username": "admin", "password": "admin"}).create();
-            testSession = session(app);
             done();
         });
         it("Should login if the user isn't logged on this session", async () => {
-            const {body, status} = await testSession
+            const {body, status} = await request
                 .post("/auth/login")
                 .send({username: "admin", password: "admin"});
             expect(status).toEqual(200);
             expect(body.username).toEqual(user.username);
         });
         it("Should refuse to login the user if he's already logged on this session", async () => {
-            const {body, status} = await testSession
+            const {body, status} = await request
                 .post("/auth/login")
                 .send({username: "admin", password: "admin"});
             expect(status).toEqual(401);
@@ -45,24 +47,21 @@ describe("Auth", () => {
         });
     });
     describe("Logout", () => {
-        let testSession;
-        testSession = session(app);
         beforeAll(async done => {
-            await testSession.post("/auth/login")
+            await request.post("/auth/login")
                 .send({username: "admin", password: "admin"});
             done();
         });
         it("Should disconnect the user if he is logged on the session", async () => {
-            const {status} = await testSession.delete("/auth/logout");
+            const {status} = await request.delete("/auth/logout");
             expect(status).toEqual(204);
         });
         it("Should refuse the user to log out if he is not logged on the session", async () => {
-            const {status} = await testSession.delete("/auth/logout");
+            const {status} = await request.delete("/auth/logout");
             expect(status).toEqual(401);
         });
     });
     describe("Register", () => {
-        let testSession;
         let user;
         beforeAll(async done => {
             user = {
@@ -70,11 +69,10 @@ describe("Auth", () => {
                 mail: faker.internet.email(),
                 password: faker.random.alphaNumeric(30)
             }
-            testSession = session(app);
             done();
         });
         it("Should register the new user", async () => {
-            const {body, status} = await testSession
+            const {body, status} = await request
                 .post("/auth/register")
                 .send(user);
             expect(status).toEqual(200);
@@ -87,7 +85,7 @@ describe("Auth", () => {
                 mail: user.mail,
                 password: faker.random.alphaNumeric(30)
             }
-            const {status} = await testSession
+            const {status} = await request
                 .post("/auth/register")
                 .send(newUser);
             expect(status).toEqual(400);
@@ -98,7 +96,7 @@ describe("Auth", () => {
                 mail: faker.internet.email(),
                 password: faker.random.alphaNumeric(30)
             }
-            const {status} = await testSession
+            const {status} = await request
                 .post("/auth/register")
                 .send(newUser);
             expect(status).toEqual(400);
@@ -109,7 +107,7 @@ describe("Auth", () => {
                 mail: faker.internet.email(),
                 password: faker.random.alphaNumeric(30)
             }
-            const {body, status} = await testSession
+            const {body, status} = await request
                 .post("/auth/register")
                 .send(newUser);
             expect(status).toEqual(400);
@@ -121,7 +119,7 @@ describe("Auth", () => {
                 mail: faker.random.alphaNumeric(20),
                 password: faker.random.alphaNumeric(30)
             }
-            const {body, status} = await testSession
+            const {body, status} = await request
                 .post("/auth/register")
                 .send(newUser);
             expect(status).toEqual(400);
@@ -130,6 +128,7 @@ describe("Auth", () => {
     });
     afterAll(async done => {
         await tearDownDatabase();
+        server.close(done);
         done();
     });
 });
