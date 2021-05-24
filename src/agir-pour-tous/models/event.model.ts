@@ -45,6 +45,8 @@ export class Event {
     @IsLongitude()
     @Column({type: "float", nullable: false})
     longitude: number;
+    @Column({nullable:true})
+    participantsLimit: number;
     @ManyToOne(() => Organisation, organisation => organisation.events)
     organisation: Organisation;
     @ManyToOne(() => User, user => user.createdEvents)
