@@ -28,6 +28,12 @@ export class EventController{
         return this.eventRepository.findOneOrFail(id);
     }
 
+    public getAllNotEnd(): Promise<Event[]> {
+        const dateNow = Date.now();
+        return this.eventRepository.createQueryBuilder()
+            .where("endDate <= :dateNow ", {dateNow})
+            .getMany();
+    }
 
     public async create(user: User, props: EventProps) {
         let event = this.eventRepository.create({...props, user: user});
@@ -48,11 +54,15 @@ export class EventController{
         return this.getById(eventId);
     }
 
+
     public async addParticipant(eventId: string, userId: string): Promise<void> {
-        return await this.eventRepository.createQueryBuilder()
-            .relation(User, "participants")
-            .of(eventId)
-            .add(userId);
+        const event = await this.getById(eventId);
+        if(!event.participants.includes(await (UserController.getInstance().getById(userId)))){
+            return await this.eventRepository.createQueryBuilder()
+                .relation(User, "participants")
+                .of(eventId)
+                .add(userId);
+        }
     }
 
     public async removeParticipant(eventId: string, userId: string): Promise<void> {
@@ -74,11 +84,18 @@ export class EventController{
         return eventList;
     };
 
-    public async getWithName(userRecherche: string): Promise<Event[]> {
+    public async getWithNameRecherche(userRecherche: string): Promise<Event[]> {
         return this.eventRepository
             .createQueryBuilder()
             .where("event.name like :userRecherche", {userRecherche: '%' + userRecherche + '%'})
             .getMany();
+    }
+
+    public async getWithName(eventName: string): Promise<Event> {
+        return this.eventRepository
+            .createQueryBuilder()
+            .where("event.name = :eventName", {eventName})
+            .getOne();
     }
     private static getRangeEvent(event: Event, userLocationX: number, userLocationY: number): number {
         return 1852 * 60 * Math.cbrt(
@@ -90,4 +107,9 @@ export class EventController{
             2)
         );
     };
+
+    isNameNotUse(name): boolean {
+        const event = this.getWithName(name);
+        return event == null;
+    }
 }
