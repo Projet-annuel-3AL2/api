@@ -74,6 +74,12 @@ export class EventController{
         return eventList;
     };
 
+    public async getWithName(userRecherche: string): Promise<Event[]> {
+        return this.eventRepository
+            .createQueryBuilder()
+            .where("event.name like :userRecherche", {userRecherche: '%' + userRecherche + '%'})
+            .getMany();
+    }
     private static getRangeEvent(event: Event, userLocationX: number, userLocationY: number): number {
         return 1852 * 60 * Math.cbrt(
             Math.pow(

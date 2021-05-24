@@ -53,12 +53,22 @@ eventRouter.get('/getWithUserLocation', ensureLoggedIn, async (req, res) => {
         const userLocationY = req.body.userLocationy;
         const range = req.body.range;
         const eventController = await EventController.getInstance();
-        let event = await eventController.getEventWithLocation(userLocationX,userLocationY,range);
-        res.json(event);
+        let events = await eventController.getEventWithLocation(userLocationX,userLocationY,range);
+        res.json(events);
     } catch (err) {
         res.status(400).json(err);
     }
 });
+
+eventRouter.get('/userRecherche/:userRecherche', ensureLoggedIn, async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const events = await eventController.getWithName(req.params.userRecherche)
+        res.json(events)
+    }catch (err) {
+    res.status(400).json(err);
+}
+})
 
 eventRouter.delete('/:eventId', ensureLoggedIn, async (req, res) => {
     try {
