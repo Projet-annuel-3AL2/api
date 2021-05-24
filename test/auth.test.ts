@@ -103,6 +103,30 @@ describe("Auth", () => {
                 .send(newUser);
             expect(status).toEqual(400);
         });
+        it("Should refuse to register if the username is empty", async ()=> {
+            const newUser = {
+                username: "",
+                mail: faker.internet.email(),
+                password: faker.random.alphaNumeric(30)
+            }
+            const { body, status } = await testSession
+                .post("/auth/register")
+                .send(newUser);
+            expect(status).toEqual(400);
+            expect(body[0].property).toEqual("username");
+        });
+        it("Should refuse to register if the email is empty", async ()=> {
+            const newUser = {
+                username: faker.random.alphaNumeric(20),
+                mail: faker.random.alphaNumeric(20),
+                password: faker.random.alphaNumeric(30)
+            }
+            const { body, status } = await testSession
+                .post("/auth/register")
+                .send(newUser);
+            expect(status).toEqual(400);
+            expect(body[0].property).toEqual("mail");
+        });
     });
     afterAll(async done => {
         await tearDownDatabase();
