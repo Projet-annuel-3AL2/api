@@ -2,12 +2,10 @@ import {getRepository, Repository} from "typeorm";
 import {Event, EventProps} from "../models/event.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
-import {UserController} from "./user.controller";
 
-export class EventController{
+export class EventController {
     private static instance: EventController;
     private eventRepository: Repository<Event>;
-
 
     private constructor() {
         this.eventRepository = getRepository(Event);
@@ -28,7 +26,6 @@ export class EventController{
         return this.eventRepository.findOneOrFail(id);
     }
 
-
     public async create(user: User, props: EventProps) {
         let event = this.eventRepository.create({...props, user: user});
         const err = await validate(event, {validationError: {target: false}});
@@ -36,7 +33,6 @@ export class EventController{
             throw err;
         }
         return this.eventRepository.save(event);
-
     }
 
     public async delete(id: string) {
@@ -62,32 +58,20 @@ export class EventController{
             .remove(userId);
     }
 
-    public async getEventWithLocation(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
-        let eventList = [];
-        const events = await this.getAll();
+    public async getEventWithLocation(userLongitude: number, userLatitude: number, range: number): Promise<Event[]> {
+        return this.eventRepository.createQueryBuilder()
+            .where("1852 * 60 * cbrt(pow((longitude - :userLongitude) * cos(:userLatitude + latitude) / 2), 2) + pow(latitude - :userLatitude, 2) > :range", {
+                range,
+                userLongitude,
+                userLatitude
+            })
+            .getMany();
+    }
 
-        events.forEach(event => {
-            if (EventController.getRangeEvent(event, userLocationX, userLocationY) < range){
-                eventList.push(event);
-            }
-        });
-        return eventList;
-    };
-
-    public async getWithName(userRecherche: string): Promise<Event[]> {
+    public async getByName(userRecherche: string): Promise<Event[]> {
         return this.eventRepository
             .createQueryBuilder()
             .where("event.name like :userRecherche", {userRecherche: '%' + userRecherche + '%'})
             .getMany();
     }
-    private static getRangeEvent(event: Event, userLocationX: number, userLocationY: number): number {
-        return 1852 * 60 * Math.cbrt(
-            Math.pow(
-                    (event.longitude - userLocationX)
-                    * Math.cos((userLocationY+event.latitude)/2), 2)
-            + Math.pow(
-                event.latitude - userLocationY,
-            2)
-        );
-    };
 }

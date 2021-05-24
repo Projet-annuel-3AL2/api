@@ -13,6 +13,7 @@ import {friendshipRouter} from "./friendship.route";
 import {postRouter} from "./post.route";
 import {conversationRouter} from "./conversation.route";
 import {eventRouter} from "./event.route";
+
 export function buildAPTRoutes() {
     const router = Router();
     configure();
