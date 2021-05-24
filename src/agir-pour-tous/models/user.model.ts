@@ -1,4 +1,5 @@
 import {
+    BeforeInsert,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
@@ -8,10 +9,10 @@ import {
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
-    UpdateDateColumn
+    UpdateDateColumn,
+    JoinColumn
 } from "typeorm";
 import {Post} from "./post.model";
-import {Conversation} from "./conversation.model";
 import {Message} from "./message.model";
 import {Certification} from "./certification.model";
 import {Media} from "./media.model";
@@ -21,28 +22,30 @@ import {Report} from "./report.model";
 import {GroupMembership} from "./group_membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
+import {hash} from "bcrypt";
 import {Friendship} from "./friendship.model";
+import {FriendRequest} from "./friend_request.model";
 
 export enum UserType {
-    USER,
-    ADMIN,
-    SUPER_ADMIN
+    USER = "USER",
+    ADMIN = "ADMIN",
+    SUPER_ADMIN = "SUPER_ADMIN"
 }
 
 export interface UserProps {
     username: string;
-    firstname: string;
     lastname: string;
+    firstname: string;
     mail: string;
     password: string;
     userType?: UserType;
 }
 
 @Entity()
-export class User {
+export class User implements UserProps {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @Length(5,20)
+    @Length(5, 20)
     @IsNotEmpty()
     @Column({unique: true, nullable: false, length: 20})
     username: string;
@@ -53,45 +56,51 @@ export class User {
     @IsEmail()
     @Column({unique: true, nullable: false})
     mail: string;
-    @Column({unique: true, nullable: false})
+    @Column({unique: true, nullable: false, select: false})
     password: string;
-    @Column({type: "enum", enum: UserType, unique: true, default: UserType.USER, nullable: false})
+    @Column({type: "enum", enum: UserType, default: UserType.USER, nullable: false})
     userType: UserType;
-    @OneToMany(() => User, user => user.friends)
-    friends: Friendship[];
+    @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true})
+    friendsOne: Friendship[];
+    @OneToMany(() => Friendship, friendship => friendship.friendTwo, {cascade: true})
+    friendsTwo: Friendship[];
+    @OneToMany(() => FriendRequest, friendRequest => friendRequest.user)
+    friendRequests: FriendRequest[];
+    @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender)
+    requestedFriends: FriendRequest[];
     @ManyToMany(() => User, user => user.blockedUsers)
     blockers: User[];
-    @ManyToMany(() => User, user => user.blockers)
+    @ManyToMany(() => User, user => user.blockers, {cascade: true})
     @JoinTable()
     blockedUsers: User[];
-    @ManyToMany(() => Post, post => post.likes)
+    @ManyToMany(() => Post, post => post.likes, {cascade: true})
     @JoinTable()
     likedPosts: Post[];
-    @OneToMany(() => Post, post => post.creator)
+    @OneToMany(() => Post, post => post.creator, {cascade: true})
     createdPosts: Post[];
-    @OneToMany(() => Comment, comment => comment.creator)
+    @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
     comments: Comment[];
-    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true})
+    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true})
+    @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.userBanner, {nullable: true})
+    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true})
+    @JoinColumn()
     bannerPicture: Media;
-    @OneToOne(() => Certification, certification => certification.user, {eager: true})
+    @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
+    @JoinColumn()
     certification: Certification;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
-    @OneToMany(() => GroupMembership, group => group.user)
+    @OneToMany(() => GroupMembership, group => group.user, {cascade: true})
     groups: GroupMembership[];
     @OneToMany(() => Event, event => event.user)
     createdEvents: Event[];
-    @ManyToMany(() => Event, event => event.participants)
+    @ManyToMany(() => Event, event => event.participants, {cascade: true})
     @JoinTable()
     eventsParticipation: Event[];
-    @OneToMany(() => OrganisationMembership, organisation => organisation.user)
+    @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true})
     organisations: OrganisationMembership[];
-    @ManyToMany(() => Conversation, conversation => conversation.members)
-    @JoinTable()
-    conversations: Conversation[];
-    @OneToMany(() => Message, message => message.user)
+    @OneToMany(() => Message, message => message.user, {cascade: true})
     messages: Message[];
     @OneToMany(() => Report, report => report.userReporter)
     reports: Report[];
@@ -103,4 +112,9 @@ export class User {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
+    @BeforeInsert()
+    async setPassword(password: string) {
+        this.password = await hash(password || this.password, 10)
+    }
 }
