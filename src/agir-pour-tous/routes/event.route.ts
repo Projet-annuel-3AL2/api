@@ -9,7 +9,7 @@ const eventRouter = express.Router();
 eventRouter.post('/', ensureLoggedIn, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
-        if (eventController.isNameNotUse(req.body.name)){
+        if (await eventController.isNameNotUse(req.body.name)){
             const event = eventController.create(req.user as User, req.body);
             res.json(event);
         }else{

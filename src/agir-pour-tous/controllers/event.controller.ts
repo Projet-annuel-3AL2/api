@@ -57,7 +57,7 @@ export class EventController{
 
     public async addParticipant(eventId: string, userId: string): Promise<void> {
         const event = await this.getById(eventId);
-        if(!event.participants.includes(await (UserController.getInstance().getById(userId)))){
+        if(!event.participants.includes(await (UserController.getInstance().getById(userId))) && await this.isEventNotFull(eventId)){
             return await this.eventRepository.createQueryBuilder()
                 .relation(User, "participants")
                 .of(eventId)
@@ -99,8 +99,13 @@ export class EventController{
             .getOne();
     }
 
-    isNameNotUse(name): boolean {
-        const event = this.getWithName(name);
+    public async isEventNotFull(eventId: string): Promise<boolean> {
+        const event = await this.eventRepository.findOneOrFail(eventId);
+        return event.participants.length < event.participantsLimit;
+    }
+
+    public async isNameNotUse(name): Promise<boolean> {
+        const event = await this.getWithName(name);
         return event == null;
     }
 }
