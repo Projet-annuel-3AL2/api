@@ -61,4 +61,27 @@ export class EventController{
             .of(eventId)
             .remove(userId);
     }
+
+    public async getEventWithLocation(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
+        let eventList = [];
+        const events = await this.getAll();
+
+        events.forEach(event => {
+            if (this.getRangeEvent(event, userLocationX, userLocationY) < range){
+                eventList.push(event);
+            }
+        });
+        return eventList;
+    };
+
+    private getRangeEvent(event: Event, userLocationX: number, userLocationY: number): number {
+        return Math.cbrt(
+            Math.pow(
+                    (event.longitude - userLocationX)
+                    * Math.cos((userLocationY+event.latitude)/2), 2)
+            + Math.pow(
+                event.latitude - userLocationY,
+            2)
+        );
+    };
 }
