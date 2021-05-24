@@ -43,7 +43,7 @@ export class UserController {
     public async getPosts(username: string): Promise<Post[]> {
         return await getRepository(Post)
             .createQueryBuilder()
-            .leftJoin("Post.user", "User")
+            .leftJoin("Post.creator", "User")
             .where("User.username=:username", {username})
             .getMany();
     }
