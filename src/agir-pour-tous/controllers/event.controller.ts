@@ -28,6 +28,12 @@ export class EventController{
         return this.eventRepository.findOneOrFail(id);
     }
 
+    public getAllNotEnd(): Promise<Event[]> {
+        const dateNow = Date.now();
+        return this.eventRepository.createQueryBuilder()
+            .where("endDate >= :dateNow ", {dateNow})
+            .getMany();
+    }
 
     public async create(user: User, props: EventProps) {
         let event = this.eventRepository.create({...props, user: user});
@@ -48,11 +54,15 @@ export class EventController{
         return this.getById(eventId);
     }
 
+
     public async addParticipant(eventId: string, userId: string): Promise<void> {
-        return await this.eventRepository.createQueryBuilder()
-            .relation(User, "participants")
-            .of(eventId)
-            .add(userId);
+        const event = await this.getById(eventId);
+        if(!event.participants.includes(await (UserController.getInstance().getById(userId)))){
+            return await this.eventRepository.createQueryBuilder()
+                .relation(User, "participants")
+                .of(eventId)
+                .add(userId);
+        }
     }
 
     public async removeParticipant(eventId: string, userId: string): Promise<void> {
@@ -63,31 +73,34 @@ export class EventController{
     }
 
     public async getEventWithLocation(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
-        let eventList = [];
-        const events = await this.getAll();
-
-        events.forEach(event => {
-            if (EventController.getRangeEvent(event, userLocationX, userLocationY) < range){
-                eventList.push(event);
-            }
-        });
-        return eventList;
+        return this.eventRepository.createQueryBuilder()
+            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range",{range, userLocationX, userLocationY})
+            .getMany();
     };
 
-    public async getWithName(userRecherche: string): Promise<Event[]> {
+    public async getEventWithLocationNotEnd(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
+        const dateNow = Date.now();
+        return this.eventRepository.createQueryBuilder()
+            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range AND dateEnd >=:dateNow",{range, userLocationX, userLocationY, dateNow})
+            .getMany();
+    };
+
+    public async getWithNameRecherche(userRecherche: string): Promise<Event[]> {
         return this.eventRepository
             .createQueryBuilder()
             .where("event.name like :userRecherche", {userRecherche: '%' + userRecherche + '%'})
             .getMany();
     }
-    private static getRangeEvent(event: Event, userLocationX: number, userLocationY: number): number {
-        return 1852 * 60 * Math.cbrt(
-            Math.pow(
-                    (event.longitude - userLocationX)
-                    * Math.cos((userLocationY+event.latitude)/2), 2)
-            + Math.pow(
-                event.latitude - userLocationY,
-            2)
-        );
-    };
+
+    public async getWithName(eventName: string): Promise<Event> {
+        return this.eventRepository
+            .createQueryBuilder()
+            .where("event.name = :eventName", {eventName})
+            .getOne();
+    }
+
+    isNameNotUse(name): boolean {
+        const event = this.getWithName(name);
+        return event == null;
+    }
 }
