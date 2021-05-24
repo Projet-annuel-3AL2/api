@@ -83,8 +83,8 @@ eventRouter.get('/getWithUserLocationNotEnd', ensureLoggedIn, async (req, res) =
         const userLocationY = req.body.userLocationy;
         const range = req.body.range;
         const eventController = await EventController.getInstance();
-        //let events = await eventController.getEventWithLocationNotEnd(userLocationX,userLocationY,range);
-        //res.json(events);
+        let events = await eventController.getEventWithLocationNotEnd(userLocationX,userLocationY,range);
+        res.json(events);
     } catch (err) {
         res.status(400).json(err);
     }

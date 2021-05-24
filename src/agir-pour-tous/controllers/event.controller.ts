@@ -31,7 +31,7 @@ export class EventController{
     public getAllNotEnd(): Promise<Event[]> {
         const dateNow = Date.now();
         return this.eventRepository.createQueryBuilder()
-            .where("endDate <= :dateNow ", {dateNow})
+            .where("endDate >= :dateNow ", {dateNow})
             .getMany();
     }
 
@@ -73,15 +73,16 @@ export class EventController{
     }
 
     public async getEventWithLocation(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
-        let eventList = [];
-        const events = await this.getAll();
+        return this.eventRepository.createQueryBuilder()
+            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range",{range, userLocationX, userLocationY})
+            .getMany();
+    };
 
-        events.forEach(event => {
-            if (EventController.getRangeEvent(event, userLocationX, userLocationY) < range){
-                eventList.push(event);
-            }
-        });
-        return eventList;
+    public async getEventWithLocationNotEnd(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
+        const dateNow = Date.now();
+        return this.eventRepository.createQueryBuilder()
+            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range AND dateEnd >=:dateNow",{range, userLocationX, userLocationY, dateNow})
+            .getMany();
     };
 
     public async getWithNameRecherche(userRecherche: string): Promise<Event[]> {
@@ -97,16 +98,6 @@ export class EventController{
             .where("event.name = :eventName", {eventName})
             .getOne();
     }
-    private static getRangeEvent(event: Event, userLocationX: number, userLocationY: number): number {
-        return 1852 * 60 * Math.cbrt(
-            Math.pow(
-                    (event.longitude - userLocationX)
-                    * Math.cos((userLocationY+event.latitude)/2), 2)
-            + Math.pow(
-                event.latitude - userLocationY,
-            2)
-        );
-    };
 
     isNameNotUse(name): boolean {
         const event = this.getWithName(name);
