@@ -31,6 +31,10 @@ export class UserController {
         return await this.userRepository.find();
     }
 
+    public async getById(userId: string): Promise<User> {
+        return await this.userRepository.findOneOrFail(userId);
+    }
+
     public async delete(username: string): Promise<void> {
         await this.userRepository.softDelete(username);
     }
