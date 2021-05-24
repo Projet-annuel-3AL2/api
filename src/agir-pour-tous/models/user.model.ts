@@ -1,4 +1,5 @@
 import {
+    BeforeInsert,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
@@ -20,19 +21,20 @@ import {Report} from "./report.model";
 import {GroupMembership} from "./group_membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsEmail, IsNotEmpty, Length} from "class-validator";
+import {hash} from "bcrypt";
 import {Friendship} from "./friendship.model";
 import {FriendRequest} from "./friend_request.model";
 
 export enum UserType {
-    USER,
-    ADMIN,
-    SUPER_ADMIN
+    USER = "USER",
+    ADMIN = "ADMIN",
+    SUPER_ADMIN = "SUPER_ADMIN"
 }
 
 export interface UserProps {
     username: string;
-    firstname: string;
     lastname: string;
+    firstname: string;
     mail: string;
     password: string;
     userType?: UserType;
@@ -55,7 +57,7 @@ export class User implements UserProps {
     mail: string;
     @Column({unique: true, nullable: false, select: false})
     password: string;
-    @Column({type: "enum", enum: UserType, unique: true, default: UserType.USER, nullable: false})
+    @Column({type: "enum", enum: UserType, default: UserType.USER, nullable: false})
     userType: UserType;
     @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true})
     friendsOne: Friendship[];
@@ -106,4 +108,9 @@ export class User implements UserProps {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
+    @BeforeInsert()
+    async setPassword(password: string) {
+        this.password = await hash(password || this.password, 10)
+    }
 }

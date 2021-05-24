@@ -5,7 +5,6 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    ManyToMany,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
@@ -14,13 +13,20 @@ import {
 import {Media} from "./media.model";
 import {Length} from "class-validator";
 
+export interface CommentProps {
+    creator: User;
+    post: Post;
+    text: string;
+    medias: Media[];
+}
+
 @Entity()
 export class Comment {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @ManyToOne(() => User, user => user.comments)
+    @ManyToOne(() => User, user => user.comments, {nullable: false})
     creator: User;
-    @ManyToMany(() => Post, post => post.comments)
+    @ManyToOne(() => Post, post => post.comments)
     post: Post;
     @Length(0, 512)
     @Column()

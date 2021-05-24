@@ -10,6 +10,8 @@ export class GroupMembership {
     group: Group;
     @Column({default: false, nullable: false})
     isAdmin: boolean;
+    @Column({default: false, nullable: false})
+    isOwner: boolean;
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()
