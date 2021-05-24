@@ -26,7 +26,7 @@ eventRouter.post('/addParticipant', ensureLoggedIn, async (req, res) => {
     }
 });
 
-eventRouter.get('/', async (req, res) => {
+eventRouter.get('/', ensureLoggedIn, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
         const event = eventController.getAll();
@@ -47,7 +47,7 @@ eventRouter.get('/:eventId', async (req, res) => {
     }
 });
 
-eventRouter.get('/getWithUserLocation', async (req, res) => {
+eventRouter.get('/getWithUserLocation', ensureLoggedIn, async (req, res) => {
     try {
         const userLocationX = req.body.userLocationX;
         const userLocationY = req.body.userLocationy;
@@ -60,7 +60,7 @@ eventRouter.get('/getWithUserLocation', async (req, res) => {
     }
 });
 
-eventRouter.delete('/:eventId', async (req, res) => {
+eventRouter.delete('/:eventId', ensureLoggedIn, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = await EventController.getInstance();
@@ -71,7 +71,7 @@ eventRouter.delete('/:eventId', async (req, res) => {
     }
 });
 
-eventRouter.delete('/participant/:userId', async (req, res) => {
+eventRouter.delete('/participant/:userId', ensureLoggedIn, async (req, res) => {
     try {
         const userId = req.params.userId;
         const eventController = await EventController.getInstance();
@@ -82,7 +82,7 @@ eventRouter.delete('/participant/:userId', async (req, res) => {
     }
 });
 
-eventRouter.put('/:eventId', async (req, res) => {
+eventRouter.put('/:eventId', ensureLoggedIn, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = await EventController.getInstance();

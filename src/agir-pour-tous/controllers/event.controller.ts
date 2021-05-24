@@ -67,15 +67,15 @@ export class EventController{
         const events = await this.getAll();
 
         events.forEach(event => {
-            if (this.getRangeEvent(event, userLocationX, userLocationY) < range){
+            if (EventController.getRangeEvent(event, userLocationX, userLocationY) < range){
                 eventList.push(event);
             }
         });
         return eventList;
     };
 
-    private getRangeEvent(event: Event, userLocationX: number, userLocationY: number): number {
-        return Math.cbrt(
+    private static getRangeEvent(event: Event, userLocationX: number, userLocationY: number): number {
+        return 1852 * 60 * Math.cbrt(
             Math.pow(
                     (event.longitude - userLocationX)
                     * Math.cos((userLocationY+event.latitude)/2), 2)
