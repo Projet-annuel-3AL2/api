@@ -24,7 +24,7 @@ export class UserController {
     }
 
     public async getByUsername(username: string): Promise<User> {
-        return await this.userRepository.findOneOrFail({where:{username}});
+        return await this.userRepository.findOneOrFail(username);
     }
 
     public async getAll(): Promise<User[]> {
@@ -43,7 +43,7 @@ export class UserController {
     public async getPosts(username: string): Promise<Post[]> {
         return await getRepository(Post)
             .createQueryBuilder()
-            .leftJoin("Post.creator", "User")
+            .leftJoin("Post.user", "User")
             .where("User.username=:username", {username})
             .getMany();
     }
