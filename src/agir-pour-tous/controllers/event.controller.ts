@@ -2,6 +2,7 @@ import {getRepository, Repository} from "typeorm";
 import {Event, EventProps} from "../models/event.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
+import {UserController} from "./user.controller";
 
 export class EventController{
     private static instance: EventController;
@@ -27,18 +28,37 @@ export class EventController{
         return this.eventRepository.findOneOrFail(id);
     }
 
-    // TODO : Rajouter OwnerShip
-    public async create(props: EventProps) {
-        let event = this.eventRepository.create({...props});
+
+    public async create(user: User, props: EventProps) {
+        let event = this.eventRepository.create({...props, user: user});
         const err = await validate(event, {validationError: {target: false}});
         if (err.length > 0) {
             throw err;
         }
-        return await this.eventRepository.save(event);
+        return this.eventRepository.save(event);
 
     }
 
     public async delete(id: string) {
         await this.eventRepository.delete(id);
+    }
+
+    public async update(eventId: string, props: EventProps): Promise<Event> {
+        await this.eventRepository.update(eventId, props);
+        return this.getById(eventId);
+    }
+
+    public async addParticipant(eventId: string, userId: string): Promise<void> {
+        return await this.eventRepository.createQueryBuilder()
+            .relation(User, "participants")
+            .of(eventId)
+            .add(userId);
+    }
+
+    public async removeParticipant(eventId: string, userId: string): Promise<void> {
+        return await this.eventRepository.createQueryBuilder()
+            .relation(User, "participants")
+            .of(eventId)
+            .remove(userId);
     }
 }

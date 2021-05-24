@@ -12,8 +12,7 @@ import {organisationRouter} from "./organisation.route";
 import {friendshipRouter} from "./friendship.route";
 import {postRouter} from "./post.route";
 import {conversationRouter} from "./conversation.route";
-import {postRouter} from "./post.route";
-
+import {eventRouter} from "./event.route";
 export function buildAPTRoutes() {
     const router = Router();
     configure();
@@ -37,6 +36,6 @@ export function buildAPTRoutes() {
     router.use("/post", postRouter);
     router.use("/friendship", friendshipRouter);
     router.use("/conversation", conversationRouter);
-    router.use("/post", postRouter);
+    router.use("/event", eventRouter)
     return router;
 }
