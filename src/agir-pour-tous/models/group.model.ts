@@ -4,7 +4,7 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    Entity,
+    Entity, JoinColumn,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -33,6 +33,7 @@ export class Group {
     @OneToMany(() => Report, report => report.reportedGroup, {cascade: true})
     reported: Report[];
     @OneToOne(() => Conversation, conversation => conversation.group, {cascade: true})
+    @JoinColumn()
     conversation: Conversation;
     @CreateDateColumn()
     createdAt: Date;

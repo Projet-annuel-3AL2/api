@@ -9,7 +9,8 @@ import {
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
-    UpdateDateColumn
+    UpdateDateColumn,
+    JoinColumn
 } from "typeorm";
 import {Post} from "./post.model";
 import {Message} from "./message.model";
@@ -80,10 +81,13 @@ export class User implements UserProps {
     @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
     comments: Comment[];
     @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true})
+    @JoinColumn()
     profilePicture: Media;
     @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true})
+    @JoinColumn()
     bannerPicture: Media;
     @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
+    @JoinColumn()
     certification: Certification;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
