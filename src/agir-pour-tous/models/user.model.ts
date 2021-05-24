@@ -4,13 +4,13 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    JoinColumn,
     JoinTable,
     ManyToMany,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
-    UpdateDateColumn,
-    JoinColumn
+    UpdateDateColumn
 } from "typeorm";
 import {Post} from "./post.model";
 import {Message} from "./message.model";
