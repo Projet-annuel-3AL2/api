@@ -37,7 +37,7 @@ export class Post {
     organisation: Organisation;
     @ManyToOne(() => Group, group => group.posts, {eager: true})
     group: Group;
-    @OneToMany(() => Event, event => event.posts, {eager: true})
+    @ManyToOne(() => Event, event => event.posts, {eager: true})
     sharedEvent: Event;
     @OneToMany(() => Post, post => post.sharesPost)
     sharedPosts: Post[];
