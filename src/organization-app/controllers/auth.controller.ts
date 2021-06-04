@@ -37,13 +37,13 @@ export class AuthController {
         });
     }
 
-    public async resetPassword(resetToken: string, newPassword: string) {
-        const encryptedPass = await hash(newPassword, 8);
+    public async resetPassword(resetToken: string, password: string) {
+        const encryptedPass = await hash(password, 8);
         await this.userRepository.createQueryBuilder()
             .update()
-            .set({password: encryptedPass})
+            .set({password: encryptedPass, resetTokenExpiration: null, resetToken: null})
             .where('resetToken = :resetToken', {resetToken})
-            .where('resetTokenExpiration < NOW()')
+            .where('resetTokenExpiration > NOW()')
             .execute();
     }
 }
