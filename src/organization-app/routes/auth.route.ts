@@ -22,6 +22,7 @@ authRouter.get("/forgot-password/:username", ensureLoggedOut, async (req, res) =
         const token = await authController.forgotPassword(username);
         res.send(token);
     } catch (err) {
+        console.log(err)
         res.status(400).json(err);
     }
 });
