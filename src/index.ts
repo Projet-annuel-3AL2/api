@@ -7,7 +7,7 @@ import {createConnection} from "typeorm";
 
 config();
 createConnection().then(() => {
-    //AuthController.getInstance().then(c=>c.register({username:"admin", password:"admin", mail:"admin@admin.com",isAdmin:true,lastname:"admin",firstname:"admin"}))
+    //hash("admin",10).then(pass=>getRepository(User).save({username:"admin", password:pass, mail:"admin@admin.com",isAdmin:true,lastname:"admin",firstname:"admin"}))
     const app: Express = express();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: false}));

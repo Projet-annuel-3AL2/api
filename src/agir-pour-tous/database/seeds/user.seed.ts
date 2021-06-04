@@ -9,7 +9,7 @@ export class CreateUser implements Seeder {
             email: process.env.SUPERADMIN_EMAIL,
             password: process.env.SUPERADMIN_PASSWD,
             userType: UserType.SUPER_ADMIN
-        });
+        }).create();
         await factory(User)({}).createMany(10);
     }
 }
