@@ -6,11 +6,11 @@ import {Session} from "../models/session.model";
 import {configure} from "../config/passport.config";
 import {authRouter} from "./auth.route";
 import {userRouter} from "./user.route";
-import {categoryRouter} from "./category.route";
 import {groupRouter} from "./group.route";
 import {organisationRouter} from "./organisation.route";
-import {friendshipRouter} from "./friendship.route";
 import {postRouter} from "./post.route";
+import {categoryRouter} from "./category.route";
+import {friendshipRouter} from "./friendship.route";
 import {conversationRouter} from "./conversation.route";
 
 export function buildAPTRoutes() {
