@@ -13,7 +13,9 @@ authRouter.post('/register', ensureLoggedOut, async (req, res) => {
     try {
         const authController = AuthController.getInstance();
         const user = await authController.register({...req.body});
-        res.json(user);
+        req.login(user,()=>{
+            res.json(req.user)
+        });
     } catch (err) {
         res.status(400).json(err);
     }
@@ -27,4 +29,3 @@ authRouter.delete('/logout', ensureLoggedIn, async (req, res) => {
 export {
     authRouter
 }
-
