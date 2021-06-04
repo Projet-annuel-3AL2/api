@@ -31,7 +31,7 @@ export class Comment {
     @Length(0, 512)
     @Column()
     text: string;
-    @OneToMany(() => Media, media => media.comments, {cascade: true})
+    @OneToMany(() => Media, media => media.comments)
     medias: Media[];
     @CreateDateColumn()
     createdAt: Date;
