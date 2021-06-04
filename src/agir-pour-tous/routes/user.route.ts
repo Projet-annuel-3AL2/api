@@ -21,7 +21,9 @@ userRouter.get('/:username', async (req, res) => {
         const userController = UserController.getInstance();
         const user = await userController.getByUsername(username);
         res.json(user);
+        console.log(user)
     } catch (err) {
+        console.log(err)
         res.status(404).json(err);
     }
 });
@@ -52,7 +54,7 @@ userRouter.get("/:username/posts", async (req, res) => {
     try {
         const username = req.params.username;
         const userController = UserController.getInstance();
-        const posts = await userController.getPosts(username)
+        const posts = await userController.getPosts(username);
         res.json(posts);
     } catch (err) {
         res.status(400).json(err);

@@ -24,7 +24,7 @@ export class UserController {
     }
 
     public async getByUsername(username: string): Promise<User> {
-        return await this.userRepository.findOneOrFail(username);
+        return await this.userRepository.findOneOrFail({where: {username}});
     }
 
     public async getAll(): Promise<User[]> {
