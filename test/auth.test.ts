@@ -1,6 +1,5 @@
 import express from "express";
 import {buildAPTRoutes} from "../src/agir-pour-tous/routes/index.route";
-import {createConnection} from "typeorm";
 import {config} from "dotenv";
 import {factory, tearDownDatabase, useRefreshDatabase, useSeeding} from "typeorm-seeding";
 import {User} from "../src/agir-pour-tous/models/user.model";
@@ -14,15 +13,14 @@ describe("Auth", () => {
     let request;
     let server;
     beforeAll(async done => {
-        await createConnection();
-        await useSeeding()
+        await useRefreshDatabase({ connection: 'memory'});
+        await useSeeding();
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({extended: false}));
         app.use(require('cookie-parser')());
         app.use("/", buildAPTRoutes());
-        await useRefreshDatabase();
         server = app.listen(done);
-        request = supertest(server);
+        request = supertest(app);
         done();
     });
     describe("Login", () => {
@@ -129,6 +127,5 @@ describe("Auth", () => {
     afterAll(async done => {
         await tearDownDatabase();
         server.close(done);
-        done();
     });
 });
