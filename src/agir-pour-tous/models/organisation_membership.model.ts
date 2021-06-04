@@ -10,6 +10,8 @@ export class OrganisationMembership {
     organisation: Organisation;
     @Column({default: false, nullable: false})
     isAdmin: boolean;
+    @Column({default: false, nullable: false})
+    isOwner: boolean;
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()

@@ -1,11 +1,9 @@
 import {Message} from "./message.model";
-import {User} from "./user.model";
 import {Organisation} from "./organisation.model";
 import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    ManyToMany,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -20,8 +18,6 @@ export class Conversation {
     id: string;
     @OneToMany(() => Message, message => message.conversation)
     messages: Message[];
-    @ManyToMany(() => User, user => user.conversations)
-    members: User[];
     @OneToOne(() => Organisation, organisation => organisation.conversation)
     organisation: Organisation;
     @OneToOne(() => Friendship, friendship => friendship.conversation)

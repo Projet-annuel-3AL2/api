@@ -7,7 +7,13 @@
     "start": "ts-node src/index.ts",
     "build": "tsc -p .",
     "dev": "nodemon --watch src/*.ts --exec ts-node src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
+    "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
+    "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
+    "schema:sync": "ts-node ./node_modules/typeorm/cli.js schema:sync",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
