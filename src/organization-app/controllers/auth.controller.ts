@@ -29,7 +29,10 @@ export class AuthController {
             .where('username = :username', {username})
             .returning("*")
             .execute()).raw[0];
-        await sendMail({
+        if(user === undefined){
+            throw new Error();
+        }
+        sendMail({
             to: user.mail,
             from: `"Organisation app" <${process.env.MAILER_USER}>`,
             subject:"Récupération du mot de passe",
