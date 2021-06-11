@@ -10,7 +10,7 @@ const authRouter = express.Router();
 
 authRouter.post('/login', ensureLoggedOut, passport.authenticate('local-org-app'), async (req, res) => {
     const userController = await UserController.getInstance()
-    res.json(userController.getById((req.user as User).id));
+    res.json(await userController.getById((req.user as User).id));
 });
 
 authRouter.delete('/logout', ensureLoggedIn, async (req, res) => {
