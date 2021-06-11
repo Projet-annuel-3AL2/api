@@ -2,12 +2,15 @@ import express from "express";
 import passport from "passport";
 import {AuthController} from "../controllers/auth.controller";
 import {ensureLoggedIn, ensureLoggedOut} from "../middlewares/auth.middleware";
+import {UserController} from "../controllers/user.controller";
+import {User} from "../models/user.model";
 
 
 const authRouter = express.Router();
 
 authRouter.post('/login', ensureLoggedOut, passport.authenticate('local-org-app'), async (req, res) => {
-    res.json(req.user);
+    const userController = await UserController.getInstance()
+    res.json(userController.getById((req.user as User).id));
 });
 
 authRouter.delete('/logout', ensureLoggedIn, async (req, res) => {
