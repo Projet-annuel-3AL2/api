@@ -163,7 +163,6 @@ projectRouter.post("/:projectId/ticket", async (req, res) => {
         const ticket = await projectController.addTicket(projectId, {...req.body}, (req.user as User).id);
         res.json(ticket);
     } catch (err) {
-        console.log(err)
         res.status(400).end();
     }
 });

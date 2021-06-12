@@ -73,7 +73,6 @@ export class ProjectController {
     }
 
     public async addProjectMember(projectId: string, memberId: string): Promise<void> {
-        console.log(projectId + " " + memberId)
         await this.projectRepository.createQueryBuilder()
             .insert()
             .into(ProjectMembership)

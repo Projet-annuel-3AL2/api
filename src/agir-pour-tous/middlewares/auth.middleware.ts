@@ -7,7 +7,6 @@ export function ensureLoggedOut(req, res, next) {
 
 export function ensureLoggedIn(req, res, next) {
     if (!req.isAuthenticated || !req.isAuthenticated()) {
-        console.log(req.user)
         return res.status(401).end();
     }
     next();
