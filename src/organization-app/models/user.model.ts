@@ -47,7 +47,7 @@ export class User {
     resetTokenExpiration: Date;
 
     @Column({nullable: false, default: false})
-    isAdmin: boolean;
+    admin: boolean;
 
     @OneToMany(() => ProjectMembership, projectMembership => projectMembership.member)
     projects: ProjectMembership[];
