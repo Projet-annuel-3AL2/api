@@ -49,15 +49,15 @@ export class User {
     @Column({nullable: false, default: false})
     admin: boolean;
 
-    @OneToMany(() => ProjectMembership, projectMembership => projectMembership.member)
+    @OneToMany(() => ProjectMembership, projectMembership => projectMembership.member, {cascade: true})
     projects: ProjectMembership[];
 
-    @OneToMany(() => Ticket, ticket => ticket.creator)
+    @OneToMany(() => Ticket, ticket => ticket.creator, {cascade: true})
     createdTickets: Ticket[];
 
-    @OneToMany(() => Ticket, ticket => ticket.assignee)
+    @OneToMany(() => Ticket, ticket => ticket.assignee, {cascade: true})
     assignedTickets: Ticket[];
 
-    @OneToMany(() => Comment, comment => comment.user)
+    @OneToMany(() => Comment, comment => comment.user, {cascade: true})
     comments: Comment[];
 }

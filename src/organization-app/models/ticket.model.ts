@@ -73,7 +73,7 @@ export class Ticket implements TicketProps {
     @RelationId((ticket: Ticket) => ticket.assignee)
     assigneeId: string;
 
-    @OneToMany(() => Comment, comment => comment.ticket)
+    @OneToMany(() => Comment, comment => comment.ticket, {cascade: true})
     comments: Comment[];
 
     @ManyToOne(() => Project, project => project.tickets)
