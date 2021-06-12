@@ -61,13 +61,13 @@ export class Ticket implements TicketProps {
     @UpdateDateColumn()
     updateDate: Date;
 
-    @ManyToOne(() => User, user => user.createdTickets)
+    @ManyToOne(() => User, user => user.createdTickets, {onDelete: "SET NULL"})
     creator: User;
     @Column()
     @RelationId((ticket: Ticket) => ticket.creator)
     creatorId: string;
 
-    @ManyToOne(() => User, user => user.assignedTickets)
+    @ManyToOne(() => User, user => user.assignedTickets, {nullable:true, onDelete: "SET NULL"})
     assignee: User;
     @Column()
     @RelationId((ticket: Ticket) => ticket.assignee)
@@ -76,7 +76,7 @@ export class Ticket implements TicketProps {
     @OneToMany(() => Comment, comment => comment.ticket, {cascade: true})
     comments: Comment[];
 
-    @ManyToOne(() => Project, project => project.tickets)
+    @ManyToOne(() => Project, project => project.tickets, {onDelete: "CASCADE"})
     project: Project;
     @Column()
     @RelationId((ticket: Ticket) => ticket.project)

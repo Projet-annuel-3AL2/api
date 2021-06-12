@@ -4,13 +4,13 @@ import {Project} from "./project.model";
 
 @Entity({schema: "organization_app"})
 export class ProjectMembership {
-    @ManyToOne(() => User, user => user.projects, {primary: true})
+    @ManyToOne(() => User, user => user.projects, {primary: true, onDelete: "CASCADE"})
     member: User;
     @Column({primary: true})
     @RelationId((projectMembership: ProjectMembership) => projectMembership.member)
     memberId: string;
 
-    @ManyToOne(() => Project, project => project.members, {primary: true})
+    @ManyToOne(() => Project, project => project.members, {primary: true, onDelete: "CASCADE"})
     project: Project;
     @Column({primary: true})
     @RelationId((projectMembership: ProjectMembership) => projectMembership.project)

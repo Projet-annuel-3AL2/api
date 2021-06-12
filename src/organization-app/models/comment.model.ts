@@ -18,13 +18,13 @@ export class Comment implements CommentProps {
     @CreateDateColumn()
     creationDate: Date;
 
-    @ManyToOne(() => Ticket, ticket => ticket.comments)
+    @ManyToOne(() => Ticket, ticket => ticket.comments, {onDelete: "CASCADE"})
     ticket: Ticket;
     @Column()
     @RelationId((comment: Comment) => comment.ticket)
     ticketId: string;
 
-    @ManyToOne(() => User, user => user.comments)
+    @ManyToOne(() => User, user => user.comments, {onDelete: "CASCADE"})
     user: User;
     @Column()
     @RelationId((comment: Comment) => comment.user)
