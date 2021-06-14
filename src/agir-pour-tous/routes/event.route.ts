@@ -35,7 +35,7 @@ eventRouter.post('/addParticipant', ensureLoggedIn, async (req, res) => {
         if (req.user instanceof User) {
             const eventId = req.body.eventId;
             const user: User = req.user;
-            const userId = req.params.userId;
+            const userId = req.body.userId;
 
             const eventController = await EventController.getInstance();
             const event = await eventController.getById(eventId);
@@ -184,9 +184,9 @@ eventRouter.put('/:eventId', ensureLoggedIn, async (req, res) => {
     try {
         if (req.user instanceof User){
 
-            const eventId = req.body.eventId;
+            const eventId = req.params.eventId;
             const user: User = req.user;
-            const userId = req.params.userId;
+            const userId = req.body.userId;
 
             const eventController = await EventController.getInstance();
 
