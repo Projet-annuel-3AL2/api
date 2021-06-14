@@ -8,7 +8,8 @@ import {
     Entity,
     ManyToMany,
     ManyToOne,
-    OneToMany, OneToOne,
+    OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -17,24 +18,34 @@ import {Report} from "./report.model";
 import {IsLatitude, IsLongitude, Length} from "class-validator";
 import {Media} from "./media.model";
 
+export interface EventProps {
+    name: string;
+    startDate: Date;
+    endDate: Date;
+    latitude: number;
+    longitude: number;
+    organisation?: Organisation;
+    user: User;
+}
+
 @Entity()
 export class Event {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @Length(5, 30)
+    @Length(5, 50)
     @Column({nullable: false, length: 50})
-    name:string;
+    name: string;
     @Column({nullable: false})
     startDate: Date;
     @Column({nullable: false})
     endDate: Date;
     @IsLatitude()
-    @Column({nullable: false})
+    @Column({type: "float", nullable: false})
     latitude: number;
     @IsLongitude()
-    @Column({nullable: false})
+    @Column({type: "float", nullable: false})
     longitude: number;
-    @Column({nullable:true})
+    @Column({nullable: true})
     participantsLimit: number;
     @ManyToOne(() => Organisation, organisation => organisation.events)
     organisation: Organisation;
@@ -44,7 +55,7 @@ export class Event {
     participants: User[];
     @OneToMany(() => Post, post => post.sharedEvent)
     posts: Post[];
-    @ManyToOne(() => Category, category => category.events)
+    @ManyToOne(() => Category, category => category.events, {nullable: false})
     category: Category;
     @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true})
     picture: Media;

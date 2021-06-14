@@ -4,8 +4,9 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    Entity,
-    OneToMany, OneToOne,
+    Entity, JoinColumn,
+    OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
@@ -14,12 +15,16 @@ import {GroupMembership} from "./group_membership.model";
 import {Length} from "class-validator";
 import {Conversation} from "./conversation.model";
 
+export interface GroupProps {
+    name: string;
+}
+
 @Entity()
 export class Group {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @Length(5,30)
-    @Column({nullable:false, unique:true})
+    @Length(5, 30)
+    @Column({nullable: false, unique: true})
     name: string;
     @OneToMany(() => GroupMembership, user => user.group)
     members: GroupMembership[];
@@ -28,6 +33,7 @@ export class Group {
     @OneToMany(() => Report, report => report.reportedGroup, {cascade: true})
     reported: Report[];
     @OneToOne(() => Conversation, conversation => conversation.group, {cascade: true})
+    @JoinColumn()
     conversation: Conversation;
     @CreateDateColumn()
     createdAt: Date;
@@ -35,6 +41,7 @@ export class Group {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
     @BeforeInsert()
     async setConversation() {
         this.conversation = new Conversation();

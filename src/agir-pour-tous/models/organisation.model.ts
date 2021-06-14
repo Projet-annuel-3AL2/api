@@ -3,7 +3,7 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    Entity,
+    Entity, JoinColumn,
     ManyToMany,
     OneToMany,
     OneToOne,
@@ -17,13 +17,23 @@ import {Event} from "./event.model";
 import {Report} from "./report.model";
 import {OrganisationMembership} from "./organisation_membership.model";
 import {IsNotEmpty, Length} from "class-validator";
+import {User} from "./user.model";
+
+export interface OrganisationProps {
+    name: string;
+    owner: User;
+}
+
+export interface OrganisationProps {
+    name: string;
+}
 
 @Entity()
 export class Organisation {
     @PrimaryGeneratedColumn("uuid")
     id: string;
     @IsNotEmpty()
-    @Length(5,30)
+    @Length(5, 30)
     @Column({nullable: false, unique: true})
     name: string;
     @ManyToMany(() => OrganisationMembership, user => user.organisation)
@@ -31,10 +41,13 @@ export class Organisation {
     @OneToMany(() => Event, user => user.organisation, {cascade: true})
     events: Event[];
     @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, cascade: true})
+    @JoinColumn()
     profilePicture: Media;
     @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true, cascade: true})
+    @JoinColumn()
     bannerPicture: Media;
     @OneToOne(() => Conversation, conversation => conversation.organisation, {nullable: false, cascade: true})
+    @JoinColumn()
     conversation: Conversation;
     @OneToMany(() => Post, post => post.organisation, {cascade: true})
     posts: Post[];
@@ -46,6 +59,7 @@ export class Organisation {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
     @BeforeInsert()
     async setConversation() {
         this.conversation = new Conversation();
