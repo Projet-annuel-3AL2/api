@@ -83,4 +83,8 @@ export class UserController {
             .where("User.username=:username", {username})
             .getMany();
     }
+
+    public async getById(userId: string): Promise<User> {
+        return await this.userRepository.findOneOrFail(userId);
+    }
 }
