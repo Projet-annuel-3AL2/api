@@ -55,9 +55,9 @@ export class EventController{
     }
 
 
-    public async addParticipant(eventId: string, userId: string): Promise<void> {
+    public async addParticipant(eventId: string, username: string, userId:string): Promise<void> {
         const event = await this.getById(eventId);
-        if(!event.participants.includes(await (UserController.getInstance().getById(userId))) && await this.isEventNotFull(eventId)){
+        if(!event.participants.includes(await (UserController.getInstance().getByUsername(username))) && await this.isEventNotFull(eventId)){
             return await this.eventRepository.createQueryBuilder()
                 .relation(User, "participants")
                 .of(eventId)
