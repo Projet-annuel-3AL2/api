@@ -35,14 +35,14 @@ eventRouter.post('/addParticipant', ensureLoggedIn, async (req, res) => {
         if (req.user instanceof User) {
             const eventId = req.body.eventId;
             const user: User = req.user;
-            const userId = req.params.userId;
-
+            const userId = req.body.userId;
+            const username = req.body.username;
             const eventController = await EventController.getInstance();
             const event = await eventController.getById(eventId);
 
             if (event != null) {
                 if (event.user.id == user.id || user.userType == UserType.ADMIN || user.userType == UserType.SUPER_ADMIN) {
-                    const event2 = eventController.addParticipant(eventId, userId);
+                    const event2 = eventController.addParticipant(eventId, username, userId);
                     res.json(event2);
                 } else {
                     res.status(400).json("Error: user are not the creator of this event or admin")
@@ -89,26 +89,26 @@ eventRouter.get('/:eventId', async (req, res) => {
     }
 });
 
-eventRouter.get('/getEventWithUserLocation', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/getEventWithUserLocation/:userLocationX/:userLocationY/:range', ensureLoggedIn, async (req, res) => {
     try {
-        const userLocationX = req.body.userLocationX;
-        const userLocationY = req.body.userLocationy;
-        const range = req.body.range;
+        const userLocationX = req.params.userLocationX;
+        const userLocationY = req.params.userLocationY;
+        const range = req.params.range;
         const eventController = await EventController.getInstance();
-        let events = await eventController.getEventWithLocation(userLocationX,userLocationY,range);
+        let events = await eventController.getEventWithLocation(Number(userLocationX),Number(userLocationY),Number(range));
         res.json(events);
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
-eventRouter.get('/getEventWithUserLocationNotEnd', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/getEventWithUserLocationNotEnd/:userLocationX/:userLocationY/:range', ensureLoggedIn, async (req, res) => {
     try {
-        const userLocationX = req.body.userLocationX;
-        const userLocationY = req.body.userLocationy;
-        const range = req.body.range;
+        const userLocationX = req.params.userLocationX;
+        const userLocationY = req.params.userLocationY;
+        const range = req.params.range;
         const eventController = await EventController.getInstance();
-        let events = await eventController.getEventWithLocationNotEnd(userLocationX,userLocationY,range);
+        let events = await eventController.getEventWithLocationNotEnd(Number(userLocationX),Number(userLocationY),Number(range));
         res.json(events);
     } catch (err) {
         res.status(400).json(err);
@@ -121,8 +121,8 @@ eventRouter.get('/userRechercheNameEvent/:userRecherche', ensureLoggedIn, async 
         const events = await eventController.getWithNameRecherche(req.params.userRecherche)
         res.json(events)
     }catch (err) {
-    res.status(400).json(err);
-}
+        res.status(400).json(err);
+    }
 })
 
 eventRouter.delete('/:eventId', ensureLoggedIn, async (req, res) => {
@@ -152,10 +152,10 @@ eventRouter.delete('/:eventId', ensureLoggedIn, async (req, res) => {
     }
 });
 
-eventRouter.delete('/participant/:userId', ensureLoggedIn, async (req, res) => {
+eventRouter.delete('/participant/:eventId/:userId', ensureLoggedIn, async (req, res) => {
     try {
         if (req.user instanceof User){
-            const eventId = req.body.eventId;
+            const eventId = req.params.eventId;
             const user: User = req.user;
             const userId = req.params.userId;
 
@@ -165,7 +165,7 @@ eventRouter.delete('/participant/:userId', ensureLoggedIn, async (req, res) => {
             if (event != null){
                 if (event.user.id == user.id || user.userType == UserType.ADMIN || user.userType == UserType.SUPER_ADMIN){
                     const eventController = await EventController.getInstance();
-                    const event = eventController.removeParticipant(req.body.eventId, userId);
+                    const event = eventController.removeParticipant(eventId, userId);
                     res.json(event);
                 }else{
                     res.status(300).json("Error: user are not the creator of this event or admin")
@@ -186,7 +186,7 @@ eventRouter.put('/:eventId', ensureLoggedIn, async (req, res) => {
 
             const eventId = req.body.eventId;
             const user: User = req.user;
-            const userId = req.params.userId;
+            const userId = req.body.userId;
 
             const eventController = await EventController.getInstance();
 
