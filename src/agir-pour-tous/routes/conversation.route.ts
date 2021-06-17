@@ -16,7 +16,7 @@ conversationRouter.get("/:conversationId", ensureLoggedIn, async (req, res) => {
     }
 });
 
-conversationRouter.get("/:conversationId/message", ensureLoggedIn, async (req, res) => {
+conversationRouter.get("/:conversationId/messages", ensureLoggedIn, async (req, res) => {
     try {
         const conversationId = req.params.conversationId;
         const conversationController = ConversationController.getInstance();

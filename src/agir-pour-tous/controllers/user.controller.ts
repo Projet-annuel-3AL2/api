@@ -53,37 +53,28 @@ export class UserController {
     public async getConversations(id: string): Promise<Conversation[]> {
         return [].concat(await this.getOrganisationConversations(id))
             .concat(await this.getGroupConversations(id))
-            .concat(await this.getFriendOneConversations(id))
-            .concat(await this.getFriendTwoConversations(id))
+            .concat(await this.getFriendshipConversations(id))
             .sort((a, b) => a.getTime() - b.getTime());
     }
 
     private async getOrganisationConversations(id: string): Promise<Conversation[]> {
         return await this.conversationRepository
             .createQueryBuilder()
-            .leftJoin("Conversation.organisation", "Organisation")
-            .leftJoin("Organisation.members", "OrganisationMembership")
-            .leftJoin("OrganisationMembership.user", "OrganisationMember")
+            .leftJoinAndSelect("Conversation.organisation", "Organisation")
+            .leftJoinAndSelect("Organisation.members", "OrganisationMembership")
+            .leftJoinAndSelect("OrganisationMembership.user", "OrganisationMember")
             .where("OrganisationMember.id=:id", {id})
             .getMany();
     }
 
-    private async getFriendTwoConversations(id: string): Promise<Conversation[]>{
+    private async getFriendshipConversations(id: string): Promise<Conversation[]>{
         return await this.conversationRepository
             .createQueryBuilder()
-            .leftJoin("Conversation.friendship", "Friendship")
-            .leftJoin("Friendship.friendTwo", "FriendTwo")
-            .where("FriendTwo.id=:id", {id})
-            .leftJoin("Conversation.messages", "Message")
-            .getMany()
-    }
-
-    private async getFriendOneConversations(id: string): Promise<Conversation[]>{
-        return await this.conversationRepository
-            .createQueryBuilder()
-            .leftJoin("Conversation.friendship", "Friendship")
-            .leftJoin("Friendship.friendOne", "FriendOne")
+            .leftJoinAndSelect("Conversation.friendship", "Friendship")
+            .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
+            .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
             .where("FriendOne.id=:id", {id})
+            .orWhere("FriendTwo.id=:id", {id})
             .leftJoin("Conversation.messages", "Message")
             .getMany()
     }
@@ -91,9 +82,9 @@ export class UserController {
     private async getGroupConversations(id: string): Promise<Conversation[]>{
         return await this.conversationRepository
             .createQueryBuilder()
-            .leftJoin("Conversation.group", "Group")
-            .leftJoin("Group.members", "GroupMembership")
-            .leftJoin("GroupMembership.user","GroupMember")
+            .leftJoinAndSelect("Conversation.group", "Group")
+            .leftJoinAndSelect("Group.members", "GroupMembership")
+            .leftJoinAndSelect("GroupMembership.user","GroupMember")
             .where("GroupMember.id=:id", {id})
             .leftJoin("Conversation.messages", "Message")
             .getMany();

@@ -28,6 +28,7 @@ export class ConversationController {
 
     public async getMessages(id: string): Promise<Message[]> {
         return this.messageRepository.createQueryBuilder()
+            .leftJoinAndSelect("Message.user", "User")
             .leftJoin("Message.conversation", "Conversation")
             .where("Conversation.id=:id", {id})
             .orderBy("Message.createdAt", "ASC")
@@ -35,6 +36,7 @@ export class ConversationController {
     }
     public async getLastMessage(id: string): Promise<Message> {
         return this.messageRepository.createQueryBuilder()
+            .leftJoinAndSelect("Message.user","User")
             .leftJoin("Message.conversation", "Conversation")
             .where("Conversation.id=:id", {id})
             .orderBy("Message.createdAt", "ASC")
