@@ -1,4 +1,4 @@
-import {BeforeInsert, Entity, ManyToOne, OneToOne} from "typeorm";
+import {BeforeInsert, Entity, JoinColumn, ManyToOne, OneToOne} from "typeorm";
 import {User} from "./user.model";
 import {Conversation} from "./conversation.model";
 
@@ -9,6 +9,7 @@ export class Friendship {
     @ManyToOne(() => User, user => user.friendsTwo, {primary: true})
     friendTwo: User;
     @OneToOne(() => Conversation, conversation => conversation, {cascade: true})
+    @JoinColumn()
     conversation: Conversation;
 
     @BeforeInsert()
