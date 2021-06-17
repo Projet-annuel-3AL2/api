@@ -14,6 +14,10 @@ userRouter.post("/", ensureAdminLoggedIn, async (req, res) => {
     }
 });
 
+userRouter.get("/me", async (req, res) => {
+    res.json(req.user);
+});
+
 userRouter.get("/", async (req, res) => {
     const userController = await UserController.getInstance();
     res.json(await userController.getAll());

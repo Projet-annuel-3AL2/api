@@ -30,7 +30,16 @@ export class ConversationController {
         return this.messageRepository.createQueryBuilder()
             .leftJoin("Message.conversation", "Conversation")
             .where("Conversation.id=:id", {id})
+            .orderBy("Message.createdAt", "ASC")
             .getMany();
+    }
+    public async getLastMessage(id: string): Promise<Message> {
+        return this.messageRepository.createQueryBuilder()
+            .leftJoin("Message.conversation", "Conversation")
+            .where("Conversation.id=:id", {id})
+            .orderBy("Message.createdAt", "ASC")
+            .limit(1)
+            .getOne();
     }
 
     public async sendMessage(user: User, conversation: Conversation, props: MessageProps): Promise<Message> {
