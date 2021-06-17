@@ -63,7 +63,7 @@ userRouter.get("/:userId/conversations", ensureLoggedIn, isAskedUser, async (req
     try {
         const userId = req.params.userId;
         const userController = UserController.getInstance();
-        const conversations = await userController.getConversations(userId)
+        const conversations = await userController.getConversations(userId);
         res.json(conversations);
     } catch (err) {
         res.status(400).json(err);
