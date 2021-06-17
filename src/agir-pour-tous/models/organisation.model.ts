@@ -4,7 +4,6 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity, JoinColumn,
-    ManyToMany,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -36,7 +35,7 @@ export class Organisation {
     @Length(5, 30)
     @Column({nullable: false, unique: true})
     name: string;
-    @ManyToMany(() => OrganisationMembership, user => user.organisation)
+    @OneToMany(() => OrganisationMembership, user => user.organisation)
     members: OrganisationMembership[];
     @OneToMany(() => Event, user => user.organisation, {cascade: true})
     events: Event[];
