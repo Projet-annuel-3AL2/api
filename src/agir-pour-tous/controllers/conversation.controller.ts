@@ -34,12 +34,13 @@ export class ConversationController {
             .orderBy("Message.createdAt", "ASC")
             .getMany();
     }
+
     public async getLastMessage(id: string): Promise<Message> {
         return this.messageRepository.createQueryBuilder()
             .leftJoinAndSelect("Message.user","User")
             .leftJoin("Message.conversation", "Conversation")
             .where("Conversation.id=:id", {id})
-            .orderBy("Message.createdAt", "ASC")
+            .orderBy("Message.createdAt", "DESC")
             .limit(1)
             .getOne();
     }
