@@ -51,10 +51,11 @@ export class UserController {
     }
 
     public async getConversations(id: string): Promise<Conversation[]> {
+
         return [].concat(await this.getOrganisationConversations(id))
             .concat(await this.getGroupConversations(id))
             .concat(await this.getFriendshipConversations(id))
-            .sort((a, b) => a.getTime() - b.getTime());
+            .sort((a:Conversation, b:Conversation) => a.messages[a.messages?.length-1]?.createdAt.getTime() - b.messages[b.messages?.length-1]?.createdAt.getTime());
     }
 
     private async getOrganisationConversations(id: string): Promise<Conversation[]> {
