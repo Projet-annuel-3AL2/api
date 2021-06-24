@@ -54,6 +54,15 @@ export class PostController {
             .getMany();
     }
 
+    public async isLiked(postId: string, userId: string): Promise<boolean> {
+        return await this.postRepository
+            .createQueryBuilder()
+            .leftJoin("Post.likes", "User")
+            .where("Post.postId=:postId", {postId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne() !== undefined;
+    }
+
     public async getTimeline(userId: string, offset: number, limit: number): Promise<Post[]> {
         console.log(await this.getOwnPosts(userId))
         return [].concat(await this.getOwnPosts(userId))
