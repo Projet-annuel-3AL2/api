@@ -46,21 +46,33 @@ export class PostController {
         return this.getById(postId);
     }
 
-    public async getLikes(postId: string): Promise<Post[]> {
-        return await this.postRepository
-            .createQueryBuilder()
-            .leftJoin("Post.likes", "User")
-            .where("Post.postId=:postId", {postId})
+    public async getLikes(postId: string): Promise<User[]> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.likedPosts", "Post")
+            .where("Post.id=:postId", {postId})
             .getMany();
     }
 
     public async isLiked(postId: string, userId: string): Promise<boolean> {
-        return await this.postRepository
-            .createQueryBuilder()
+        return await this.postRepository.createQueryBuilder()
             .leftJoin("Post.likes", "User")
-            .where("Post.postId=:postId", {postId})
+            .where("Post.id=:postId", {postId})
             .andWhere("User.id=:userId", {userId})
             .getOne() !== undefined;
+    }
+
+    public async likePost(postId, userId: string) {
+        await this.postRepository.createQueryBuilder()
+            .relation("likes")
+            .of(postId)
+            .add(userId);
+    }
+
+    public async dislikePost(postId: string, userId: string) {
+        await this.postRepository.createQueryBuilder()
+            .relation("likes")
+            .of(postId)
+            .remove(userId);
     }
 
     public async getTimeline(userId: string, offset: number, limit: number): Promise<Post[]> {

@@ -58,6 +58,32 @@ postRouter.put('/:postId', ensureLoggedIn, async (req, res) => {
     }
 });
 
+postRouter.get("/:postId/like", async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const userId = (req.user as User).id;
+        const postController = PostController.getInstance();
+        const likes = await postController.likePost(postId, userId);
+        res.json(likes);
+    } catch (err) {
+        console.log(err)
+        res.status(400).json(err);
+    }
+});
+
+postRouter.delete("/:postId/like", async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const userId = (req.user as User).id;
+        const postController = PostController.getInstance();
+        const likes = await postController.dislikePost(postId, userId);
+        res.json(likes);
+    } catch (err) {
+        console.log(err)
+        res.status(400).json(err);
+    }
+});
+
 postRouter.get("/:postId/likes", async (req, res) => {
     try {
         const postId = req.params.postId;
@@ -89,7 +115,6 @@ postRouter.get("/timeline/:offset/:limit", async (req, res) => {
         const posts = await postController.getTimeline((req.user as User).id, offset, limit);
         res.json(posts);
     }catch (err) {
-        console.log(err)
         res.status(400).json(err);
     }
 });
