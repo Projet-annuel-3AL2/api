@@ -8,7 +8,7 @@ const postRouter = express.Router();
 postRouter.post('/', ensureLoggedIn, async (req, res) => {
     try {
         const postController = PostController.getInstance();
-        const post = postController.create(req.user as User, req.body);
+        const post = await postController.create(req.user as User, req.body);
         res.json(post);
     } catch (err) {
         res.status(400).json(err);
@@ -65,6 +65,20 @@ postRouter.get("/:postId/likes", async (req, res) => {
         const likes = postController.getLikes(postId)
         res.json(likes);
     } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+postRouter.get("/timeline/:offset/:limit", async (req, res) => {
+    try{
+        const offset=parseInt(req.params.offset);
+        const limit=parseInt(req.params.limit);
+        const postController = PostController.getInstance();
+        const posts = await postController.getTimeline((req.user as User).id, offset, limit);
+        console.log(posts)
+        res.json(posts);
+    }catch (err) {
+        console.log(err)
         res.status(400).json(err);
     }
 });

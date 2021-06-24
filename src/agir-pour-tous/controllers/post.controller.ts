@@ -47,10 +47,46 @@ export class PostController {
     }
 
     public async getLikes(postId: string): Promise<Post[]> {
-        return await getRepository(Post)
+        return await this.postRepository
             .createQueryBuilder()
             .leftJoin("Post.likes", "User")
             .where("Post.postId=:postId", {postId})
+            .getMany();
+    }
+
+    public async getTimeline(userId: string, offset: number, limit: number): Promise<Post[]> {
+        console.log(await this.getOwnPosts(userId))
+        return [].concat(await this.getOwnPosts(userId))
+            .concat(await this.getFriendOnePosts(userId))
+            .concat(await this.getFriendTwoPosts(userId))
+            .sort((a: Post, b: Post) => b.createdAt.getTime() - a.createdAt.getTime());
+    }
+
+    private getOwnPosts(userId: string):Promise<Post[]>{
+        return this.postRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Post.creator","User")
+            .where("User.id=:userId",{userId})
+            .getMany();
+    }
+
+    private getFriendOnePosts(userId: string): Promise<Post[]>{
+        return this.postRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Post.creator","User")
+            .leftJoin("User.friendsOne","FriendOne")
+            .leftJoin("FriendOne.friendTwo","FriendTwo")
+            .where("FriendTwo.id=:userId",{userId})
+            .getMany();
+    }
+
+    private getFriendTwoPosts(userId: string): Promise<Post[]>{
+        return this.postRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Post.creator","User")
+            .leftJoin("User.friendsTwo","FriendTwo")
+            .leftJoin("FriendTwo.friendOne","FriendOne")
+            .where("FriendOne.id=:userId",{userId})
             .getMany();
     }
 }
