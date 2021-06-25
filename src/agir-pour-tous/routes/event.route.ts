@@ -73,6 +73,16 @@ eventRouter.get('/:eventId', async (req, res) => {
     }
 });
 
+eventRouter.get('/fullEvent/:eventId', async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = await EventController.getInstance();
+        const event = await eventController.getFullEvent(eventId);
+        res.status(200).json(event);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
 eventRouter.get('/:eventId/getMembers', async (req, res) => {
     try {
         const eventId = req.params.eventId;

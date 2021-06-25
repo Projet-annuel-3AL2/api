@@ -120,4 +120,14 @@ export class EventController{
             relations: ['participants']
         });
     }
+
+    async getFullEvent(eventId: string): Promise<Event> {
+        return await this.eventRepository.findOne({
+            where: {
+                id: eventId
+            },
+            relations: ['participants','category', 'organisation','user']
+        })
+
+    }
 }
