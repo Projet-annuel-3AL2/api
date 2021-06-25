@@ -41,12 +41,21 @@ export class OrganisationController {
         return await this.organisationRepository.find();
     }
 
-    public async getSuggestionOrganisation() {
+    public async getSuggestionOrganisation(): Promise<Organisation[]> {
         return await this.organisationRepository.find({
             order: {
                 createdAt: "DESC"
             },
             take: 3
+        })
+    }
+
+    public async getMembership(organisationName: string): Promise<Organisation> {
+        return await this.organisationRepository.findOne({
+            where: {
+                name: organisationName
+            },
+            relations: ['members', 'members.user']
         })
     }
     public async delete(organisationName: string): Promise<void> {

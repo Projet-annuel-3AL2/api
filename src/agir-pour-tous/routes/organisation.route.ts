@@ -61,12 +61,12 @@ organisationRouter.put('/:organisationName', ensureLoggedIn, isAskedUser, async 
     }
 });
 
-organisationRouter.get("/:organisationName/posts", async (req, res) => {
+organisationRouter.get("/getMembership/:organisationName", async (req, res) => {
     try {
         const organisationName = req.params.organisationName;
-        const organisationController = OrganisationController.getInstance();
-        const posts = organisationController.getPosts(organisationName)
-        res.json(posts);
+        const organisationController = await OrganisationController.getInstance();
+        const organisation = await organisationController.getMembership(organisationName);
+        res.json(organisation);
     } catch (err) {
         res.status(400).json(err);
     }
