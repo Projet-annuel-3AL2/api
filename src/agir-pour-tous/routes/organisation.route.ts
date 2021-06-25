@@ -72,6 +72,17 @@ organisationRouter.get("/:organisationName/posts", async (req, res) => {
     }
 });
 
+organisationRouter.get("/suggestionOrganisation", async (req, res) => {
+    try {
+        const organisationController = await OrganisationController.getInstance();
+        const organisations = await organisationController.getSuggestionOrganisation();
+        console.log(organisations);
+        res.status(200).json(organisations);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 groupRouter.post("/:groupName/posts", async (req, res) => {
     try {
         const organisationName = req.params.groupName;

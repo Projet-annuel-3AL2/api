@@ -16,9 +16,9 @@ categoryRouter.post("/", ensureLoggedIn, async (req, res) => {
 
 categoryRouter.get("/", async (req, res) => {
     try {
-        const categoryController = CategoryController.getInstance();
-        const category = categoryController.getAll();
-        res.json(category);
+        const categoryController = await CategoryController.getInstance();
+        const category = await categoryController.getAll();
+        res.status(200).json(category);
     } catch (err) {
         res.status(404).json(err);
     }

@@ -6,6 +6,7 @@ import {Organisation, OrganisationProps} from "../models/organisation.model";
 import {OrganisationMembership} from "../models/organisation_membership.model";
 
 export class OrganisationController {
+
     private static instance: OrganisationController;
 
     private organisationRepository: Repository<Organisation>;
@@ -40,6 +41,14 @@ export class OrganisationController {
         return await this.organisationRepository.find();
     }
 
+    public async getSuggestionOrganisation() {
+        return await this.organisationRepository.find({
+            order: {
+                createdAt: "DESC"
+            },
+            take: 3
+        })
+    }
     public async delete(organisationName: string): Promise<void> {
         await this.organisationRepository.softDelete(organisationName);
     }

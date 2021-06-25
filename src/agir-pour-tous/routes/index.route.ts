@@ -12,6 +12,7 @@ import {postRouter} from "./post.route";
 import {categoryRouter} from "./category.route";
 import {friendshipRouter} from "./friendship.route";
 import {conversationRouter} from "./conversation.route";
+import {eventRouter} from "./event.route";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -37,5 +38,6 @@ export function buildAPTRoutes() {
     router.use("/post", postRouter);
     router.use("/friendship", friendshipRouter);
     router.use("/conversation", conversationRouter);
+    router.use("/event", eventRouter);
     return router;
 }

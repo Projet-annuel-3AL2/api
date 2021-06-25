@@ -1,4 +1,4 @@
-import {getRepository, Repository} from "typeorm";
+import {getRepository, MoreThan, Repository} from "typeorm";
 import {Event, EventProps} from "../models/event.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
@@ -29,10 +29,13 @@ export class EventController{
     }
 
     public getAllNotEnd(): Promise<Event[]> {
-        const dateNow = Date.now();
-        return this.eventRepository.createQueryBuilder()
-            .where("endDate >= :dateNow ", {dateNow})
-            .getMany();
+        const dateNow = new Date(Date.now());
+        return this.eventRepository.find({
+            where:{
+                endDate: MoreThan(dateNow)
+            },
+            relations: ['organisation', 'category']
+        })
     }
 
     public async create(user: User, props: EventProps) {

@@ -71,8 +71,8 @@ eventRouter.get('/', ensureLoggedIn, async (req, res) => {
 eventRouter.get('/notEndEvent', ensureLoggedIn, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
-        const event = eventController.getAllNotEnd();
-        res.json(event);
+        const events = await eventController.getAllNotEnd();
+        res.status(200).json(events);
     } catch (err) {
         res.status(400).json(err);
     }
