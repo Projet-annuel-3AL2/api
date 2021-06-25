@@ -58,11 +58,11 @@ export class EventController{
     }
 
 
-    public async addParticipant(eventId: string, username: string, userId:string): Promise<void> {
-        const event = await this.getById(eventId);
-        if(!event.participants.includes(await (UserController.getInstance().getById(username))) && await this.isEventNotFull(eventId)){
+    public async addParticipant(eventId: string, userId:string): Promise<void> {
+        const event = await this.getEventMembers(eventId);
+        if(!event.participants.includes(await (UserController.getInstance().getById(userId))) && await this.isEventNotFull(eventId)){
             return await this.eventRepository.createQueryBuilder()
-                .relation(User, "participants")
+                .relation(Event, "participants")
                 .of(eventId)
                 .add(userId);
         }
@@ -70,7 +70,7 @@ export class EventController{
 
     public async removeParticipant(eventId: string, userId: string): Promise<void> {
         return await this.eventRepository.createQueryBuilder()
-            .relation(User, "participants")
+            .relation(Event, "participants")
             .of(eventId)
             .remove(userId);
     }
@@ -103,12 +103,21 @@ export class EventController{
     }
 
     public async isEventNotFull(eventId: string): Promise<boolean> {
-        const event = await this.eventRepository.findOneOrFail(eventId);
+        const event = await this.getEventMembers(eventId);
         return event.participants.length < event.participantsLimit;
     }
 
     public async isNameNotUse(name): Promise<boolean> {
         const event = await this.getWithName(name);
         return event == null;
+    }
+
+    public async getEventMembers(eventId: string): Promise<Event> {
+        return await this.eventRepository.findOneOrFail({
+            where: {
+                id: eventId
+            },
+            relations: ['participants']
+        });
     }
 }
