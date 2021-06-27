@@ -15,7 +15,7 @@ export class OrganisationController {
         this.organisationRepository = getRepository(Organisation);
     }
 
-    public static getInstance(): OrganisationController {
+    public static async getInstance(): Promise<OrganisationController> {
         if (OrganisationController.instance === undefined) {
             OrganisationController.instance = new OrganisationController();
         }
@@ -34,7 +34,11 @@ export class OrganisationController {
     }
 
     public async getByName(organisationName: string): Promise<Organisation> {
-        return await this.organisationRepository.findOneOrFail(organisationName);
+        return await this.organisationRepository.findOneOrFail({
+            where: {
+                name: organisationName
+            }
+        });
     }
 
     public async getAll(): Promise<Organisation[]> {
@@ -50,12 +54,12 @@ export class OrganisationController {
         })
     }
 
-    public async getMembership(organisationName: string): Promise<Organisation> {
+    public async getFullOrganisation(organisationName: string): Promise<Organisation> {
         return await this.organisationRepository.findOne({
             where: {
                 name: organisationName
             },
-            relations: ['members', 'members.user']
+            relations: ['members', 'members.user', 'bannerPicture', 'events', "events.organisation", "events.category", "events.participants", "events.user"]
         })
     }
     public async delete(organisationName: string): Promise<void> {
