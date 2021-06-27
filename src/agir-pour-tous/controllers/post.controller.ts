@@ -2,6 +2,7 @@ import {getRepository, Repository} from "typeorm";
 import {Post, PostProps} from "../models/post.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
+import {Organisation} from "../models/organisation.model";
 
 export class PostController {
 
@@ -13,7 +14,7 @@ export class PostController {
         this.postRepository = getRepository(Post);
     }
 
-    public static getInstance(): PostController {
+    public static async getInstance(): Promise<PostController> {
         if (PostController.instance === undefined) {
             PostController.instance = new PostController();
         }
@@ -88,5 +89,13 @@ export class PostController {
             .leftJoin("FriendTwo.friendOne","FriendOne")
             .where("FriendOne.id=:userId",{userId})
             .getMany();
+    }
+
+    async getAllWithOrgaId(orga: Organisation): Promise<Post[]> {
+        return await this.postRepository.find({
+            where:{
+                organisation: orga
+            }
+        })
     }
 }
