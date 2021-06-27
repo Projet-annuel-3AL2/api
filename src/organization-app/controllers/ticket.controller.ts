@@ -45,7 +45,7 @@ export class TicketController {
         await this.ticketRepository.createQueryBuilder()
             .relation(Ticket, "assignee")
             .of(id)
-            .add(userId);
+            .set(userId);
     }
 
     public async getComments(ticketId: string): Promise<Comment[]> {

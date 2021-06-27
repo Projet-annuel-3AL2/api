@@ -14,6 +14,10 @@ userRouter.post("/", ensureAdminLoggedIn, async (req, res) => {
     }
 });
 
+userRouter.get("/me", async (req, res) => {
+    res.json(req.user);
+});
+
 userRouter.get("/", async (req, res) => {
     const userController = await UserController.getInstance();
     res.json(await userController.getAll());
@@ -43,16 +47,11 @@ userRouter.put("/set-admin/:userId", ensureAdminLoggedIn, async (req, res) => {
 });
 
 userRouter.get("/:userId/projects", async (req, res) => {
-    const userId = req.params.userId;
-    if (userId === undefined) {
-        res.status(400).end();
-    }
     const userController = await UserController.getInstance();
     try {
-        const projects = await userController.getProjects(userId);
+        const projects = await userController.getProjects(req.params.userId);
         res.json(projects).status(200).end();
     } catch (err) {
-        console.log(err)
         res.status(404).end();
     }
 });
