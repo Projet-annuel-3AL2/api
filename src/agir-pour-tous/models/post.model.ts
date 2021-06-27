@@ -33,7 +33,7 @@ export class Post {
     id: string;
     @ManyToOne(() => User, user => user.createdPosts, {eager: true})
     creator: User;
-    @ManyToOne(() => Organisation, organisation => organisation.posts)
+    @ManyToOne(() => Organisation, organisation => organisation.posts, {eager: true})
     organisation: Organisation;
     @ManyToOne(() => Group, group => group.posts, {eager: true})
     group: Group;
@@ -41,7 +41,7 @@ export class Post {
     sharedEvent: Event;
     @OneToMany(() => Post, post => post.sharesPost)
     sharedPosts: Post[];
-    @ManyToOne(() => Post, post => post.sharedPosts)
+    @ManyToOne(() => Post, post => post.sharedPosts, {eager: true})
     sharesPost: Post;
     @ManyToMany(() => User, user => user.likedPosts)
     likes: User[];

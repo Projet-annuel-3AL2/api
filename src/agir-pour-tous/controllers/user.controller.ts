@@ -43,7 +43,13 @@ export class UserController {
             where: {
                 username: username
             },
-            relations: ['eventsParticipation', 'eventsParticipation.organisation', "eventsParticipation.category", "eventsParticipation.participants", "eventsParticipation.user"]
+            relations: [
+                'eventsParticipation',
+                'eventsParticipation.organisation',
+                "eventsParticipation.category",
+                "eventsParticipation.participants",
+                "eventsParticipation.user"
+            ]
         })
     }
 
