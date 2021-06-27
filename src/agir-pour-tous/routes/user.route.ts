@@ -20,9 +20,9 @@ userRouter.get('/:userId', async (req, res) => {
         const userId = req.params.userId;
         const userController = await UserController.getInstance();
         const user = await userController.getById(userId);
-        res.json(user);
+        res.status(200).json(user);
     } catch (err) {
-        res.status(404).json(err);
+        res.status(403).json(err);
     }
 });
 
@@ -33,7 +33,18 @@ userRouter.get('/getWithUsername/:username', async (req, res) => {
         const user = await userController.getWithUsername(username);
         res.status(200).json(user);
     } catch (err) {
-        res.status(404).json(err);
+        res.status(403).json(err);
+    }
+});
+
+userRouter.get('/getFullUser/:username', async (req, res) => {
+    try {
+        const username = req.params.username;
+        const userController = await UserController.getInstance();
+        const user = await userController.getFullUser(username);
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(403).json(err);
     }
 });
 

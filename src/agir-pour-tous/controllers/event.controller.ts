@@ -20,12 +20,12 @@ export class EventController{
         return EventController.instance;
     }
 
-    public getAll(): Promise<Event[]> {
-        return this.eventRepository.find();
+    public async getAll(): Promise<Event[]> {
+        return await this.eventRepository.find();
     }
 
-    public getById(id: string): Promise<Event> {
-        return this.eventRepository.findOneOrFail(id);
+    public async getById(id: string): Promise<Event> {
+        return await this.eventRepository.findOneOrFail(id);
     }
 
     public getAllNotEnd(): Promise<Event[]> {
@@ -54,7 +54,7 @@ export class EventController{
 
     public async update(eventId: string, props: EventProps): Promise<Event> {
         await this.eventRepository.update(eventId, props);
-        return this.getById(eventId);
+        return await this.getById(eventId);
     }
 
 

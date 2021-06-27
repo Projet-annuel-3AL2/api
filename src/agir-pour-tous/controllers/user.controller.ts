@@ -34,7 +34,16 @@ export class UserController {
             where: {
                 username: username
             },
-            relations: ['createdPosts']
+            relations: []
+        })
+    }
+
+    public async getFullUser(username: string): Promise<User> {
+        return await this.userRepository.findOne({
+            where: {
+                username: username
+            },
+            relations: ['eventsParticipation', 'eventsParticipation.organisation', "eventsParticipation.category", "eventsParticipation.participants", "eventsParticipation.user"]
         })
     }
 

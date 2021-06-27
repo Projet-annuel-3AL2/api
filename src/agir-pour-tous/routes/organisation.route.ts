@@ -9,7 +9,7 @@ const organisationRouter = express.Router();
 
 organisationRouter.post('/', async (req, res) => {
     try {
-        const organisationController = OrganisationController.getInstance();
+        const organisationController = await OrganisationController.getInstance();
         const group = await organisationController.create(req.user as User, req.body);
         res.json(group);
     } catch (err) {
@@ -20,7 +20,7 @@ organisationRouter.post('/', async (req, res) => {
 
 organisationRouter.get('/', async (req, res) => {
     try {
-        const organisationController = OrganisationController.getInstance();
+        const organisationController = await OrganisationController.getInstance();
         const organisations = await organisationController.getAll();
         res.json(organisations);
     } catch (err) {
@@ -31,7 +31,7 @@ organisationRouter.get('/', async (req, res) => {
 organisationRouter.get('/:organisationName', async (req, res) => {
     try {
         const organisationName = req.params.organisationName;
-        const organisationController = OrganisationController.getInstance();
+        const organisationController = await OrganisationController.getInstance();
         const group = await organisationController.getByName(organisationName);
         res.json(group);
     } catch (err) {
@@ -42,7 +42,7 @@ organisationRouter.get('/:organisationName', async (req, res) => {
 organisationRouter.delete('/:organisationName', ensureLoggedIn, async (req, res) => {
     try {
         const organisationName = req.params.organisationName;
-        const organisationController = OrganisationController.getInstance();
+        const organisationController = await OrganisationController.getInstance();
         await organisationController.delete(organisationName);
         res.status(204).end();
     } catch (err) {
@@ -53,7 +53,7 @@ organisationRouter.delete('/:organisationName', ensureLoggedIn, async (req, res)
 organisationRouter.put('/:organisationName', ensureLoggedIn, isAskedUser, async (req, res) => {
     try {
         const organisationName = req.params.organisationName;
-        const organisationController = OrganisationController.getInstance();
+        const organisationController = await OrganisationController.getInstance();
         await organisationController.update(organisationName, {...req.body});
         res.status(204).end();
     } catch (err) {
@@ -61,19 +61,20 @@ organisationRouter.put('/:organisationName', ensureLoggedIn, isAskedUser, async 
     }
 });
 
-organisationRouter.get("/getMembership/:organisationName", async (req, res) => {
+organisationRouter.get("/getFullOrganisation/:organisationName", async (req, res) => {
     try {
         const organisationName = req.params.organisationName;
         const organisationController = await OrganisationController.getInstance();
-        const organisation = await organisationController.getMembership(organisationName);
-        res.json(organisation);
+        const organisation = await organisationController.getFullOrganisation(organisationName);
+        res.status(200).json(organisation);
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
-organisationRouter.get("/suggestionOrganisation", async (req, res) => {
+organisationRouter.get("/suggestion/:id", async (req, res) => {
     try {
+        const id = req.params.id;
         const organisationController = await OrganisationController.getInstance();
         const organisations = await organisationController.getSuggestionOrganisation();
         console.log(organisations);
@@ -86,7 +87,7 @@ organisationRouter.get("/suggestionOrganisation", async (req, res) => {
 groupRouter.post("/:groupName/posts", async (req, res) => {
     try {
         const organisationName = req.params.groupName;
-        const organisationController = OrganisationController.getInstance();
+        const organisationController = await OrganisationController.getInstance();
         const organisation = await organisationController.getByName(organisationName);
         const post = await organisationController.addPost(organisation, req.user as User, req.body)
         res.json(post);

@@ -2,6 +2,7 @@ import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {User, UserType} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
+import {OrganisationController} from "../controllers/organisation.controller";
 
 const eventRouter = express.Router();
 
@@ -45,7 +46,7 @@ eventRouter.post('/addParticipant', ensureLoggedIn, async (req, res) => {
 eventRouter.get('/', ensureLoggedIn, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
-        const event = eventController.getAll();
+        const event = await eventController.getAll();
         res.json(event);
     } catch (err) {
         res.status(400).json(err);
@@ -205,7 +206,6 @@ eventRouter.put('/:eventId', ensureLoggedIn, async (req, res) => {
         res.status(400).json(err);
     }
 });
-
 
 export {
     eventRouter
