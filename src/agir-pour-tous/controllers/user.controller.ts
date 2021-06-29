@@ -75,6 +75,39 @@ export class UserController {
             .getMany();
     }
 
+    public async blockUser(currentUserId, id: string): Promise<void> {
+        await this.userRepository.createQueryBuilder()
+            .relation("blockedUsers")
+            .of(currentUserId)
+            .add(id);
+    }
+
+    public async unblockUser(currentUserId, id: string): Promise<void> {
+        await this.userRepository.createQueryBuilder()
+            .relation("blockedUsers")
+            .of(currentUserId)
+            .remove(id);
+    }
+
+    public async isBlocked(currentUserId: string, userId: string): Promise<boolean> {
+        return (await this.userRepository.createQueryBuilder()
+            .where("User.blockedUsers=:userId", {userId})
+            .andWhere("User.blockers=:currentUserId", {currentUserId})
+            .getOne() !== undefined);
+    }
+
+    public async reportUser(userReporter: User, reportedUser: User, props: ReportProps): Promise<Report> {
+        const report = getRepository(Report).create({...props, userReporter, reportedUser});
+        return await getRepository(Report).save(report);
+    }
+
+    public async getReports(username: string): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoin("Report.reportedUser", "ReportedUser")
+            .where("ReportedUser.username=:username", {username})
+            .getMany();
+    }
+
     private async getOrganisationConversations(username: string): Promise<Conversation[]> {
         return await this.conversationRepository
             .createQueryBuilder()
@@ -105,39 +138,6 @@ export class UserController {
             .leftJoinAndSelect("GroupMembership.user", "GroupMember")
             .where("GroupMember.username=:username", {username})
             .leftJoin("Conversation.messages", "Message")
-            .getMany();
-    }
-
-    public async blockUser(currentUserId, id: string): Promise<void> {
-        await this.userRepository.createQueryBuilder()
-            .relation("blockedUsers")
-            .of(currentUserId)
-            .add(id);
-    }
-
-    public async unblockUser(currentUserId, id: string): Promise<void> {
-        await this.userRepository.createQueryBuilder()
-            .relation("blockedUsers")
-            .of(currentUserId)
-            .remove(id);
-    }
-
-    public async isBlocked(currentUserId: string, userId: string):Promise<boolean> {
-        return (await this.userRepository.createQueryBuilder()
-            .where("User.blockedUsers=:userId",{userId})
-            .andWhere("User.blockers=:currentUserId",{currentUserId})
-            .getOne() !== undefined);
-    }
-
-    public async reportUser(userReporter: User, reportedUser: User, props: ReportProps): Promise<Report>{
-        const report = getRepository(Report).create({...props, userReporter, reportedUser});
-        return await getRepository(Report).save(report);
-    }
-
-    public async getReports(username: string): Promise<Report[]> {
-        return await getRepository(Report).createQueryBuilder()
-            .leftJoin("Report.reportedUser","ReportedUser")
-            .where("ReportedUser.username=:username",{username})
             .getMany();
     }
 }

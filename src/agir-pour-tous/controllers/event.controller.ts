@@ -122,10 +122,10 @@ export class EventController {
             .getMany();
     }
 
-    public async getPosts(eventId: string): Promise<Post[]>{
+    public async getPosts(eventId: string): Promise<Post[]> {
         return await getRepository(Post).createQueryBuilder()
-            .leftJoin("Post.sharedEvent","Event")
-            .where("Event.id=:eventId",{eventId})
+            .leftJoin("Post.sharedEvent", "Event")
+            .where("Event.id=:eventId", {eventId})
             .getMany();
     }
 
@@ -136,8 +136,8 @@ export class EventController {
 
     public async getReports(postId: string): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
-            .leftJoin("Report.reportedEvent","ReportedEvent")
-            .where("ReportedEvent.postId=:postId",{postId})
+            .leftJoin("Report.reportedEvent", "ReportedEvent")
+            .where("ReportedEvent.postId=:postId", {postId})
             .getMany();
     }
 }

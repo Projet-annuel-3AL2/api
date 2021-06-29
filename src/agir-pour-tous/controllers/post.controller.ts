@@ -84,6 +84,18 @@ export class PostController {
             .sort((a: Post, b: Post) => b.createdAt.getTime() - a.createdAt.getTime());
     }
 
+    public async reportPost(userReporter: User, reportedPost: Post, props: ReportProps): Promise<Report> {
+        const report = getRepository(Report).create({...props, userReporter, reportedPost});
+        return await getRepository(Report).save(report);
+    }
+
+    public async getReports(postId: string): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoin("Report.reportedPost", "ReportedPost")
+            .where("ReportedPost.id=:postId", {postId})
+            .getMany();
+    }
+
     private getOwnPosts(userId: string): Promise<Post[]> {
         return this.postRepository
             .createQueryBuilder()
@@ -109,18 +121,6 @@ export class PostController {
             .leftJoin("User.friendsTwo", "FriendTwo")
             .leftJoin("FriendTwo.friendOne", "FriendOne")
             .where("FriendOne.id=:userId", {userId})
-            .getMany();
-    }
-
-    public async reportPost(userReporter: User, reportedPost: Post, props: ReportProps): Promise<Report> {
-        const report = getRepository(Report).create({...props, userReporter, reportedPost});
-        return await getRepository(Report).save(report);
-    }
-
-    public async getReports(postId: string): Promise<Report[]> {
-        return await getRepository(Report).createQueryBuilder()
-            .leftJoin("Report.reportedPost","ReportedPost")
-            .where("ReportedPost.id=:postId",{postId})
             .getMany();
     }
 }

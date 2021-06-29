@@ -93,7 +93,7 @@ userRouter.get("/:username/participation", async (req, res) => {
     }
 });
 
-userRouter.put("/:userId/block",ensureLoggedIn, isNotAskedUser, async (req, res) => {
+userRouter.put("/:userId/block", ensureLoggedIn, isNotAskedUser, async (req, res) => {
     try {
         const userId = req.params.userId;
         const currentUserId = (req.user as User).id;
@@ -105,7 +105,7 @@ userRouter.put("/:userId/block",ensureLoggedIn, isNotAskedUser, async (req, res)
     }
 });
 
-userRouter.delete("/:userId/unblock",ensureLoggedIn, isNotAskedUser, async (req, res) => {
+userRouter.delete("/:userId/unblock", ensureLoggedIn, isNotAskedUser, async (req, res) => {
     try {
         const userId = req.params.userId;
         const currentUserId = (req.user as User).id;
@@ -120,7 +120,7 @@ userRouter.delete("/:userId/unblock",ensureLoggedIn, isNotAskedUser, async (req,
 /**
  *  Is the given user blocked by the connected user
  */
-userRouter.get("/:userId/is-blocked",ensureLoggedIn, isNotAskedUser, async (req, res) => {
+userRouter.get("/:userId/is-blocked", ensureLoggedIn, isNotAskedUser, async (req, res) => {
     try {
         const userId = req.params.userId;
         const currentUserId = (req.user as User).id;
@@ -135,7 +135,7 @@ userRouter.get("/:userId/is-blocked",ensureLoggedIn, isNotAskedUser, async (req,
 /**
  *  Is the current user blocked by the given user
  */
-userRouter.get("/:userId/blocked",ensureLoggedIn, isNotAskedUser, async (req, res) => {
+userRouter.get("/:userId/blocked", ensureLoggedIn, isNotAskedUser, async (req, res) => {
     try {
         const userId = req.params.userId;
         const currentUserId = (req.user as User).id;

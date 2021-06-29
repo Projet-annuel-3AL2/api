@@ -105,16 +105,16 @@ export class OrganisationController {
 
     public async getReports(organisationId: string): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
-            .leftJoin("Report.reportedOrganisation","ReportedOrganisation")
-            .where("ReportedOrganisation.id=:organisationId",{organisationId})
+            .leftJoin("Report.reportedOrganisation", "ReportedOrganisation")
+            .where("ReportedOrganisation.id=:organisationId", {organisationId})
             .getMany();
     }
 
-    public async getMembers(organisationId: string): Promise<User[]>{
+    public async getMembers(organisationId: string): Promise<User[]> {
         return await getRepository(User).createQueryBuilder()
-            .leftJoin("User.organisations","OrganisationMembership")
-            .leftJoin("OrganisationMembership.organisation","Organisation")
-            .where("Organisation.id=:organisationId",{organisationId})
+            .leftJoin("User.organisations", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .where("Organisation.id=:organisationId", {organisationId})
             .getMany();
     }
 }
