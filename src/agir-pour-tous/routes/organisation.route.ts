@@ -151,6 +151,30 @@ organisationRouter.get("/:organisationId/members", ensureLoggedIn, async (req, r
     }
 });
 
+organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, /*isOrganisationAdmin,*/ async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const userId = req.params.userId;
+        const organisationController = OrganisationController.getInstance();
+        const members = await organisationController.removeMember(organisationId,userId);
+        res.json(members);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+organisationRouter.delete("/:organisationId/leave", ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const userId = (req.user as User).id;
+        const organisationController = OrganisationController.getInstance();
+        const members = await organisationController.removeMember(organisationId, userId);
+        res.json(members);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 /*
 organisationRouter.get("/suggestion/:id", async (req, res) => {
     try {

@@ -117,4 +117,14 @@ export class OrganisationController {
             .where("Organisation.id=:organisationId", {organisationId})
             .getMany();
     }
+
+    public async removeMember(organisationId: string, userId: string): Promise<void>{
+        await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("User.id=:userId", {userId})
+            .andWhere("Organisation.id=:organisationId",{organisationId})
+            .softDelete()
+            .execute();
+    }
 }
