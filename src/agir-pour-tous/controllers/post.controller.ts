@@ -2,6 +2,7 @@ import {getRepository, Repository} from "typeorm";
 import {Post, PostProps} from "../models/post.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
+import {Report, ReportProps} from "../models/report.model";
 
 export class PostController {
 
@@ -111,4 +112,15 @@ export class PostController {
             .getMany();
     }
 
+    public async reportPost(userReporter: User, reportedPost: Post, props: ReportProps) {
+        const report = getRepository(Report).create({...props, userReporter, reportedPost});
+        return await getRepository(Report).save(report);
+    }
+
+    public async getReports(postId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoin("Report.reportedPost","ReportedPost")
+            .where("ReportedPost.postId=:postId",{postId})
+            .getMany();
+    }
 }
