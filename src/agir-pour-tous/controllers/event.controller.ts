@@ -129,12 +129,12 @@ export class EventController {
             .getMany();
     }
 
-    public async reportEvent(userReporter: User, reportedEvent: Event, props: ReportProps) {
+    public async reportEvent(userReporter: User, reportedEvent: Event, props: ReportProps): Promise<Report> {
         const report = getRepository(Report).create({...props, userReporter, reportedEvent});
         return await getRepository(Report).save(report);
     }
 
-    public async getReports(postId: string) {
+    public async getReports(postId: string): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
             .leftJoin("Report.reportedEvent","ReportedEvent")
             .where("ReportedEvent.postId=:postId",{postId})

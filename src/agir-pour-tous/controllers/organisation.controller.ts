@@ -98,12 +98,12 @@ export class OrganisationController {
         return getRepository(Post).save(post);
     }
 
-    public async reportOrganisation(userReporter: User, reportedOrganisation: Organisation, props: ReportProps) {
+    public async reportOrganisation(userReporter: User, reportedOrganisation: Organisation, props: ReportProps): Promise<Report> {
         const report = getRepository(Report).create({...props, userReporter, reportedOrganisation});
         return await getRepository(Report).save(report);
     }
 
-    public async getReports(organisationId: string) {
+    public async getReports(organisationId: string): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
             .leftJoin("Report.reportedOrganisation","ReportedOrganisation")
             .where("ReportedOrganisation.id=:organisationId",{organisationId})

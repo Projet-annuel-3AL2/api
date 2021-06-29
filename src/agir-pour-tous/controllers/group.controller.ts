@@ -67,12 +67,12 @@ export class GroupController {
         return getRepository(Post).save(post);
     }
 
-    public async reportGroup(userReporter: User, reportedGroup: Group, props: ReportProps) {
+    public async reportGroup(userReporter: User, reportedGroup: Group, props: ReportProps): Promise<Report> {
         const report = getRepository(Report).create({...props, userReporter, reportedGroup});
         return await getRepository(Report).save(report);
     }
 
-    public async getReports(groupId: string) {
+    public async getReports(groupId: string): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
             .leftJoin("Report.reportedGroup","ReportedGroup")
             .where("ReportedGroup.id=:groupId",{groupId})

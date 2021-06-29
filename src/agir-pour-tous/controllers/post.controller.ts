@@ -112,12 +112,12 @@ export class PostController {
             .getMany();
     }
 
-    public async reportPost(userReporter: User, reportedPost: Post, props: ReportProps) {
+    public async reportPost(userReporter: User, reportedPost: Post, props: ReportProps): Promise<Report> {
         const report = getRepository(Report).create({...props, userReporter, reportedPost});
         return await getRepository(Report).save(report);
     }
 
-    public async getReports(postId: string) {
+    public async getReports(postId: string): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
             .leftJoin("Report.reportedPost","ReportedPost")
             .where("ReportedPost.id=:postId",{postId})
