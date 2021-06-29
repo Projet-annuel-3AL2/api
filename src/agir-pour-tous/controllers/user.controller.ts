@@ -51,7 +51,6 @@ export class UserController {
     }
 
     public async getConversations(username: string): Promise<Conversation[]> {
-
         return [].concat(await this.getOrganisationConversations(username))
             .concat(await this.getGroupConversations(username))
             .concat(await this.getFriendshipConversations(username))
