@@ -59,17 +59,6 @@ userRouter.put('/:username', ensureLoggedIn, isAskedUser, async (req, res) => {
     }
 });
 
-userRouter.get("/:username/posts", async (req, res) => {
-    try {
-        const username = req.params.username;
-        const userController = UserController.getInstance();
-        const posts = await userController.getPosts(username);
-        res.json(posts);
-    } catch (err) {
-        res.status(400).json(err);
-    }
-});
-
 userRouter.get("/:username/conversations", ensureLoggedIn, isAskedUser, async (req, res) => {
     try {
         const username = req.params.username;
