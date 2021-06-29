@@ -2,6 +2,13 @@ import {BeforeInsert, Entity, JoinColumn, ManyToOne, OneToOne} from "typeorm";
 import {User} from "./user.model";
 import {Conversation} from "./conversation.model";
 
+export enum FriendshipStatus {
+    NONE,
+    PENDING,
+    RECEIVED,
+    BEFRIENDED
+}
+
 @Entity()
 export class Friendship {
     @ManyToOne(() => User, user => user.friendsOne, {primary: true})

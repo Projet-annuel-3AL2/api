@@ -1,5 +1,5 @@
 import {getRepository, Repository} from "typeorm";
-import {Friendship} from "../models/friendship.model";
+import {Friendship, FriendshipStatus} from "../models/friendship.model";
 import {FriendRequest} from "../models/friend_request.model";
 import {User} from "../models/user.model";
 
@@ -49,5 +49,39 @@ export class FriendshipController {
             .andWhere("FriendTwo.username=:friendTwoUsername", {friendTwoUsername})
             .softDelete()
             .execute();
+    }
+
+    public async isFriendshipRequested(currentUsername: string, username: string): Promise<FriendshipStatus> {
+        if (await this.friendshipRepository.createQueryBuilder()
+            .leftJoin("Friendship.friendOne", "FriendOne")
+            .leftJoin("Friendship.friendTwo", "FriendTwo")
+            .where("FriendOne.id=:currentUsername AND FriendTwo.id=:username", {currentUsername, username})
+            .orWhere("FriendOne.id=:username AND FriendTwo.id=:currentUsername", {currentUsername, username})
+            .getOne() !== undefined) {
+            return FriendshipStatus.BEFRIENDED;
+        } else if (await this.friendRequestRepository.createQueryBuilder()
+            .where("sender=:currentUsername and username=:username", {currentUsername, username})
+            .getOne() !== undefined) {
+            return FriendshipStatus.PENDING;
+        } else if (await this.friendRequestRepository.createQueryBuilder()
+            .where("sender=:username and username=:currentUsername", {currentUsername, username})
+            .getOne() !== undefined) {
+            return FriendshipStatus.RECEIVED;
+        }
+        return FriendshipStatus.NONE;
+    }
+
+    public async sentFriendshipRequest(id: string): Promise<FriendRequest[]> {
+        return this.friendRequestRepository.createQueryBuilder()
+            .leftJoin("FriendRequest.sender", "Sender")
+            .where("Sender.id=:id", {id})
+            .getMany();
+    }
+
+    public async receivedFriendshipRequest(id: string): Promise<FriendRequest[]> {
+        return this.friendRequestRepository.createQueryBuilder()
+            .leftJoin("FriendRequest.user", "User")
+            .where("User.id=:id", {id})
+            .getMany();
     }
 }

@@ -6,6 +6,28 @@ import {UserController} from "../controllers/user.controller";
 
 const friendshipRouter = express.Router();
 
+friendshipRouter.get("/sent-friendship-request", ensureLoggedIn, async (req, res) => {
+    try {
+        const username = (req.user as User).id;
+        const friendshipController = FriendshipController.getInstance();
+        const friendship = await friendshipController.sentFriendshipRequest(username);
+        res.json(friendship);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+friendshipRouter.get("/received-friendship-request", ensureLoggedIn, async (req, res) => {
+    try {
+        const username = (req.user as User).id;
+        const friendshipController = FriendshipController.getInstance();
+        const friendship = await friendshipController.receivedFriendshipRequest(username);
+        res.json(friendship);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 friendshipRouter.post("/:username", ensureLoggedIn, async (req, res) => {
     try {
         const username = req.params.username;
@@ -49,6 +71,17 @@ friendshipRouter.delete("/:username/remove", ensureLoggedIn, async (req, res) =>
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.removeFriendship(username, (req.user as User).id);
         res.json(friendship);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+friendshipRouter.get("/:username/friendship-status", ensureLoggedIn, async (req, res) => {
+    try {
+        const username = req.params.username;
+        const friendshipController = FriendshipController.getInstance();
+        const isFriendshipRequested = await friendshipController.isFriendshipRequested((req.user as User).id, username);
+        res.json(isFriendshipRequested);
     } catch (err) {
         res.status(400).json(err);
     }
