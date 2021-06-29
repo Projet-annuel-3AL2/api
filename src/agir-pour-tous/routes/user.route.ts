@@ -1,7 +1,7 @@
 import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {UserController} from "../controllers/user.controller";
-import {isAskedUser, isNotAskedUser} from "../middlewares/user.middleware";
+import {hasAdminRights, isAskedUser, isNotAskedUser} from "../middlewares/user.middleware";
 import {User} from "../models/user.model";
 
 const userRouter = express.Router();
@@ -141,6 +141,30 @@ userRouter.get("/:userId/blocked",ensureLoggedIn, isNotAskedUser, async (req, re
         const currentUserId = (req.user as User).id;
         const userController = UserController.getInstance();
         const isBlocked = await userController.isBlocked(userId, currentUserId);
+        res.json(isBlocked);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+userRouter.put("/:username/report", ensureLoggedIn, isNotAskedUser, async (req, res) => {
+    try {
+        const username = req.params.username;
+        const userReporter = (req.user as User);
+        const userController = UserController.getInstance();
+        const reportedUser = await userController.getByUsername(username);
+        const isBlocked = await userController.reportUser(userReporter, reportedUser, {...req.body});
+        res.json(isBlocked);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+userRouter.get("/:username/reports", ensureLoggedIn, hasAdminRights, async (req, res) => {
+    try {
+        const username = req.params.username;
+        const userController = UserController.getInstance();
+        const isBlocked = await userController.getReports(username);
         res.json(isBlocked);
     } catch (err) {
         res.status(400).json(err);

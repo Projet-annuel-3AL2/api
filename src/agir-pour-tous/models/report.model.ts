@@ -12,7 +12,17 @@ import {Organisation} from "./organisation.model";
 import {Group} from "./group.model";
 import {Post} from "./post.model";
 import {Event} from "./event.model";
-import {IsNotEmpty, Length} from "class-validator";
+import {Length} from "class-validator";
+
+export interface ReportProps {
+    text: string;
+    userReporter: User;
+    reportedUser?: User;
+    reportedGroup?: Group;
+    reportedPost?: Post;
+    reportedOrganisation?: Organisation;
+    reportedEvent?: Event;
+}
 
 @Entity()
 export class Report {
@@ -20,8 +30,7 @@ export class Report {
     id: string;
     @ManyToOne(() => User, user => user.reports)
     userReporter: User;
-    @IsNotEmpty()
-    @Length(5, 500)
+    @Length(0, 500)
     @Column({length: 500, nullable: false})
     text: string;
     @ManyToOne(() => User, user => user.reported)

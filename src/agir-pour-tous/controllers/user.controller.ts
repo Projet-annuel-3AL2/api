@@ -5,6 +5,7 @@ import {Conversation} from "../models/conversation.model";
 import {Group} from "../models/group.model";
 import {GroupMembership} from "../models/group_membership.model";
 import {Event} from "../models/event.model";
+import {Report, ReportProps} from "../models/report.model";
 
 export class UserController {
 
@@ -126,5 +127,17 @@ export class UserController {
             .where("User.blockedUsers=:userId",{userId})
             .andWhere("User.blockers=:currentUserId",{currentUserId})
             .getOne() !== undefined);
+    }
+
+    public async reportUser(userReporter: User, reportedUser: User, props: ReportProps): Promise<Report>{
+        const report = getRepository(Report).create({...props, userReporter, reportedUser});
+        return await getRepository(Report).save(report);
+    }
+
+    public async getReports(username: string): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoin("Report.userReporter","ReportedUser")
+            .where("ReportedUser.username=:username",{username})
+            .getMany();
     }
 }
