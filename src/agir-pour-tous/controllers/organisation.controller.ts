@@ -127,4 +127,22 @@ export class OrganisationController {
             .softDelete()
             .execute();
     }
+
+    public async isAdmin(organisationId: string, userId: string): Promise<boolean>{
+        return (await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne()).isAdmin;
+    }
+
+    public async isOwner(organisationId: string, userId: string): Promise<boolean>{
+        return (await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne()).isOwner;
+    }
 }

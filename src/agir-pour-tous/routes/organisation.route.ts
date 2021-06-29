@@ -3,6 +3,7 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {hasAdminRights, isAskedUser} from "../middlewares/user.middleware";
 import {User} from "../models/user.model";
 import {OrganisationController} from "../controllers/organisation.controller";
+import {isOrganisationAdmin} from "../middlewares/organisation.middleware";
 
 const organisationRouter = express.Router();
 
@@ -151,7 +152,7 @@ organisationRouter.get("/:organisationId/members", ensureLoggedIn, async (req, r
     }
 });
 
-organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, /*isOrganisationAdmin,*/ async (req, res) => {
+organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, isOrganisationAdmin, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const userId = req.params.userId;
@@ -174,6 +175,8 @@ organisationRouter.delete("/:organisationId/leave", ensureLoggedIn, async (req, 
         res.status(400).json(err);
     }
 });
+
+
 
 /*
 organisationRouter.get("/suggestion/:id", async (req, res) => {
