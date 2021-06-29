@@ -177,6 +177,29 @@ organisationRouter.delete("/:organisationId/leave", ensureLoggedIn, async (req, 
 });
 
 
+organisationRouter.get('/:organisationId/is-admin', async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const userId = (req.user as User).id;
+        const organisationController = await OrganisationController.getInstance();
+        const organisation = await organisationController.isAdmin(organisationId, userId);
+        res.json(organisation);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+organisationRouter.get('/:organisationId/is-owner', async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const userId = (req.user as User).id;
+        const organisationController = await OrganisationController.getInstance();
+        const organisation = await organisationController.isOwner(organisationId, userId);
+        res.json(organisation);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
 
 /*
 organisationRouter.get("/suggestion/:id", async (req, res) => {
