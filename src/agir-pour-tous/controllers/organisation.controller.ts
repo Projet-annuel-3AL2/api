@@ -33,12 +33,8 @@ export class OrganisationController {
         return this.organisationRepository.save(organisation);
     }
 
-    public async getByName(organisationName: string): Promise<Organisation> {
-        return await this.organisationRepository.findOneOrFail({
-            where: {
-                name: organisationName
-            }
-        });
+    public async getById(id: string): Promise<Organisation> {
+        return await this.organisationRepository.findOneOrFail(id);
     }
 
     public async getAll(): Promise<Organisation[]> {
@@ -54,21 +50,13 @@ export class OrganisationController {
         })
     }
 
-    public async getFullOrganisation(organisationName: string): Promise<Organisation> {
-        return await this.organisationRepository.findOne({
-            where: {
-                name: organisationName
-            },
-            relations: ['members', 'members.user', 'bannerPicture', 'events', "events.organisation", "events.category", "events.participants", "events.user"]
-        })
-    }
     public async delete(organisationName: string): Promise<void> {
         await this.organisationRepository.softDelete(organisationName);
     }
 
     public async update(organisationName: string, props: OrganisationProps): Promise<Organisation> {
         await this.organisationRepository.update(organisationName, props);
-        return this.getByName(organisationName);
+        return this.getById(organisationName);
     }
 
     public async getPosts(organisationName: string): Promise<Post[]> {

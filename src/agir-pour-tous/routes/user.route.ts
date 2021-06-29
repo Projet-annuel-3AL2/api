@@ -15,116 +15,93 @@ userRouter.get('/', async (req, res) => {
     }
 });
 
-userRouter.get('/:userId', async (req, res) => {
-    try {
-        const userId = req.params.userId;
-        const userController = await UserController.getInstance();
-        const user = await userController.getById(userId);
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(403).json(err);
-    }
-});
-
-userRouter.get('/getWithUsername/:username', async (req, res) => {
+userRouter.get('/:username', async (req, res) => {
     try {
         const username = req.params.username;
         const userController = await UserController.getInstance();
-        const user = await userController.getWithUsername(username);
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(403).json(err);
-    }
-});
-
-userRouter.get('/getFullUser/:username', async (req, res) => {
-    try {
-        const username = req.params.username;
-        const userController = await UserController.getInstance();
-        const user = await userController.getFullUser(username);
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(403).json(err);
-    }
-});
-
-userRouter.get('/getPostWithUsername/:username', async (req, res) => {
-    try {
-        const username = req.params.username;
-        const userController = await UserController.getInstance();
-        const user = await userController.getPostWithUsername(username);
-        res.status(200).json(user);
-    } catch (err) {
-        res.status(404).json(err);
-    }
-});
-
-userRouter.delete('/:userId', ensureLoggedIn, isAskedUser, async (req, res) => {
-    try {
-        const userId = req.params.userId;
-        const userController = UserController.getInstance();
-        await userController.delete(userId);
-        res.status(204);
+        const user = await userController.getByUsername(username);
+        res.json(user);
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
-userRouter.put('/:userId', ensureLoggedIn, isAskedUser, async (req, res) => {
+userRouter.get('/:username/posts', async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const username = req.params.username;
+        const userController = await UserController.getInstance();
+        const user = await userController.getPosts(username);
+        res.json(user);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+userRouter.delete('/:username', ensureLoggedIn, isAskedUser, async (req, res) => {
+    try {
+        const username = req.params.username;
         const userController = UserController.getInstance();
-        await userController.update(userId, {...req.body});
+        await userController.delete(username);
         res.status(204).end();
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
-userRouter.get("/:userId/posts", async (req, res) => {
+userRouter.put('/:username', ensureLoggedIn, isAskedUser, async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const username = req.params.username;
         const userController = UserController.getInstance();
-        const posts = await userController.getPosts(userId)
+        await userController.update(username, {...req.body});
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+userRouter.get("/:username/posts", async (req, res) => {
+    try {
+        const username = req.params.username;
+        const userController = UserController.getInstance();
+        const posts = await userController.getPosts(username);
         res.json(posts);
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
-userRouter.get("/:userId/conversations", ensureLoggedIn, isAskedUser, async (req, res) => {
+userRouter.get("/:username/conversations", ensureLoggedIn, isAskedUser, async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const username = req.params.username;
         const userController = UserController.getInstance();
-        const conversations = await userController.getConversations(userId);
+        const conversations = await userController.getConversations(username);
         res.json(conversations);
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
-userRouter.get("/:userId/groups", async (req, res) => {
+userRouter.get("/:username/groups", async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const username = req.params.username;
         const userController = UserController.getInstance();
-        const groups = await userController.getGroups(userId)
+        const groups = await userController.getGroups(username);
         res.json(groups);
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
-userRouter.get("/:userId/participation", async (req, res) => {
+userRouter.get("/:username/participation", async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const username = req.params.username;
         const userController = UserController.getInstance();
-        const eventsParticipation = await userController.getEventsParticipation(userId)
-        res.json(eventsParticipation);
+        const eventParticipation = await userController.getEventsParticipation(username)
+        res.json(eventParticipation);
     } catch (err) {
         res.status(400).json(err);
     }
 });
-
 
 export {
     userRouter

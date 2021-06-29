@@ -14,7 +14,7 @@ export class PostController {
         this.postRepository = getRepository(Post);
     }
 
-    public static async getInstance(): Promise<PostController> {
+    public static getInstance(): PostController {
         if (PostController.instance === undefined) {
             PostController.instance = new PostController();
         }

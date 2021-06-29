@@ -2,7 +2,6 @@ import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {User, UserType} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
-import {OrganisationController} from "../controllers/organisation.controller";
 
 const eventRouter = express.Router();
 
@@ -31,13 +30,13 @@ eventRouter.post('/', ensureLoggedIn, async (req, res) => {
 });
 
 
-eventRouter.post('/addParticipant', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/:eventId/join', ensureLoggedIn, async (req, res) => {
     try {
-        const eventId = req.body.eventId;
-        const userId = req.body.userId;
+        const eventId = req.params.eventId;
+        const userId = (req.user as User).id;
         const eventController = await EventController.getInstance();
         const event = await eventController.addParticipant(eventId, userId);
-        res.status(200).json(event);
+        res.json(event);
     } catch (err) {
         res.status(400).json(err);
     }
@@ -53,11 +52,11 @@ eventRouter.get('/', ensureLoggedIn, async (req, res) => {
     }
 });
 
-eventRouter.get('/notEndEvent', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/is-finished', ensureLoggedIn, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
         const events = await eventController.getAllNotEnd();
-        res.status(200).json(events);
+        res.json(events);
     } catch (err) {
         res.status(400).json(err);
     }
@@ -74,16 +73,6 @@ eventRouter.get('/:eventId', async (req, res) => {
     }
 });
 
-eventRouter.get('/fullEvent/:eventId', async (req, res) => {
-    try {
-        const eventId = req.params.eventId;
-        const eventController = await EventController.getInstance();
-        const event = await eventController.getFullEvent(eventId);
-        res.status(200).json(event);
-    } catch (err) {
-        res.status(400).json(err);
-    }
-});
 eventRouter.get('/:eventId/getMembers', async (req, res) => {
     try {
         const eventId = req.params.eventId;
