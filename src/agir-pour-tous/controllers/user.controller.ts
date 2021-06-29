@@ -106,4 +106,25 @@ export class UserController {
             .leftJoin("Conversation.messages", "Message")
             .getMany();
     }
+
+    public async blockUser(currentUserId, id: string): Promise<void> {
+        await this.userRepository.createQueryBuilder()
+            .relation("blockedUsers")
+            .of(currentUserId)
+            .add(id);
+    }
+
+    public async unblockUser(currentUserId, id: string): Promise<void> {
+        await this.userRepository.createQueryBuilder()
+            .relation("blockedUsers")
+            .of(currentUserId)
+            .remove(id);
+    }
+
+    public async isBlocked(currentUserId: string, userId: string):Promise<boolean> {
+        return (await this.userRepository.createQueryBuilder()
+            .where("User.blockedUsers=:userId",{userId})
+            .andWhere("User.blockers=:currentUserId",{currentUserId})
+            .getOne() !== undefined);
+    }
 }

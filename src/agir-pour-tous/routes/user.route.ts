@@ -1,7 +1,8 @@
 import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {UserController} from "../controllers/user.controller";
-import {isAskedUser} from "../middlewares/user.middleware";
+import {isAskedUser, isNotAskedUser} from "../middlewares/user.middleware";
+import {User} from "../models/user.model";
 
 const userRouter = express.Router();
 
@@ -85,8 +86,62 @@ userRouter.get("/:username/participation", async (req, res) => {
     try {
         const username = req.params.username;
         const userController = UserController.getInstance();
-        const eventParticipation = await userController.getEventsParticipation(username)
+        const eventParticipation = await userController.getEventsParticipation(username);
         res.json(eventParticipation);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+userRouter.put("/:userId/block",ensureLoggedIn, isNotAskedUser, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const currentUserId = (req.user as User).id;
+        const userController = UserController.getInstance();
+        await userController.blockUser(currentUserId, userId);
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+userRouter.delete("/:userId/unblock",ensureLoggedIn, isNotAskedUser, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const currentUserId = (req.user as User).id;
+        const userController = UserController.getInstance();
+        await userController.unblockUser(currentUserId, userId);
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+/**
+ *  Is the given user blocked by the connected user
+ */
+userRouter.get("/:userId/is-blocked",ensureLoggedIn, isNotAskedUser, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const currentUserId = (req.user as User).id;
+        const userController = UserController.getInstance();
+        const isBlocked = await userController.isBlocked(currentUserId, userId);
+        res.json(isBlocked);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+/**
+ *  Is the current user blocked by the given user
+ */
+userRouter.get("/:userId/blocked",ensureLoggedIn, isNotAskedUser, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const currentUserId = (req.user as User).id;
+        const userController = UserController.getInstance();
+        const isBlocked = await userController.isBlocked(userId, currentUserId);
+        res.json(isBlocked);
     } catch (err) {
         res.status(400).json(err);
     }
