@@ -2,7 +2,6 @@ import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {User, UserType} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
-import {userRouter} from "./user.route";
 import {hasAdminRights} from "../middlewares/user.middleware";
 
 const eventRouter = express.Router();
@@ -209,7 +208,7 @@ eventRouter.get('/:eventId/posts', async (req, res) => {
     }
 });
 
-userRouter.put("/:eventId/report", ensureLoggedIn, async (req, res) => {
+eventRouter.put("/:eventId/report", ensureLoggedIn, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const userReporter = (req.user as User);
@@ -222,7 +221,7 @@ userRouter.put("/:eventId/report", ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req, res) => {
+eventRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();

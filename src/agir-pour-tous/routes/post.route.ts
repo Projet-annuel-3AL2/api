@@ -3,7 +3,6 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {PostController} from "../controllers/post.controller";
 import {User} from "../models/user.model";
 import {hasAdminRights} from "../middlewares/user.middleware";
-import {userRouter} from "./user.route";
 
 const postRouter = express.Router();
 
@@ -121,7 +120,7 @@ postRouter.get("/:postId/is-liked", ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
+postRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
     try {
         const postId = req.params.postId;
         const userReporter = (req.user as User);
@@ -134,7 +133,7 @@ userRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.get("/:postId/reports", ensureLoggedIn, hasAdminRights, async (req, res) => {
+postRouter.get("/:postId/reports", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const postId = req.params.postId;
         const postController = PostController.getInstance();

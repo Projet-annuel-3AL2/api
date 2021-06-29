@@ -3,7 +3,6 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {hasAdminRights, isAskedUser} from "../middlewares/user.middleware";
 import {GroupController} from "../controllers/group.controller";
 import {User} from "../models/user.model";
-import {userRouter} from "./user.route";
 
 const groupRouter = express.Router();
 
@@ -84,7 +83,7 @@ groupRouter.post("/:groupName/posts", async (req, res) => {
     }
 });
 
-userRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
+groupRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
     try {
         const groupId = req.params.groupId;
         const userReporter = (req.user as User);
@@ -97,7 +96,7 @@ userRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.get("/:groupId/reports", ensureLoggedIn, hasAdminRights, async (req, res) => {
+groupRouter.get("/:groupId/reports", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const groupId = req.params.groupId;
         const groupController = GroupController.getInstance();
