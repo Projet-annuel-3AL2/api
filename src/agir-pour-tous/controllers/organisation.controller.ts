@@ -109,4 +109,12 @@ export class OrganisationController {
             .where("ReportedOrganisation.id=:organisationId",{organisationId})
             .getMany();
     }
+
+    public async getMembers(organisationId: string): Promise<User[]>{
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.organisations","OrganisationMembership")
+            .leftJoin("OrganisationMembership.organisation","Organisation")
+            .where("Organisation.id=:organisationId",{organisationId})
+            .getMany();
+    }
 }

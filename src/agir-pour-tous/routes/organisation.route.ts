@@ -141,6 +141,17 @@ userRouter.get("/:organisationId/reports", ensureLoggedIn, hasAdminRights, async
     }
 });
 
+organisationRouter.get("/:organisationId/members", ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = OrganisationController.getInstance();
+        const members = await organisationController.getMembers(organisationId);
+        res.json(members);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 /*
 organisationRouter.get("/suggestion/:id", async (req, res) => {
     try {
