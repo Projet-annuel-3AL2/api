@@ -196,6 +196,17 @@ eventRouter.put('/:eventId', ensureLoggedIn, async (req, res) => {
     }
 });
 
+eventRouter.get('/:eventId/posts', async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = await EventController.getInstance();
+        const posts = await eventController.getPosts(eventId);
+        res.json(posts);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 export {
     eventRouter
 }

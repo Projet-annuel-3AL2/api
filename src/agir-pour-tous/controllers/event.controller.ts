@@ -2,6 +2,7 @@ import {getRepository, MoreThan, Repository} from "typeorm";
 import {Event, EventProps} from "../models/event.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
+import {Post} from "../models/post.model";
 
 export class EventController {
     private static instance: EventController;
@@ -117,6 +118,13 @@ export class EventController {
         return await this.userRepository.createQueryBuilder()
             .leftJoin("User.eventParticipation", "Event")
             .where("Event.id=:eventId", {eventId})
+            .getMany();
+    }
+
+    public async getPosts(eventId: string): Promise<Post[]>{
+        return await getRepository(Post).createQueryBuilder()
+            .leftJoin("Post.sharedEvent","Event")
+            .where("Event.id=:eventId",{eventId})
             .getMany();
     }
 }
