@@ -3,6 +3,7 @@ import {Event, EventProps} from "../models/event.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {Post} from "../models/post.model";
+import {Report, ReportProps} from "../models/report.model";
 
 export class EventController {
     private static instance: EventController;
@@ -15,7 +16,7 @@ export class EventController {
         this.userRepository = getRepository(User);
     }
 
-    public static async getInstance(): Promise<EventController> {
+    public static getInstance(): EventController {
         if (EventController.instance === undefined) {
             EventController.instance = new EventController();
         }
@@ -125,6 +126,18 @@ export class EventController {
         return await getRepository(Post).createQueryBuilder()
             .leftJoin("Post.sharedEvent","Event")
             .where("Event.id=:eventId",{eventId})
+            .getMany();
+    }
+
+    public async reportEvent(userReporter: User, reportedEvent: Event, props: ReportProps) {
+        const report = getRepository(Report).create({...props, userReporter, reportedEvent});
+        return await getRepository(Report).save(report);
+    }
+
+    public async getReports(postId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoin("Report.reportedEvent","ReportedEvent")
+            .where("ReportedEvent.postId=:postId",{postId})
             .getMany();
     }
 }

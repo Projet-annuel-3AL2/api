@@ -2,6 +2,8 @@ import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {User, UserType} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
+import {userRouter} from "./user.route";
+import {hasAdminRights} from "../middlewares/user.middleware";
 
 const eventRouter = express.Router();
 
@@ -175,7 +177,7 @@ eventRouter.put('/:eventId', ensureLoggedIn, async (req, res) => {
             const user: User = req.user;
             const userId = req.body.userId;
 
-            const eventController = await EventController.getInstance();
+            const eventController = EventController.getInstance();
 
             const event = await eventController.getById(eventId);
             if (event != null) {
@@ -202,6 +204,30 @@ eventRouter.get('/:eventId/posts', async (req, res) => {
         const eventController = await EventController.getInstance();
         const posts = await eventController.getPosts(eventId);
         res.json(posts);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+userRouter.put("/:eventId/report", ensureLoggedIn, async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const userReporter = (req.user as User);
+        const eventController = EventController.getInstance();
+        const reportedEvent = await eventController.getById(eventId);
+        const report = await eventController.reportEvent(userReporter, reportedEvent, {...req.body});
+        res.json(report);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+userRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = EventController.getInstance();
+        const reports = await eventController.getReports(eventId);
+        res.json(reports);
     } catch (err) {
         res.status(400).json(err);
     }
