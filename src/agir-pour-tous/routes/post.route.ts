@@ -107,6 +107,18 @@ postRouter.get("/timeline/:offset/:limit", async (req, res) => {
     }
 });
 
+postRouter.get("/:postId/is-liked", async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const userId = (req.user as User).id;
+        const postController = PostController.getInstance();
+        const likes = await postController.isLiked(postId, userId);
+        res.json(likes);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 export {
     postRouter
 }

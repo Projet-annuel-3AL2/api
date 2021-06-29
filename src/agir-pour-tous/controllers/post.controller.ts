@@ -2,7 +2,6 @@ import {getRepository, Repository} from "typeorm";
 import {Post, PostProps} from "../models/post.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
-import {Organisation} from "../models/organisation.model";
 
 export class PostController {
 
@@ -112,11 +111,4 @@ export class PostController {
             .getMany();
     }
 
-    async getAllWithOrgaId(orga: Organisation): Promise<Post[]> {
-        return await this.postRepository.find({
-            where:{
-                organisation: orga
-            }
-        })
-    }
 }
