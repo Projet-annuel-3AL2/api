@@ -83,6 +83,38 @@ organisationRouter.put('/:organisationId', ensureLoggedIn, isAskedUser, async (r
     }
 });
 
+organisationRouter.get('/:organisationId/followers', async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = await OrganisationController.getInstance();
+        const followers = await organisationController.getFollowers(organisationId);
+        res.json(followers);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+organisationRouter.put('/:organisationId/follow', async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = await OrganisationController.getInstance();
+        const followers = await organisationController.addFollower(organisationId, (req.user as User).id);
+        res.json(followers);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+organisationRouter.delete('/:organisationId/unfollow', async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = await OrganisationController.getInstance();
+        const followers = await organisationController.removeFollower(organisationId, (req.user as User).id);
+        res.json(followers);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
 /*
 organisationRouter.get("/suggestion/:id", async (req, res) => {
     try {

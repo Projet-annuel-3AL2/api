@@ -50,21 +50,42 @@ export class OrganisationController {
         })
     }
 
-    public async delete(organisationName: string): Promise<void> {
-        await this.organisationRepository.softDelete(organisationName);
+    public async delete(id: string): Promise<void> {
+        await this.organisationRepository.softDelete(id);
     }
 
-    public async update(organisationName: string, props: OrganisationProps): Promise<Organisation> {
-        await this.organisationRepository.update(organisationName, props);
-        return this.getById(organisationName);
+    public async update(id: string, props: OrganisationProps): Promise<Organisation> {
+        await this.organisationRepository.update(id, props);
+        return this.getById(id);
     }
 
-    public async getPosts(organisationName: string): Promise<Post[]> {
+    public async getPosts(id: string): Promise<Post[]> {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoin("Post.organisation", "Organisation")
-            .where("Organisation.name=:groupName", {organisationName})
+            .where("Organisation.id=:id", {id})
             .getMany();
+    }
+
+    public async getFollowers(id: string): Promise<User[]>{
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.followedOrganisations","Organisation")
+            .where("Organisation.id=:id",{id})
+            .getMany();
+    }
+
+    public async addFollower(id: string, userId: string): Promise<void>{
+        await this.organisationRepository.createQueryBuilder()
+            .relation("followers")
+            .of(id)
+            .add(userId);
+    }
+
+    public async removeFollower(id: string, userId: string): Promise<void>{
+        await this.organisationRepository.createQueryBuilder()
+            .relation("followers")
+            .of(id)
+            .remove(userId);
     }
 
     public async addPost(organisation: Organisation, creator: User, props: PostProps): Promise<Post> {

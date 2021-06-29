@@ -3,7 +3,7 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    Entity, JoinColumn,
+    Entity, JoinColumn, ManyToMany,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -37,6 +37,8 @@ export class Organisation {
     name: string;
     @OneToMany(() => OrganisationMembership, user => user.organisation)
     members: OrganisationMembership[];
+    @ManyToMany(() => User, user => user.followedOrganisations, {cascade: true})
+    followers: User[];
     @OneToMany(() => Event, user => user.organisation, {cascade: true})
     events: Event[];
     @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, cascade: true})

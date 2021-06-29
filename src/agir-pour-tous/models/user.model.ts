@@ -25,6 +25,7 @@ import {IsEmail, IsNotEmpty, Length} from "class-validator";
 import {hash} from "bcrypt";
 import {Friendship} from "./friendship.model";
 import {FriendRequest} from "./friend_request.model";
+import {Organisation} from "./organisation.model";
 
 export enum UserType {
     USER = "USER",
@@ -100,6 +101,9 @@ export class User implements UserProps {
     eventsParticipation: Event[];
     @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true})
     organisations: OrganisationMembership[];
+    @ManyToMany(() => Organisation, organisation => organisation.followers)
+    @JoinTable()
+    followedOrganisations: Organisation[];
     @OneToMany(() => Message, message => message.user, {cascade: true})
     messages: Message[];
     @OneToMany(() => Report, report => report.userReporter)
