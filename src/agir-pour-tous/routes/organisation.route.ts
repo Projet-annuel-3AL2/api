@@ -94,7 +94,7 @@ organisationRouter.get('/:organisationId/followers', async (req, res) => {
     }
 });
 
-organisationRouter.put('/:organisationId/follow', async (req, res) => {
+organisationRouter.put('/:organisationId/follow',ensureLoggedIn,  async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
@@ -105,7 +105,7 @@ organisationRouter.put('/:organisationId/follow', async (req, res) => {
     }
 });
 
-organisationRouter.delete('/:organisationId/unfollow', async (req, res) => {
+organisationRouter.delete('/:organisationId/unfollow', ensureLoggedIn, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
