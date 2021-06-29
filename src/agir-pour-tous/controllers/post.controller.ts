@@ -96,6 +96,15 @@ export class PostController {
             .getMany();
     }
 
+    public async isPostOwner(postId: string, userId: string): Promise<Boolean> {
+        return (await this.postRepository
+            .createQueryBuilder()
+            .leftJoin("Post.creator", "User")
+            .where("User.id=:userId", {userId})
+            .andWhere("Post.id=:postId", {postId})
+            .getOne() !== undefined);
+    }
+
     private getOwnPosts(userId: string): Promise<Post[]> {
         return this.postRepository
             .createQueryBuilder()
@@ -122,14 +131,5 @@ export class PostController {
             .leftJoin("FriendTwo.friendOne", "FriendOne")
             .where("FriendOne.id=:userId", {userId})
             .getMany();
-    }
-
-    public async isPostOwner(postId: string, userId: string): Promise<Boolean> {
-        return (await this.postRepository
-            .createQueryBuilder()
-            .leftJoin("Post.creator","User")
-            .where("User.id=:userId",{userId})
-            .andWhere("Post.id=:postId", {postId})
-            .getOne() !== undefined);
     }
 }

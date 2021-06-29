@@ -1,10 +1,11 @@
 import express from "express";
 import {CategoryController} from "../controllers/category.controller";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
+import {hasAdminRights} from "../middlewares/user.middleware";
 
 const categoryRouter = express.Router();
 
-categoryRouter.post("/", ensureLoggedIn, async (req, res) => {
+categoryRouter.post("/", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const categoryController = CategoryController.getInstance();
         const category = await categoryController.create(req.body);
@@ -35,7 +36,7 @@ categoryRouter.get("/:categoryId", async (req, res) => {
     }
 });
 
-categoryRouter.put("/:categoryId", async (req, res) => {
+categoryRouter.put("/:categoryId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const categoryId = req.params.categoryId;
         const categoryController = CategoryController.getInstance();
@@ -46,7 +47,7 @@ categoryRouter.put("/:categoryId", async (req, res) => {
     }
 });
 
-categoryRouter.delete("/:categoryId", async (req, res) => {
+categoryRouter.delete("/:categoryId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const categoryId = req.params.categoryId;
         const categoryController = CategoryController.getInstance();

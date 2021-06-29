@@ -145,12 +145,12 @@ postRouter.get("/:postId/reports", ensureLoggedIn, hasAdminRights, async (req, r
     }
 });
 
-postRouter.get("/:postId/is-owner",async (req, res) => {
+postRouter.get("/:postId/is-owner", async (req, res) => {
     try {
         const postId = req.params.postId;
         const userId = (req.user as User).id;
         const postController = PostController.getInstance();
-        const isOwner = await postController.isPostOwner(postId,userId);
+        const isOwner = await postController.isPostOwner(postId, userId);
         res.json({isOwner});
     } catch (err) {
         res.status(400).json(err);

@@ -25,7 +25,12 @@ export class OrganisationController {
 
     public async create(user: User, props: OrganisationProps): Promise<Organisation> {
         const organisation = this.organisationRepository.create({...props});
-        const creatorMembership = getRepository(OrganisationMembership).create({organisation, user, isOwner: true, isAdmin: true});
+        const creatorMembership = getRepository(OrganisationMembership).create({
+            organisation,
+            user,
+            isOwner: true,
+            isAdmin: true
+        });
         organisation.members = [creatorMembership];
         const err = await validate(organisation);
         if (err.length > 0) {
@@ -118,17 +123,17 @@ export class OrganisationController {
             .getMany();
     }
 
-    public async removeMember(organisationId: string, userId: string): Promise<void>{
+    public async removeMember(organisationId: string, userId: string): Promise<void> {
         await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("OrganisationMembership.user", "User")
             .where("User.id=:userId", {userId})
-            .andWhere("Organisation.id=:organisationId",{organisationId})
+            .andWhere("Organisation.id=:organisationId", {organisationId})
             .softDelete()
             .execute();
     }
 
-    public async isAdmin(organisationId: string, userId: string): Promise<boolean>{
+    public async isAdmin(organisationId: string, userId: string): Promise<boolean> {
         return (await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("OrganisationMembership.user", "User")
@@ -137,7 +142,7 @@ export class OrganisationController {
             .getOne()).isAdmin;
     }
 
-    public async isOwner(organisationId: string, userId: string): Promise<boolean>{
+    public async isOwner(organisationId: string, userId: string): Promise<boolean> {
         return (await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("OrganisationMembership.user", "User")
@@ -148,10 +153,10 @@ export class OrganisationController {
 
     public async addAdmin(organisationId: string, userId: string): Promise<void> {
         await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation","Organisation")
-            .leftJoin("OrganisationMembership.user","User")
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
             .update()
-            .set({ isAdmin: true })
+            .set({isAdmin: true})
             .where("Organisation.id=:organisationId", {organisationId})
             .where("User.id=:userId", {userId})
             .execute();
@@ -159,10 +164,10 @@ export class OrganisationController {
 
     public async removeAdmin(organisationId: string, userId: string): Promise<void> {
         await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation","Organisation")
-            .leftJoin("OrganisationMembership.user","User")
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
             .update()
-            .set({ isAdmin: false })
+            .set({isAdmin: false})
             .where("Organisation.id=:organisationId", {organisationId})
             .where("User.id=:userId", {userId})
             .execute();

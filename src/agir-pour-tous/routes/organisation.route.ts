@@ -4,9 +4,9 @@ import {hasAdminRights, isAskedUser, isNotAskedUser} from "../middlewares/user.m
 import {User} from "../models/user.model";
 import {OrganisationController} from "../controllers/organisation.controller";
 import {
+    isNotOrganisationUserOwner,
     isOrganisationAdmin,
-    isOrganisationOwner,
-    isNotOrganisationUserOwner
+    isOrganisationOwner
 } from "../middlewares/organisation.middleware";
 
 const organisationRouter = express.Router();
@@ -161,7 +161,7 @@ organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, isO
         const organisationId = req.params.organisationId;
         const userId = req.params.userId;
         const organisationController = OrganisationController.getInstance();
-        await organisationController.removeMember(organisationId,userId);
+        await organisationController.removeMember(organisationId, userId);
         res.status(204).end();
     } catch (err) {
         res.status(400).json(err);
