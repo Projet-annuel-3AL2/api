@@ -4,6 +4,7 @@ import {Group, GroupProps} from "../models/group.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {GroupMembership} from "../models/group_membership.model";
+import {Report, ReportProps} from "../models/report.model";
 
 export class GroupController {
     private static instance: GroupController;
@@ -32,8 +33,8 @@ export class GroupController {
         return this.groupRepository.save(group);
     }
 
-    public async getByName(groupName: string): Promise<Group> {
-        return await this.groupRepository.findOneOrFail(groupName);
+    public async getById(id: string): Promise<Group> {
+        return await this.groupRepository.findOneOrFail(id);
     }
 
     public async getAll(): Promise<Group[]> {
@@ -46,7 +47,7 @@ export class GroupController {
 
     public async update(groupName: string, props: GroupProps): Promise<Group> {
         await this.groupRepository.update(groupName, props);
-        return this.getByName(groupName);
+        return this.getById(groupName);
     }
 
     public async getPosts(groupName: string): Promise<Post[]> {
@@ -64,5 +65,17 @@ export class GroupController {
             throw err;
         }
         return getRepository(Post).save(post);
+    }
+
+    public async reportGroup(userReporter: User, reportedGroup: Group, props: ReportProps) {
+        const report = getRepository(Report).create({...props, userReporter, reportedGroup});
+        return await getRepository(Report).save(report);
+    }
+
+    public async getReports(groupId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoin("Report.reportedGroup","ReportedGroup")
+            .where("ReportedGroup.id=:groupId",{groupId})
+            .getMany();
     }
 }
