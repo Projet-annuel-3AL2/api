@@ -54,40 +54,7 @@ export class UserController {
         return [].concat(await this.getOrganisationConversations(username))
             .concat(await this.getGroupConversations(username))
             .concat(await this.getFriendshipConversations(username))
-            .sort((a:Conversation, b:Conversation) => a.messages[a.messages?.length-1]?.createdAt.getTime() - b.messages[b.messages?.length-1]?.createdAt.getTime());
-    }
-
-    private async getOrganisationConversations(username: string): Promise<Conversation[]> {
-        return await this.conversationRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Conversation.organisation", "Organisation")
-            .leftJoinAndSelect("Organisation.members", "OrganisationMembership")
-            .leftJoinAndSelect("OrganisationMembership.user", "OrganisationMember")
-            .where("OrganisationMember.username=:username", {username})
-            .getMany();
-    }
-
-    private async getFriendshipConversations(username: string): Promise<Conversation[]>{
-        return await this.conversationRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Conversation.friendship", "Friendship")
-            .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
-            .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
-            .where("FriendOne.username=:username", {username})
-            .orWhere("FriendTwo.username=:username", {username})
-            .leftJoin("Conversation.messages", "Message")
-            .getMany()
-    }
-
-    private async getGroupConversations(username: string): Promise<Conversation[]>{
-        return await this.conversationRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Conversation.group", "Group")
-            .leftJoinAndSelect("Group.members", "GroupMembership")
-            .leftJoinAndSelect("GroupMembership.user","GroupMember")
-            .where("GroupMember.username=:username", {username})
-            .leftJoin("Conversation.messages", "Message")
-            .getMany();
+            .sort((a: Conversation, b: Conversation) => a.messages[a.messages?.length - 1]?.createdAt.getTime() - b.messages[b.messages?.length - 1]?.createdAt.getTime());
     }
 
     public async getGroups(username: string): Promise<GroupMembership[]> {
@@ -104,6 +71,39 @@ export class UserController {
             .createQueryBuilder()
             .leftJoin("Event.participants", "User")
             .where("User.username=:username", {username})
+            .getMany();
+    }
+
+    private async getOrganisationConversations(username: string): Promise<Conversation[]> {
+        return await this.conversationRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Conversation.organisation", "Organisation")
+            .leftJoinAndSelect("Organisation.members", "OrganisationMembership")
+            .leftJoinAndSelect("OrganisationMembership.user", "OrganisationMember")
+            .where("OrganisationMember.username=:username", {username})
+            .getMany();
+    }
+
+    private async getFriendshipConversations(username: string): Promise<Conversation[]> {
+        return await this.conversationRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Conversation.friendship", "Friendship")
+            .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
+            .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
+            .where("FriendOne.username=:username", {username})
+            .orWhere("FriendTwo.username=:username", {username})
+            .leftJoin("Conversation.messages", "Message")
+            .getMany()
+    }
+
+    private async getGroupConversations(username: string): Promise<Conversation[]> {
+        return await this.conversationRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Conversation.group", "Group")
+            .leftJoinAndSelect("Group.members", "GroupMembership")
+            .leftJoinAndSelect("GroupMembership.user", "GroupMember")
+            .where("GroupMember.username=:username", {username})
+            .leftJoin("Conversation.messages", "Message")
             .getMany();
     }
 }

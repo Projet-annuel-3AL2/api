@@ -29,14 +29,14 @@ export class AuthController {
             .where('username = :username', {username})
             .returning("*")
             .execute()).raw[0];
-        if(user === undefined){
+        if (user === undefined) {
             throw new Error();
         }
         sendMail({
             to: user.mail,
             from: `"Organisation app" <${process.env.MAILER_USER}>`,
-            subject:"Récupération du mot de passe",
-            text:`Veuillez saisir le code suivant: ${token} celui-ci expire dans 10 minutes`
+            subject: "Récupération du mot de passe",
+            text: `Veuillez saisir le code suivant: ${token} celui-ci expire dans 10 minutes`
         });
     }
 

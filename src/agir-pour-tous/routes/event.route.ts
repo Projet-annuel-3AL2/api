@@ -9,19 +9,19 @@ eventRouter.post('/', ensureLoggedIn, async (req, res) => {
     try {
         if (req.user instanceof User) {
             const user: User = req.user;
-            if (user.certification != null || user.organisations != null){
+            if (user.certification != null || user.organisations != null) {
 
                 const eventController = await EventController.getInstance();
-                if (await eventController.isNameNotUse(req.body.name)){
+                if (await eventController.isNameNotUse(req.body.name)) {
                     const event = eventController.create(req.user as User, req.body);
                     res.json(event);
-                }else{
+                } else {
                     res.status(200).json("Error: Name already used")
                 }
-            }else{
+            } else {
                 res.status(400).json("Error: User are not certified or belongs to an organisation")
             }
-        }else{
+        } else {
             res.status(400).json("Error: Error with req.user")
         }
     } catch (err) {
@@ -90,7 +90,7 @@ eventRouter.get('/getEventWithUserLocation/:userLocationX/:userLocationY/:range'
         const userLocationY = req.params.userLocationY;
         const range = req.params.range;
         const eventController = await EventController.getInstance();
-        let events = await eventController.getEventWithLocation(Number(userLocationX),Number(userLocationY),Number(range));
+        let events = await eventController.getEventWithLocation(Number(userLocationX), Number(userLocationY), Number(range));
         res.json(events);
     } catch (err) {
         res.status(400).json(err);
@@ -103,7 +103,7 @@ eventRouter.get('/getEventWithUserLocationNotEnd/:userLocationX/:userLocationY/:
         const userLocationY = req.params.userLocationY;
         const range = req.params.range;
         const eventController = await EventController.getInstance();
-        let events = await eventController.getEventWithLocationNotEnd(Number(userLocationX),Number(userLocationY),Number(range));
+        let events = await eventController.getEventWithLocationNotEnd(Number(userLocationX), Number(userLocationY), Number(range));
         res.status(200).json(events);
     } catch (err) {
         res.status(400).json(err);
@@ -115,26 +115,26 @@ eventRouter.get('/userRechercheNameEvent/:userRecherche', ensureLoggedIn, async 
         const eventController = await EventController.getInstance();
         const events = await eventController.getWithNameRecherche(req.params.userRecherche)
         res.json(events)
-    }catch (err) {
+    } catch (err) {
         res.status(400).json(err);
     }
 })
 
 eventRouter.delete('/:eventId', ensureLoggedIn, async (req, res) => {
     try {
-        if (req.user instanceof User){
+        if (req.user instanceof User) {
             const eventId = req.params.eventId;
             const user: User = req.user;
             const eventController = await EventController.getInstance();
             const event = await eventController.getById(eventId);
-            if (event != null){
-                if (event.user.id == user.id || user.userType == UserType.ADMIN || user.userType == UserType.SUPER_ADMIN){
+            if (event != null) {
+                if (event.user.id == user.id || user.userType == UserType.ADMIN || user.userType == UserType.SUPER_ADMIN) {
                     const event = eventController.delete(eventId);
                     res.json(event);
-                }else{
+                } else {
                     res.status(300).json("Error: user are not the creator or admin")
                 }
-            }else{
+            } else {
                 res.status(300).json("Error: There is no event with the given Id");
             }
 
@@ -155,11 +155,11 @@ eventRouter.delete('/participant/:eventId/:userId', ensureLoggedIn, async (req, 
         const eventController = await EventController.getInstance();
         const event = await eventController.getById(eventId);
 
-        if (event != null){
+        if (event != null) {
             const eventController = await EventController.getInstance();
             const event = eventController.removeParticipant(eventId, userId);
             res.status(200).json(event);
-        }else{
+        } else {
             res.status(400).json("Error: There is no event with the given Id");
         }
     } catch (err) {
@@ -169,7 +169,7 @@ eventRouter.delete('/participant/:eventId/:userId', ensureLoggedIn, async (req, 
 
 eventRouter.put('/:eventId', ensureLoggedIn, async (req, res) => {
     try {
-        if (req.user instanceof User){
+        if (req.user instanceof User) {
 
             const eventId = req.body.eventId;
             const user: User = req.user;
@@ -178,15 +178,15 @@ eventRouter.put('/:eventId', ensureLoggedIn, async (req, res) => {
             const eventController = await EventController.getInstance();
 
             const event = await eventController.getById(eventId);
-            if (event != null){
+            if (event != null) {
 
-                if (event.user.id == user.id || user.userType == UserType.ADMIN || user.userType == UserType.SUPER_ADMIN){
+                if (event.user.id == user.id || user.userType == UserType.ADMIN || user.userType == UserType.SUPER_ADMIN) {
                     const event = eventController.update(eventId, {...req.body});
                     res.json(event);
-                }else{
+                } else {
                     res.status(300).json("Error: user are not the creator of this event or admin")
                 }
-            }else{
+            } else {
                 res.status(400).json("Error: There is no event with the given Id");
             }
         }

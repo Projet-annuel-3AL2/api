@@ -83,31 +83,31 @@ export class PostController {
             .sort((a: Post, b: Post) => b.createdAt.getTime() - a.createdAt.getTime());
     }
 
-    private getOwnPosts(userId: string):Promise<Post[]>{
+    private getOwnPosts(userId: string): Promise<Post[]> {
         return this.postRepository
             .createQueryBuilder()
-            .leftJoinAndSelect("Post.creator","User")
-            .where("User.id=:userId",{userId})
+            .leftJoinAndSelect("Post.creator", "User")
+            .where("User.id=:userId", {userId})
             .getMany();
     }
 
-    private getFriendOnePosts(userId: string): Promise<Post[]>{
+    private getFriendOnePosts(userId: string): Promise<Post[]> {
         return this.postRepository
             .createQueryBuilder()
-            .leftJoinAndSelect("Post.creator","User")
-            .leftJoin("User.friendsOne","FriendOne")
-            .leftJoin("FriendOne.friendTwo","FriendTwo")
-            .where("FriendTwo.id=:userId",{userId})
+            .leftJoinAndSelect("Post.creator", "User")
+            .leftJoin("User.friendsOne", "FriendOne")
+            .leftJoin("FriendOne.friendTwo", "FriendTwo")
+            .where("FriendTwo.id=:userId", {userId})
             .getMany();
     }
 
-    private getFriendTwoPosts(userId: string): Promise<Post[]>{
+    private getFriendTwoPosts(userId: string): Promise<Post[]> {
         return this.postRepository
             .createQueryBuilder()
-            .leftJoinAndSelect("Post.creator","User")
-            .leftJoin("User.friendsTwo","FriendTwo")
-            .leftJoin("FriendTwo.friendOne","FriendOne")
-            .where("FriendOne.id=:userId",{userId})
+            .leftJoinAndSelect("Post.creator", "User")
+            .leftJoin("User.friendsTwo", "FriendTwo")
+            .leftJoin("FriendTwo.friendOne", "FriendOne")
+            .where("FriendOne.id=:userId", {userId})
             .getMany();
     }
 

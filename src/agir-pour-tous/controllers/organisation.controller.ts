@@ -67,21 +67,21 @@ export class OrganisationController {
             .getMany();
     }
 
-    public async getFollowers(id: string): Promise<User[]>{
+    public async getFollowers(id: string): Promise<User[]> {
         return await getRepository(User).createQueryBuilder()
-            .leftJoin("User.followedOrganisations","Organisation")
-            .where("Organisation.id=:id",{id})
+            .leftJoin("User.followedOrganisations", "Organisation")
+            .where("Organisation.id=:id", {id})
             .getMany();
     }
 
-    public async addFollower(id: string, userId: string): Promise<void>{
+    public async addFollower(id: string, userId: string): Promise<void> {
         await this.organisationRepository.createQueryBuilder()
             .relation("followers")
             .of(id)
             .add(userId);
     }
 
-    public async removeFollower(id: string, userId: string): Promise<void>{
+    public async removeFollower(id: string, userId: string): Promise<void> {
         await this.organisationRepository.createQueryBuilder()
             .relation("followers")
             .of(id)

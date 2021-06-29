@@ -17,7 +17,7 @@ import {eventRouter} from "./event.route";
 export function buildAPTRoutes() {
     const router = Router();
     configure();
-    router.use(require('cors')({credentials: true, origin:"http://localhost:4200"}));
+    router.use(require('cors')({credentials: true, origin: "http://localhost:4200"}));
     router.use(require('express-session')({
         secret: process.env.ORG_APP_SECRET,
         resave: true,

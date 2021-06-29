@@ -54,7 +54,7 @@ organisationRouter.put('/:organisationId/post', async (req, res) => {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
         const organisation = await organisationController.getById(organisationId);
-        const posts = await organisationController.addPost(organisation,req.user as User, {...req.body});
+        const posts = await organisationController.addPost(organisation, req.user as User, {...req.body});
         res.json(posts);
     } catch (err) {
         res.status(404).json(err);
@@ -94,7 +94,7 @@ organisationRouter.get('/:organisationId/followers', async (req, res) => {
     }
 });
 
-organisationRouter.put('/:organisationId/follow',ensureLoggedIn,  async (req, res) => {
+organisationRouter.put('/:organisationId/follow', ensureLoggedIn, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();

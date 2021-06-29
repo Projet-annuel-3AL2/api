@@ -67,7 +67,7 @@ export class Ticket implements TicketProps {
     @RelationId((ticket: Ticket) => ticket.creator)
     creatorId: string;
 
-    @ManyToOne(() => User, user => user.assignedTickets, {nullable:true, onDelete: "SET NULL"})
+    @ManyToOne(() => User, user => user.assignedTickets, {nullable: true, onDelete: "SET NULL"})
     assignee: User;
     @Column()
     @RelationId((ticket: Ticket) => ticket.assignee)

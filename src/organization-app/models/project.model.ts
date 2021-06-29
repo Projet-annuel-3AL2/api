@@ -19,6 +19,6 @@ export class Project {
     @OneToMany(() => ProjectMembership, projectMembership => projectMembership.project, {cascade: true})
     members: ProjectMembership[];
 
-    @OneToMany(() => Ticket, ticket => ticket.project,{cascade: true})
+    @OneToMany(() => Ticket, ticket => ticket.project, {cascade: true})
     tickets: Ticket[];
 }

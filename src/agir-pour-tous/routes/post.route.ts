@@ -95,13 +95,13 @@ postRouter.get("/:postId/likes", async (req, res) => {
 });
 
 postRouter.get("/timeline/:offset/:limit", async (req, res) => {
-    try{
-        const offset=parseInt(req.params.offset);
-        const limit=parseInt(req.params.limit);
+    try {
+        const offset = parseInt(req.params.offset);
+        const limit = parseInt(req.params.limit);
         const postController = PostController.getInstance();
         const posts = await postController.getTimeline((req.user as User).id, offset, limit);
         res.json(posts);
-    }catch (err) {
+    } catch (err) {
         console.log(err)
         res.status(400).json(err);
     }

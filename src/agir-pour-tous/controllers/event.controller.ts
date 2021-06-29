@@ -3,7 +3,7 @@ import {Event, EventProps} from "../models/event.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
 
-export class EventController{
+export class EventController {
     private static instance: EventController;
     private eventRepository: Repository<Event>;
     private userRepository: Repository<User>;
@@ -32,7 +32,7 @@ export class EventController{
     public getAllNotEnd(): Promise<Event[]> {
         const dateNow = new Date(Date.now());
         return this.eventRepository.find({
-            where:{
+            where: {
                 endDate: MoreThan(dateNow)
             },
             relations: ['organisation', 'category']
@@ -58,7 +58,7 @@ export class EventController{
         return await this.getById(eventId);
     }
 
-    public async addParticipant(eventId: string, userId:string): Promise<void> {
+    public async addParticipant(eventId: string, userId: string): Promise<void> {
         return await this.eventRepository.createQueryBuilder()
             .relation(Event, "participants")
             .of(eventId)
@@ -74,14 +74,23 @@ export class EventController{
 
     public async getEventWithLocation(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
         return this.eventRepository.createQueryBuilder()
-            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range",{range, userLocationX, userLocationY})
+            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range", {
+                range,
+                userLocationX,
+                userLocationY
+            })
             .getMany();
     };
 
     public async getEventWithLocationNotEnd(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
         const dateNow = Date.now();
         return this.eventRepository.createQueryBuilder()
-            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range AND dateEnd >=:dateNow",{range, userLocationX, userLocationY, dateNow})
+            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range AND dateEnd >=:dateNow", {
+                range,
+                userLocationX,
+                userLocationY,
+                dateNow
+            })
             .getMany();
     };
 
@@ -107,7 +116,7 @@ export class EventController{
     public async getEventMembers(eventId: string): Promise<User[]> {
         return await this.userRepository.createQueryBuilder()
             .leftJoin("User.eventParticipation", "Event")
-            .where("Event.id=:eventId",{eventId})
+            .where("Event.id=:eventId", {eventId})
             .getMany();
     }
 }
