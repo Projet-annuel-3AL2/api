@@ -18,9 +18,42 @@ userRouter.get('/', async (req, res) => {
 userRouter.get('/:userId', async (req, res) => {
     try {
         const userId = req.params.userId;
-        const userController = UserController.getInstance();
+        const userController = await UserController.getInstance();
         const user = await userController.getById(userId);
-        res.json(user);
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(403).json(err);
+    }
+});
+
+userRouter.get('/getWithUsername/:username', async (req, res) => {
+    try {
+        const username = req.params.username;
+        const userController = await UserController.getInstance();
+        const user = await userController.getWithUsername(username);
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(403).json(err);
+    }
+});
+
+userRouter.get('/getFullUser/:username', async (req, res) => {
+    try {
+        const username = req.params.username;
+        const userController = await UserController.getInstance();
+        const user = await userController.getFullUser(username);
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(403).json(err);
+    }
+});
+
+userRouter.get('/getPostWithUsername/:username', async (req, res) => {
+    try {
+        const username = req.params.username;
+        const userController = await UserController.getInstance();
+        const user = await userController.getPostWithUsername(username);
+        res.status(200).json(user);
     } catch (err) {
         res.status(404).json(err);
     }

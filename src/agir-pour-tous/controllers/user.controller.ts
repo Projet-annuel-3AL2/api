@@ -29,6 +29,38 @@ export class UserController {
         return await this.userRepository.findOneOrFail(id);
     }
 
+    public async getWithUsername(username: string): Promise<User> {
+        return await this.userRepository.findOne({
+            where: {
+                username: username
+            },
+            relations: []
+        })
+    }
+
+    public async getFullUser(username: string): Promise<User> {
+        return await this.userRepository.findOne({
+            where: {
+                username: username
+            },
+            relations: [
+                'eventsParticipation',
+                'eventsParticipation.organisation',
+                "eventsParticipation.category",
+                "eventsParticipation.participants",
+                "eventsParticipation.user"
+            ]
+        })
+    }
+
+    public async getPostWithUsername(username: string): Promise<User> {
+        return await this.userRepository.findOne({
+            where: {
+                username: username
+            }
+        })
+    }
+
     public async getAll(): Promise<User[]> {
         return await this.userRepository.find();
     }

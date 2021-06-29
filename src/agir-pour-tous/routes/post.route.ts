@@ -7,7 +7,7 @@ const postRouter = express.Router();
 
 postRouter.post('/', ensureLoggedIn, async (req, res) => {
     try {
-        const postController = PostController.getInstance();
+        const postController = await PostController.getInstance();
         const post = await postController.create(req.user as User, req.body);
         res.json(post);
     } catch (err) {
@@ -66,7 +66,6 @@ postRouter.get("/:postId/like", async (req, res) => {
         const likes = await postController.likePost(postId, userId);
         res.json(likes);
     } catch (err) {
-        console.log(err)
         res.status(400).json(err);
     }
 });
@@ -88,19 +87,7 @@ postRouter.get("/:postId/likes", async (req, res) => {
     try {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
-        const likes = await postController.getLikes(postId)
-        res.json(likes);
-    } catch (err) {
-        res.status(400).json(err);
-    }
-});
-
-postRouter.get("/:postId/is-liked", async (req, res) => {
-    try {
-        const postId = req.params.postId;
-        const userId = (req.user as User).id;
-        const postController = PostController.getInstance();
-        const likes = await postController.isLiked(postId, userId);
+        const likes = postController.getLikes(postId)
         res.json(likes);
     } catch (err) {
         res.status(400).json(err);
@@ -115,6 +102,7 @@ postRouter.get("/timeline/:offset/:limit", async (req, res) => {
         const posts = await postController.getTimeline((req.user as User).id, offset, limit);
         res.json(posts);
     }catch (err) {
+        console.log(err)
         res.status(400).json(err);
     }
 });

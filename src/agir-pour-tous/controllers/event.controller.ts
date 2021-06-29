@@ -1,4 +1,4 @@
-import {getRepository, Repository} from "typeorm";
+import {getRepository, MoreThan, Repository} from "typeorm";
 import {Event, EventProps} from "../models/event.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
@@ -20,19 +20,22 @@ export class EventController{
         return EventController.instance;
     }
 
-    public getAll(): Promise<Event[]> {
-        return this.eventRepository.find();
+    public async getAll(): Promise<Event[]> {
+        return await this.eventRepository.find();
     }
 
-    public getById(id: string): Promise<Event> {
-        return this.eventRepository.findOneOrFail(id);
+    public async getById(id: string): Promise<Event> {
+        return await this.eventRepository.findOneOrFail(id);
     }
 
     public getAllNotEnd(): Promise<Event[]> {
-        const dateNow = Date.now();
-        return this.eventRepository.createQueryBuilder()
-            .where("endDate >= :dateNow ", {dateNow})
-            .getMany();
+        const dateNow = new Date(Date.now());
+        return this.eventRepository.find({
+            where:{
+                endDate: MoreThan(dateNow)
+            },
+            relations: ['organisation', 'category']
+        })
     }
 
     public async create(user: User, props: EventProps) {
@@ -51,15 +54,15 @@ export class EventController{
 
     public async update(eventId: string, props: EventProps): Promise<Event> {
         await this.eventRepository.update(eventId, props);
-        return this.getById(eventId);
+        return await this.getById(eventId);
     }
 
 
-    public async addParticipant(eventId: string, username: string, userId:string): Promise<void> {
-        const event = await this.getById(eventId);
-        if(!event.participants.includes(await (UserController.getInstance().getById(username))) && await this.isEventNotFull(eventId)){
+    public async addParticipant(eventId: string, userId:string): Promise<void> {
+        const event = await this.getEventMembers(eventId);
+        if(!event.participants.includes(await (UserController.getInstance().getById(userId))) && await this.isEventNotFull(eventId)){
             return await this.eventRepository.createQueryBuilder()
-                .relation(User, "participants")
+                .relation(Event, "participants")
                 .of(eventId)
                 .add(userId);
         }
@@ -67,7 +70,7 @@ export class EventController{
 
     public async removeParticipant(eventId: string, userId: string): Promise<void> {
         return await this.eventRepository.createQueryBuilder()
-            .relation(User, "participants")
+            .relation(Event, "participants")
             .of(eventId)
             .remove(userId);
     }
@@ -100,12 +103,31 @@ export class EventController{
     }
 
     public async isEventNotFull(eventId: string): Promise<boolean> {
-        const event = await this.eventRepository.findOneOrFail(eventId);
+        const event = await this.getEventMembers(eventId);
         return event.participants.length < event.participantsLimit;
     }
 
     public async isNameNotUse(name): Promise<boolean> {
         const event = await this.getWithName(name);
         return event == null;
+    }
+
+    public async getEventMembers(eventId: string): Promise<Event> {
+        return await this.eventRepository.findOneOrFail({
+            where: {
+                id: eventId
+            },
+            relations: ['participants']
+        });
+    }
+
+    async getFullEvent(eventId: string): Promise<Event> {
+        return await this.eventRepository.findOne({
+            where: {
+                id: eventId
+            },
+            relations: ['participants','category', 'organisation','user']
+        })
+
     }
 }

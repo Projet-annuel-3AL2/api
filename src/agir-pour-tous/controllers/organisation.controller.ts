@@ -6,6 +6,7 @@ import {Organisation, OrganisationProps} from "../models/organisation.model";
 import {OrganisationMembership} from "../models/organisation_membership.model";
 
 export class OrganisationController {
+
     private static instance: OrganisationController;
 
     private organisationRepository: Repository<Organisation>;
@@ -14,7 +15,7 @@ export class OrganisationController {
         this.organisationRepository = getRepository(Organisation);
     }
 
-    public static getInstance(): OrganisationController {
+    public static async getInstance(): Promise<OrganisationController> {
         if (OrganisationController.instance === undefined) {
             OrganisationController.instance = new OrganisationController();
         }
@@ -33,13 +34,34 @@ export class OrganisationController {
     }
 
     public async getByName(organisationName: string): Promise<Organisation> {
-        return await this.organisationRepository.findOneOrFail(organisationName);
+        return await this.organisationRepository.findOneOrFail({
+            where: {
+                name: organisationName
+            }
+        });
     }
 
     public async getAll(): Promise<Organisation[]> {
         return await this.organisationRepository.find();
     }
 
+    public async getSuggestionOrganisation(): Promise<Organisation[]> {
+        return await this.organisationRepository.find({
+            order: {
+                createdAt: "DESC"
+            },
+            take: 3
+        })
+    }
+
+    public async getFullOrganisation(organisationName: string): Promise<Organisation> {
+        return await this.organisationRepository.findOne({
+            where: {
+                name: organisationName
+            },
+            relations: ['members', 'members.user', 'bannerPicture', 'events', "events.organisation", "events.category", "events.participants", "events.user"]
+        })
+    }
     public async delete(organisationName: string): Promise<void> {
         await this.organisationRepository.softDelete(organisationName);
     }
