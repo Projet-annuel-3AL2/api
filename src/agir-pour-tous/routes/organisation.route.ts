@@ -157,8 +157,8 @@ organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, isO
         const organisationId = req.params.organisationId;
         const userId = req.params.userId;
         const organisationController = OrganisationController.getInstance();
-        const members = await organisationController.removeMember(organisationId,userId);
-        res.json(members);
+        await organisationController.removeMember(organisationId,userId);
+        res.status(204).end();
     } catch (err) {
         res.status(400).json(err);
     }
@@ -169,8 +169,8 @@ organisationRouter.delete("/:organisationId/leave", ensureLoggedIn, async (req, 
         const organisationId = req.params.organisationId;
         const userId = (req.user as User).id;
         const organisationController = OrganisationController.getInstance();
-        const members = await organisationController.removeMember(organisationId, userId);
-        res.json(members);
+        await organisationController.removeMember(organisationId, userId);
+        res.status(204).end();
     } catch (err) {
         res.status(400).json(err);
     }
@@ -182,8 +182,8 @@ organisationRouter.get('/:organisationId/is-admin', async (req, res) => {
         const organisationId = req.params.organisationId;
         const userId = (req.user as User).id;
         const organisationController = await OrganisationController.getInstance();
-        const organisation = await organisationController.isAdmin(organisationId, userId);
-        res.json(organisation);
+        const isAdmin = await organisationController.isAdmin(organisationId, userId);
+        res.json(isAdmin);
     } catch (err) {
         res.status(404).json(err);
     }
@@ -194,8 +194,8 @@ organisationRouter.get('/:organisationId/is-owner', async (req, res) => {
         const organisationId = req.params.organisationId;
         const userId = (req.user as User).id;
         const organisationController = await OrganisationController.getInstance();
-        const organisation = await organisationController.isOwner(organisationId, userId);
-        res.json(organisation);
+        const isOwner = await organisationController.isOwner(organisationId, userId);
+        res.json(isOwner);
     } catch (err) {
         res.status(404).json(err);
     }
