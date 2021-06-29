@@ -136,7 +136,7 @@ export class UserController {
 
     public async getReports(username: string): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
-            .leftJoin("Report.userReporter","ReportedUser")
+            .leftJoin("Report.reportedUser","ReportedUser")
             .where("ReportedUser.username=:username",{username})
             .getMany();
     }
