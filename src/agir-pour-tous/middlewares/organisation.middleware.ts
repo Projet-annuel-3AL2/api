@@ -18,3 +18,23 @@ export function isOrganisationOwner(req, res, next) {
     }
     next();
 }
+
+export function isNotOrganisationUserOwner(req, res, next) {
+    const organisationId = req.params.organisationId;
+    const userId = req.params.userId;
+    const organisationController = OrganisationController.getInstance();
+    if (!req.user && !organisationController.isOwner(organisationId, userId)) {
+        return res.status(403).end();
+    }
+    next();
+}
+
+export function isOrganisationUserNotAdmin(req, res, next) {
+    const organisationId = req.params.organisationId;
+    const userId = req.params.userId;
+    const organisationController = OrganisationController.getInstance();
+    if (!req.user && !organisationController.isOwner(organisationId, userId)) {
+        return res.status(403).end();
+    }
+    next();
+}

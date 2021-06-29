@@ -25,7 +25,7 @@ export class OrganisationController {
 
     public async create(user: User, props: OrganisationProps): Promise<Organisation> {
         const organisation = this.organisationRepository.create({...props});
-        const creatorMembership = getRepository(OrganisationMembership).create({organisation, user});
+        const creatorMembership = getRepository(OrganisationMembership).create({organisation, user, isOwner: true, isAdmin: true});
         organisation.members = [creatorMembership];
         const err = await validate(organisation);
         if (err.length > 0) {

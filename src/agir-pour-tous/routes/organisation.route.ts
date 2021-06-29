@@ -1,9 +1,13 @@
 import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
-import {hasAdminRights, isAskedUser} from "../middlewares/user.middleware";
+import {hasAdminRights, isAskedUser, isNotAskedUser} from "../middlewares/user.middleware";
 import {User} from "../models/user.model";
 import {OrganisationController} from "../controllers/organisation.controller";
-import {isOrganisationAdmin, isOrganisationOwner} from "../middlewares/organisation.middleware";
+import {
+    isOrganisationAdmin,
+    isOrganisationOwner,
+    isNotOrganisationUserOwner
+} from "../middlewares/organisation.middleware";
 
 const organisationRouter = express.Router();
 
@@ -177,7 +181,7 @@ organisationRouter.delete("/:organisationId/leave", ensureLoggedIn, async (req, 
 });
 
 
-organisationRouter.get('/:organisationId/is-admin', async (req, res) => {
+organisationRouter.get('/:organisationId/is-admin', ensureLoggedIn, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const userId = (req.user as User).id;
@@ -189,7 +193,7 @@ organisationRouter.get('/:organisationId/is-admin', async (req, res) => {
     }
 });
 
-organisationRouter.get('/:organisationId/is-owner', async (req, res) => {
+organisationRouter.get('/:organisationId/is-owner', ensureLoggedIn, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const userId = (req.user as User).id;
@@ -201,7 +205,7 @@ organisationRouter.get('/:organisationId/is-owner', async (req, res) => {
     }
 });
 
-organisationRouter.put('/:organisationId/add-admin/:userId', isOrganisationOwner, async (req, res) => {
+organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isNotAskedUser, isOrganisationOwner, isNotOrganisationUserOwner, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const userId = req.params.userId;
@@ -212,7 +216,7 @@ organisationRouter.put('/:organisationId/add-admin/:userId', isOrganisationOwner
         res.status(404).json(err);
     }
 });
-organisationRouter.put('/:organisationId/remove-admin/:userId', isOrganisationOwner, async (req, res) => {
+organisationRouter.put('/:organisationId/remove-admin/:userId', ensureLoggedIn, isNotAskedUser, isOrganisationOwner, isNotOrganisationUserOwner, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const userId = req.params.userId;
