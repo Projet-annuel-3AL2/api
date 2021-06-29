@@ -4,6 +4,7 @@ import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {Organisation, OrganisationProps} from "../models/organisation.model";
 import {OrganisationMembership} from "../models/organisation_membership.model";
+import {Report, ReportProps} from "../models/report.model";
 
 export class OrganisationController {
 
@@ -15,7 +16,7 @@ export class OrganisationController {
         this.organisationRepository = getRepository(Organisation);
     }
 
-    public static async getInstance(): Promise<OrganisationController> {
+    public static getInstance(): OrganisationController {
         if (OrganisationController.instance === undefined) {
             OrganisationController.instance = new OrganisationController();
         }
@@ -95,5 +96,17 @@ export class OrganisationController {
             throw err;
         }
         return getRepository(Post).save(post);
+    }
+
+    public async reportOrganisation(userReporter: User, reportedOrganisation: Organisation, props: ReportProps) {
+        const report = getRepository(Report).create({...props, userReporter, reportedOrganisation});
+        return await getRepository(Report).save(report);
+    }
+
+    public async getReports(organisationId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoin("Report.reportedOrganisation","ReportedOrganisation")
+            .where("ReportedOrganisation.id=:organisationId",{organisationId})
+            .getMany();
     }
 }
