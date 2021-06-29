@@ -107,7 +107,7 @@ postRouter.get("/timeline/:offset/:limit", async (req, res) => {
     }
 });
 
-postRouter.get("/:postId/is-liked", async (req, res) => {
+postRouter.get("/:postId/is-liked", ensureLoggedIn, async (req, res) => {
     try {
         const postId = req.params.postId;
         const userId = (req.user as User).id;
