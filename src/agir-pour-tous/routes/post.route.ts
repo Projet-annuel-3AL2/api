@@ -2,7 +2,7 @@ import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {PostController} from "../controllers/post.controller";
 import {User} from "../models/user.model";
-import {hasAdminRights, isNotAskedUser} from "../middlewares/user.middleware";
+import {hasAdminRights} from "../middlewares/user.middleware";
 import {userRouter} from "./user.route";
 
 const postRouter = express.Router();
@@ -121,14 +121,14 @@ postRouter.get("/:postId/is-liked", ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.put("/:postId/report", ensureLoggedIn, isNotAskedUser, async (req, res) => {
+userRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
     try {
         const postId = req.params.postId;
         const userReporter = (req.user as User);
         const postController = PostController.getInstance();
         const reportedPost = await postController.getById(postId);
-        const isBlocked = await postController.reportPost(userReporter, reportedPost, {...req.body});
-        res.json(isBlocked);
+        const report = await postController.reportPost(userReporter, reportedPost, {...req.body});
+        res.json(report);
     } catch (err) {
         res.status(400).json(err);
     }
@@ -138,8 +138,8 @@ userRouter.get("/:postId/reports", ensureLoggedIn, hasAdminRights, async (req, r
     try {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
-        const isBlocked = await postController.getReports(postId);
-        res.json(isBlocked);
+        const reports = await postController.getReports(postId);
+        res.json(reports);
     } catch (err) {
         res.status(400).json(err);
     }

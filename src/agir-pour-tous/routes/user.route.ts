@@ -153,8 +153,8 @@ userRouter.put("/:username/report", ensureLoggedIn, isNotAskedUser, async (req, 
         const userReporter = (req.user as User);
         const userController = UserController.getInstance();
         const reportedUser = await userController.getByUsername(username);
-        const isBlocked = await userController.reportUser(userReporter, reportedUser, {...req.body});
-        res.json(isBlocked);
+        const report = await userController.reportUser(userReporter, reportedUser, {...req.body});
+        res.json(report);
     } catch (err) {
         res.status(400).json(err);
     }
@@ -164,8 +164,8 @@ userRouter.get("/:username/reports", ensureLoggedIn, hasAdminRights, async (req,
     try {
         const username = req.params.username;
         const userController = UserController.getInstance();
-        const isBlocked = await userController.getReports(username);
-        res.json(isBlocked);
+        const reports = await userController.getReports(username);
+        res.json(reports);
     } catch (err) {
         res.status(400).json(err);
     }

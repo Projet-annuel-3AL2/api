@@ -120,7 +120,7 @@ export class PostController {
     public async getReports(postId: string) {
         return await getRepository(Report).createQueryBuilder()
             .leftJoin("Report.reportedPost","ReportedPost")
-            .where("ReportedPost.postId=:postId",{postId})
+            .where("ReportedPost.id=:postId",{postId})
             .getMany();
     }
 }
