@@ -98,8 +98,8 @@ organisationRouter.put('/:organisationId/follow', async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
-        const followers = await organisationController.addFollower(organisationId, (req.user as User).id);
-        res.json(followers);
+        await organisationController.addFollower(organisationId, (req.user as User).id);
+        res.status(204).end();
     } catch (err) {
         res.status(404).json(err);
     }
@@ -109,8 +109,8 @@ organisationRouter.delete('/:organisationId/unfollow', async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
-        const followers = await organisationController.removeFollower(organisationId, (req.user as User).id);
-        res.json(followers);
+        await organisationController.removeFollower(organisationId, (req.user as User).id);
+        res.status(204).end();
     } catch (err) {
         res.status(404).json(err);
     }
