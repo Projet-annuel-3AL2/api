@@ -3,7 +3,7 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {hasAdminRights, isAskedUser} from "../middlewares/user.middleware";
 import {User} from "../models/user.model";
 import {OrganisationController} from "../controllers/organisation.controller";
-import {isOrganisationAdmin} from "../middlewares/organisation.middleware";
+import {isOrganisationAdmin, isOrganisationOwner} from "../middlewares/organisation.middleware";
 
 const organisationRouter = express.Router();
 
@@ -196,6 +196,29 @@ organisationRouter.get('/:organisationId/is-owner', async (req, res) => {
         const organisationController = await OrganisationController.getInstance();
         const isOwner = await organisationController.isOwner(organisationId, userId);
         res.json(isOwner);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+organisationRouter.put('/:organisationId/add-admin/:userId', isOrganisationOwner, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const userId = req.params.userId;
+        const organisationController = await OrganisationController.getInstance();
+        await organisationController.addAdmin(organisationId, userId);
+        res.status(204).end();
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+organisationRouter.put('/:organisationId/remove-admin/:userId', isOrganisationOwner, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const userId = req.params.userId;
+        const organisationController = await OrganisationController.getInstance();
+        await organisationController.removeAdmin(organisationId, userId);
+        res.status(204).end();
     } catch (err) {
         res.status(404).json(err);
     }

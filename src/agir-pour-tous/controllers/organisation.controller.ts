@@ -145,4 +145,26 @@ export class OrganisationController {
             .andWhere("User.id=:userId", {userId})
             .getOne()).isOwner;
     }
+
+    public async addAdmin(organisationId: string, userId: string): Promise<void> {
+        await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation","Organisation")
+            .leftJoin("OrganisationMembership.user","User")
+            .update()
+            .set({ isAdmin: true })
+            .where("Organisation.id=:organisationId", {organisationId})
+            .where("User.id=:userId", {userId})
+            .execute();
+    }
+
+    public async removeAdmin(organisationId: string, userId: string): Promise<void> {
+        await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation","Organisation")
+            .leftJoin("OrganisationMembership.user","User")
+            .update()
+            .set({ isAdmin: false })
+            .where("Organisation.id=:organisationId", {organisationId})
+            .where("User.id=:userId", {userId})
+            .execute();
+    }
 }
