@@ -59,6 +59,10 @@ export class User implements UserProps {
     mail: string;
     @Column({unique: true, nullable: false, select: false})
     password: string;
+    @Column({select: false, nullable: true})
+    resetToken: string;
+    @Column({select: false, nullable: true})
+    resetTokenExpiration: Date;
     @Column({type: "enum", enum: UserType, default: UserType.USER, nullable: false})
     userType: UserType;
     @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true})
