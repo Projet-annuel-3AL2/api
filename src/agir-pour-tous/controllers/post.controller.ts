@@ -123,4 +123,13 @@ export class PostController {
             .where("FriendOne.id=:userId", {userId})
             .getMany();
     }
+
+    public async isPostOwner(postId: string, userId: string): Promise<Boolean> {
+        return (await this.postRepository
+            .createQueryBuilder()
+            .leftJoin("Post.creator","User")
+            .where("User.id=:userId",{userId})
+            .andWhere("Post.id=:postId", {postId})
+            .getOne() !== undefined);
+    }
 }

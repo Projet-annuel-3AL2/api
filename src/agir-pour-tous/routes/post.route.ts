@@ -3,6 +3,7 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {PostController} from "../controllers/post.controller";
 import {User} from "../models/user.model";
 import {hasAdminRights} from "../middlewares/user.middleware";
+import {isPostOwner} from "../middlewares/post.middleware";
 
 const postRouter = express.Router();
 
@@ -37,7 +38,7 @@ postRouter.get('/:postId', async (req, res) => {
     }
 });
 
-postRouter.delete('/:postId', ensureLoggedIn, async (req, res) => {
+postRouter.delete('/:postId', ensureLoggedIn, isPostOwner, async (req, res) => {
     try {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
@@ -48,7 +49,7 @@ postRouter.delete('/:postId', ensureLoggedIn, async (req, res) => {
     }
 });
 
-postRouter.put('/:postId', ensureLoggedIn, async (req, res) => {
+postRouter.put('/:postId', ensureLoggedIn, isPostOwner, async (req, res) => {
     try {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
@@ -59,7 +60,7 @@ postRouter.put('/:postId', ensureLoggedIn, async (req, res) => {
     }
 });
 
-postRouter.get("/:postId/like", async (req, res) => {
+postRouter.get("/:postId/like", ensureLoggedIn, async (req, res) => {
     try {
         const postId = req.params.postId;
         const userId = (req.user as User).id;
@@ -71,7 +72,7 @@ postRouter.get("/:postId/like", async (req, res) => {
     }
 });
 
-postRouter.delete("/:postId/like", async (req, res) => {
+postRouter.delete("/:postId/like", ensureLoggedIn, async (req, res) => {
     try {
         const postId = req.params.postId;
         const userId = (req.user as User).id;
@@ -139,6 +140,18 @@ postRouter.get("/:postId/reports", ensureLoggedIn, hasAdminRights, async (req, r
         const postController = PostController.getInstance();
         const reports = await postController.getReports(postId);
         res.json(reports);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+postRouter.get("/:postId/is-owner",async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const userId = (req.user as User).id;
+        const postController = PostController.getInstance();
+        const isOwner = await postController.isPostOwner(postId,userId);
+        res.json({isOwner});
     } catch (err) {
         res.status(400).json(err);
     }
