@@ -31,13 +31,32 @@ export class EventController {
         return await this.eventRepository.findOneOrFail(id);
     }
 
-    public getAllNotEnd(): Promise<Event[]> {
+    public async getAllNotEnd(): Promise<Event[]> {
         const dateNow = new Date(Date.now());
-        return this.eventRepository.find({
+        return await this.eventRepository.find({
             where: {
                 endDate: MoreThan(dateNow)
             },
             relations: ['organisation', 'category', 'user']
+        })
+    }
+
+    public async getSuggestion(): Promise<Event[]> {
+        const dateNow = new Date(Date.now());
+        return await this.eventRepository.find({
+            where: {
+                endDate: MoreThan(dateNow)
+            },
+            take: 3
+        })
+    }
+
+    public async getProfil(eventId: string): Promise<Event> {
+        return await this.eventRepository.findOneOrFail({
+            where: {
+                id: eventId
+            },
+            relations: ['user', 'organisation', 'category' ]
         })
     }
 
@@ -124,8 +143,8 @@ export class EventController {
 
     public async getPosts(eventId: string): Promise<Post[]> {
         return await getRepository(Post).createQueryBuilder()
-            .leftJoin("Post.sharedEvent", "Event")
-            .where("Event.id=:eventId", {eventId})
+            .innerJoin("Post.sharedEvent", "Event")
+            .where("Post.sharedEvent.id=:eventId", {eventId})
             .getMany();
     }
 
