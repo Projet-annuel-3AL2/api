@@ -184,21 +184,21 @@ organisationRouter.delete("/:organisationId/leave", ensureLoggedIn, async (req, 
 organisationRouter.get('/:organisationId/is-admin', ensureLoggedIn, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
-        const userId = (req.user as User).id;
+        const username = (req.user as User).username;
         const organisationController = await OrganisationController.getInstance();
-        const isAdmin = await organisationController.isAdmin(organisationId, userId);
+        const isAdmin = await organisationController.isAdmin(organisationId, username);
         res.json(isAdmin);
     } catch (err) {
-        res.status(404).json(err);
+        res.status(400).json(err);
     }
 });
 
 organisationRouter.get('/:organisationId/is-owner', ensureLoggedIn, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
-        const userId = (req.user as User).id;
+        const username = (req.user as User).username;
         const organisationController = await OrganisationController.getInstance();
-        const isOwner = await organisationController.isOwner(organisationId, userId);
+        const isOwner = await organisationController.isOwner(organisationId, username);
         res.json(isOwner);
     } catch (err) {
         res.status(404).json(err);

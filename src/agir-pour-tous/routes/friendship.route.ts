@@ -80,7 +80,7 @@ friendshipRouter.get("/:username/friendship-status", ensureLoggedIn, async (req,
     try {
         const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
-        const isFriendshipRequested = await friendshipController.isFriendshipRequested((req.user as User).id, username);
+        const isFriendshipRequested = await friendshipController.isFriendshipRequested((req.user as User).username, username);
         res.json(isFriendshipRequested);
     } catch (err) {
         res.status(400).json(err);
