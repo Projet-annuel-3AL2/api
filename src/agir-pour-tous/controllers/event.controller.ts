@@ -37,7 +37,7 @@ export class EventController {
             where: {
                 endDate: MoreThan(dateNow)
             },
-            relations: ['organisation', 'category']
+            relations: ['organisation', 'category', 'user']
         })
     }
 
@@ -117,7 +117,7 @@ export class EventController {
 
     public async getEventMembers(eventId: string): Promise<User[]> {
         return await this.userRepository.createQueryBuilder()
-            .leftJoin("User.eventParticipation", "Event")
+            .leftJoin("User.eventsParticipation", "Event")
             .where("Event.id=:eventId", {eventId})
             .getMany();
     }

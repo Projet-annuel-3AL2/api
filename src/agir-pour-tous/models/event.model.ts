@@ -57,7 +57,7 @@ export class Event {
     posts: Post[];
     @ManyToOne(() => Category, category => category.events, {nullable: false})
     category: Category;
-    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true})
     picture: Media;
     @OneToMany(() => Report, report => report.reportedEvent)
     reported: Report[];
