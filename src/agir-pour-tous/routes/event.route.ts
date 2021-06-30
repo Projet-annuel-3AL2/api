@@ -63,6 +63,26 @@ eventRouter.get('/is-finished', ensureLoggedIn, async (req, res) => {
     }
 });
 
+eventRouter.get('/suggestion', ensureLoggedIn, async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const events = await eventController.getSuggestion();
+        res.json(events);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/profil', ensureLoggedIn, async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const events = await eventController.getProfil(req.params.eventId);
+        res.json(events);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 eventRouter.get('/:eventId', async (req, res) => {
     try {
         const eventId = req.params.eventId;
@@ -203,6 +223,17 @@ eventRouter.get('/:eventId/posts', async (req, res) => {
         const eventController = await EventController.getInstance();
         const posts = await eventController.getPosts(eventId);
         res.json(posts);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/event-card', async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = await EventController.getInstance();
+        const event = await eventController.getEventCard(eventId);
+        res.json(event);
     } catch (err) {
         res.status(400).json(err);
     }

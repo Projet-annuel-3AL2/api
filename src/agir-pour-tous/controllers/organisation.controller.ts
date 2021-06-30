@@ -133,21 +133,21 @@ export class OrganisationController {
             .execute();
     }
 
-    public async isAdmin(organisationId: string, userId: string): Promise<boolean> {
+    public async isAdmin(organisationId: string, username: string): Promise<boolean> {
         return (await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
-            .andWhere("User.id=:userId", {userId})
+            .andWhere("User.username=:username", { username})
             .getOne()).isAdmin;
     }
 
-    public async isOwner(organisationId: string, userId: string): Promise<boolean> {
+    public async isOwner(organisationId: string, username: string): Promise<boolean> {
         return (await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
-            .andWhere("User.id=:userId", {userId})
+            .andWhere("User.username=:username", {username})
             .getOne()).isOwner;
     }
 
