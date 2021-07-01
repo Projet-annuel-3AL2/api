@@ -228,17 +228,6 @@ eventRouter.get('/:eventId/posts', async (req, res) => {
     }
 });
 
-eventRouter.get('/:eventId/event-card', async (req, res) => {
-    try {
-        const eventId = req.params.eventId;
-        const eventController = await EventController.getInstance();
-        const event = await eventController.getEventCard(eventId);
-        res.json(event);
-    } catch (err) {
-        res.status(400).json(err);
-    }
-});
-
 eventRouter.put("/:eventId/report", ensureLoggedIn, async (req, res) => {
     try {
         const eventId = req.params.eventId;
