@@ -171,6 +171,17 @@ userRouter.get("/:username/reports", ensureLoggedIn, hasAdminRights, async (req,
     }
 });
 
+userRouter.get("/is-following-orga/:organisationId", ensureLoggedIn, async (req, res) =>{
+   try {
+       const organisationId = req.params.organisationId;
+       const userController = UserController.getInstance();
+       const isFollowing = await userController.isFollowingOrganisation((req.user as User).username, organisationId);
+       res.json(isFollowing);
+   } catch (err) {
+       res.status(400).json(err);
+   }
+});
+
 export {
     userRouter
 }
