@@ -55,16 +55,20 @@ export class FriendshipController {
         if (await this.friendshipRepository.createQueryBuilder()
             .leftJoin("Friendship.friendOne", "FriendOne")
             .leftJoin("Friendship.friendTwo", "FriendTwo")
-            .where("FriendOne.id=:currentUsername AND FriendTwo.id=:username", {currentUsername, username})
-            .orWhere("FriendOne.id=:username AND FriendTwo.id=:currentUsername", {currentUsername, username})
+            .where("FriendOne.username=:currentUsername AND FriendTwo.username=:username", {currentUsername, username})
+            .orWhere("FriendOne.username=:username AND FriendTwo.username=:currentUsername", {currentUsername, username})
             .getOne() !== undefined) {
             return FriendshipStatus.BEFRIENDED;
         } else if (await this.friendRequestRepository.createQueryBuilder()
-            .where("sender=:currentUsername and username=:username", {currentUsername, username})
+            .leftJoin("FriendRequest.sender","Sender")
+            .leftJoin("FriendRequest.user","User")
+            .where("Sender.username=:currentUsername and User.username=:username", {currentUsername, username})
             .getOne() !== undefined) {
             return FriendshipStatus.PENDING;
         } else if (await this.friendRequestRepository.createQueryBuilder()
-            .where("sender=:username and username=:currentUsername", {currentUsername, username})
+            .leftJoin("FriendRequest.sender","Sender")
+            .leftJoin("FriendRequest.user","User")
+            .where("Sender.username=:username and User.username=:currentUsername", {currentUsername, username})
             .getOne() !== undefined) {
             return FriendshipStatus.RECEIVED;
         }
