@@ -198,6 +198,18 @@ organisationRouter.get('/:organisationId/is-admin', ensureLoggedIn, async (req, 
     }
 });
 
+organisationRouter.get('/:organisationId/is-user-admin/:username', ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const username = req.params.username;
+        const organisationController = await OrganisationController.getInstance();
+        const isAdmin = await organisationController.isAdmin(organisationId, username);
+        res.json(isAdmin);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 organisationRouter.get('/:organisationId/is-owner', ensureLoggedIn, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
@@ -210,6 +222,20 @@ organisationRouter.get('/:organisationId/is-owner', ensureLoggedIn, async (req, 
     }
 });
 
+organisationRouter.get('/:organisationId/is-user-owner/:username', ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const username = req.params.username;
+        const organisationController = await OrganisationController.getInstance();
+        const isOwner = await organisationController.isOwner(organisationId, username);
+        res.json(isOwner);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+
+
 organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isNotAskedUser, isOrganisationOwner, isNotOrganisationUserOwner, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
@@ -218,18 +244,18 @@ organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isN
         await organisationController.addAdmin(organisationId, userId);
         res.status(204).end();
     } catch (err) {
-        res.status(404).json(err);
+        res.status(403).json(err);
     }
 });
 organisationRouter.put('/:organisationId/remove-admin/:userId', ensureLoggedIn, isNotAskedUser, isOrganisationOwner, isNotOrganisationUserOwner, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const userId = req.params.userId;
-        const organisationController = await OrganisationController.getInstance();
+        const organisationController = OrganisationController.getInstance();
         await organisationController.removeAdmin(organisationId, userId);
         res.status(204).end();
     } catch (err) {
-        res.status(404).json(err);
+        res.status(403).json(err);
     }
 });
 
