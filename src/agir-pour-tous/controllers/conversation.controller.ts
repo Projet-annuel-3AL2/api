@@ -53,4 +53,45 @@ export class ConversationController {
         }
         return this.messageRepository.save(message);
     }
+    
+    public async getMembers(conversationId: string): Promise<User[]> {
+        return (await this.getFriendOne(conversationId))
+            .concat(await this.getFriendTwo(conversationId))
+            .concat(await this.getGroupMembers(conversationId))
+            .concat(await this.getOrganisationMembers(conversationId));
+    }
+
+    public async getFriendOne(conversationId: string): Promise<User[]> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.friendsOne","Friendship")
+            .leftJoin("Friendship.conversation","Conversation")
+            .where("Conversation.id=:conversationId",{conversationId})
+            .getMany();
+    }
+
+    public async getFriendTwo(conversationId: string): Promise<User[]> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.friendsTwo","Friendship")
+            .leftJoin("Friendship.conversation","Conversation")
+            .where("Conversation.id=:conversationId",{conversationId})
+            .getMany();
+    }
+
+    public async getOrganisationMembers(conversationId: string): Promise<User[]> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.organisations","OrganisationMembership")
+            .leftJoin("OrganisationMembership.organisation","Organisation")
+            .leftJoin("Organisation.conversation","Conversation")
+            .where("Conversation.id=:conversationId",{conversationId})
+            .getMany();
+    }
+
+    public async getGroupMembers(conversationId: string): Promise<User[]> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.groups","GroupMembership")
+            .leftJoin("GroupMembership.group","Group")
+            .leftJoin("Group.conversation","Conversation")
+            .where("Conversation.id=:conversationId",{conversationId})
+            .getMany();
+    }
 }

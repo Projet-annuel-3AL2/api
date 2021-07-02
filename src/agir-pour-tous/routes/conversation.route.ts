@@ -1,11 +1,10 @@
 import express from "express";
 import {ConversationController} from "../controllers/conversation.controller";
-import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {User} from "../models/user.model";
 
 const conversationRouter = express.Router();
 
-conversationRouter.get("/:conversationId", ensureLoggedIn, async (req, res) => {
+conversationRouter.get("/:conversationId", async (req, res) => {
     try {
         const conversationId = req.params.conversationId;
         const conversationController = ConversationController.getInstance();
@@ -16,7 +15,7 @@ conversationRouter.get("/:conversationId", ensureLoggedIn, async (req, res) => {
     }
 });
 
-conversationRouter.get("/:conversationId/messages", ensureLoggedIn, async (req, res) => {
+conversationRouter.get("/:conversationId/messages", async (req, res) => {
     try {
         const conversationId = req.params.conversationId;
         const conversationController = ConversationController.getInstance();
@@ -27,7 +26,7 @@ conversationRouter.get("/:conversationId/messages", ensureLoggedIn, async (req, 
     }
 });
 
-conversationRouter.get("/:conversationId/last-message", ensureLoggedIn, async (req, res) => {
+conversationRouter.get("/:conversationId/last-message", async (req, res) => {
     try {
         const conversationId = req.params.conversationId;
         const conversationController = ConversationController.getInstance();
@@ -38,7 +37,7 @@ conversationRouter.get("/:conversationId/last-message", ensureLoggedIn, async (r
     }
 });
 
-conversationRouter.post("/:conversationId/message", ensureLoggedIn, async (req, res) => {
+conversationRouter.post("/:conversationId/message", async (req, res) => {
     try {
         const conversationId = req.params.conversationId;
         const conversationController = ConversationController.getInstance();
@@ -50,6 +49,16 @@ conversationRouter.post("/:conversationId/message", ensureLoggedIn, async (req, 
     }
 });
 
+conversationRouter.get("/:conversationId/members", async (req, res) => {
+    try {
+        const conversationId = req.params.conversationId;
+        const conversationController = ConversationController.getInstance();
+        const members = await conversationController.getMembers(conversationId);
+        res.json(members);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
 
 export {
     conversationRouter
