@@ -26,6 +26,14 @@ export class CertificationController {
         return CertificationController.instance;
     }
 
+    public async getById(certificationId: string): Promise<Certification>{
+        return this.certificationRepository.findOneOrFail(certificationId);
+    }
+
+    public async getAll(): Promise<Certification[]>{
+        return this.certificationRepository.find();
+    }
+
     public async getRequestById(certificationRequestId: string): Promise<CertificationRequest>{
         return this.certificationRequestRepository.findOneOrFail(certificationRequestId);
     }

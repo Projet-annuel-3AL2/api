@@ -6,11 +6,32 @@ import {User} from "../models/user.model";
 
 const certificationRouter = express.Router();
 
-certificationRouter.get("/request/:certificateId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.get("/:certificateId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const certificateId = req.params.certificateId;
         const certificationController = CertificationController.getInstance();
-        const certificationRequest = await certificationController.getRequestById(certificateId);
+        const certificationRequest = await certificationController.getById(certificateId);
+        res.json(certificationRequest);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req, res) => {
+    try {
+        const certificationController = CertificationController.getInstance();
+        const certificationRequests = await certificationController.getAll();
+        res.json(certificationRequests);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+certificationRouter.get("/request/:certificateRequestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+    try {
+        const certificateRequestId = req.params.certificateRequestId;
+        const certificationController = CertificationController.getInstance();
+        const certificationRequest = await certificationController.getRequestById(certificateRequestId);
         res.json(certificationRequest);
     } catch (err) {
         res.status(404).json(err);
