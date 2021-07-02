@@ -41,11 +41,11 @@ friendshipRouter.post("/:username", ensureLoggedIn, async (req, res) => {
     }
 });
 
-friendshipRouter.delete("/:username/reject", ensureLoggedIn, async (req, res) => {
+friendshipRouter.delete("/:friendRequestId/reject", ensureLoggedIn, async (req, res) => {
     try {
-        const username = req.params.username;
+        const friendRequestId = req.params.friendRequestId;
         const friendshipController = FriendshipController.getInstance();
-        const friendship = await friendshipController.cancelFriendRequest((req.user as User).id, username);
+        const friendship = await friendshipController.cancelFriendRequest(friendRequestId);
         res.json(friendship);
     } catch (err) {
         res.status(400).json(err);
