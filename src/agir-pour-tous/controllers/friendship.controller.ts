@@ -27,7 +27,7 @@ export class FriendshipController {
     }
 
     public async cancelFriendRequest(senderUsername: string, username: string): Promise<void> {
-        await this.friendRequestRepository.softDelete(await this.friendRequestRepository.createQueryBuilder()
+        await this.friendRequestRepository.delete(await this.friendRequestRepository.createQueryBuilder()
             .leftJoin("FriendRequest.user", "User")
             .where("User.username=:username", {username})
             .leftJoin("FriendRequest.sender", "Sender")
