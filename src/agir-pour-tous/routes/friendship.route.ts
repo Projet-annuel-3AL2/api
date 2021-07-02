@@ -41,11 +41,22 @@ friendshipRouter.post("/:username", ensureLoggedIn, async (req, res) => {
     }
 });
 
-friendshipRouter.delete("/:friendRequestId/reject", ensureLoggedIn, async (req, res) => {
+friendshipRouter.delete("/:username/cancel", ensureLoggedIn, async (req, res) => {
     try {
-        const friendRequestId = req.params.friendRequestId;
+        const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
-        const friendship = await friendshipController.cancelFriendRequest(friendRequestId);
+        const friendship = await friendshipController.cancelFriendRequest((req.user as User).username, username);
+        res.json(friendship);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+friendshipRouter.delete("/:username/reject", ensureLoggedIn, async (req, res) => {
+    try {
+        const username = req.params.username;
+        const friendshipController = FriendshipController.getInstance();
+        const friendship = await friendshipController.cancelFriendRequest(username, (req.user as User).username);
         res.json(friendship);
     } catch (err) {
         res.status(400).json(err);
@@ -69,7 +80,7 @@ friendshipRouter.delete("/:username/remove", ensureLoggedIn, async (req, res) =>
     try {
         const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
-        const friendship = await friendshipController.removeFriendship(username, (req.user as User).id);
+        const friendship = await friendshipController.removeFriendship(username, (req.user as User).username);
         res.json(friendship);
     } catch (err) {
         res.status(400).json(err);
@@ -80,7 +91,7 @@ friendshipRouter.get("/:username/friendship-status", ensureLoggedIn, async (req,
     try {
         const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
-        const isFriendshipRequested = await friendshipController.isFriendshipRequested((req.user as User).id, username);
+        const isFriendshipRequested = await friendshipController.isFriendshipRequested((req.user as User).username, username);
         res.json(isFriendshipRequested);
     } catch (err) {
         res.status(400).json(err);
