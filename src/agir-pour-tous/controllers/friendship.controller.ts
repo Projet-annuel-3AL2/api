@@ -26,13 +26,8 @@ export class FriendshipController {
         return this.friendRequestRepository.save(friendRequest);
     }
 
-    public async cancelFriendRequest(senderUsername: string, username: string): Promise<void> {
-        await this.friendRequestRepository.delete(await this.friendRequestRepository.createQueryBuilder()
-            .leftJoin("FriendRequest.user", "User")
-            .where("User.username=:username", {username})
-            .leftJoin("FriendRequest.sender", "Sender")
-            .andWhere("Sender.username=:senderUsername", {senderUsername})
-            .getOne());
+    public async cancelFriendRequest(friendRequestId: string): Promise<void> {
+        await this.friendRequestRepository.delete(friendRequestId);
     }
 
     public async acceptFriendRequest(friendOne: User, friendTwo: User): Promise<Friendship> {
