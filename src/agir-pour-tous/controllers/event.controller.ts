@@ -96,23 +96,11 @@ export class EventController {
             .getMany();
     };
 
-    public async getWithNameRecherche(userRecherche: string): Promise<Event[]> {
+    public async searchByName(name: string): Promise<Event[]> {
         return this.eventRepository
             .createQueryBuilder()
-            .where("event.name like :userRecherche", {userRecherche: '%' + userRecherche + '%'})
+            .where("event.name like :name", {name: '%' + name + '%'})
             .getMany();
-    }
-
-    public async getWithName(eventName: string): Promise<Event> {
-        return this.eventRepository
-            .createQueryBuilder()
-            .where("event.name = :eventName", {eventName})
-            .getOne();
-    }
-
-    public async isNameNotUse(name): Promise<boolean> {
-        const event = await this.getWithName(name);
-        return event == null;
     }
 
     public async getEventMembers(eventId: string): Promise<User[]> {
