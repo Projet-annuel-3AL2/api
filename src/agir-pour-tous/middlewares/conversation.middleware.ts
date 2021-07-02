@@ -1,7 +1,6 @@
 import {User} from "../models/user.model";
 import {ConversationController} from "../controllers/conversation.controller";
 
-
 export async function isConversationMember(req, res, next) {
     const conversationId = req.params.conversationId;
     const conversationController = ConversationController.getInstance();
