@@ -1,5 +1,5 @@
 import {User} from "./user.model";
-import {CreateDateColumn, Entity, ManyToOne} from "typeorm";
+import {CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
 export class FriendRequest {

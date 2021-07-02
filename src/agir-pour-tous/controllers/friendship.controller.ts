@@ -26,14 +26,19 @@ export class FriendshipController {
         return this.friendRequestRepository.save(friendRequest);
     }
 
-    public async cancelFriendRequest(senderUsername: string, username: string): Promise<void> {
-        await this.friendRequestRepository.createQueryBuilder()
+    public async cancelFriendRequest(senderUsername: string, username: string): Promise<any> {
+        console.log(await this.friendRequestRepository.createQueryBuilder()
             .leftJoin("FriendRequest.user", "User")
             .where("User.username=:username", {username})
             .leftJoin("FriendRequest.sender", "Sender")
             .andWhere("Sender.username=:senderUsername", {senderUsername})
-            .softDelete()
-            .execute();
+            .getOne());
+        return await this.friendRequestRepository.delete(await this.friendRequestRepository.createQueryBuilder()
+            .leftJoin("FriendRequest.user", "User")
+            .where("User.username=:username", {username})
+            .leftJoin("FriendRequest.sender", "Sender")
+            .andWhere("Sender.username=:senderUsername", {senderUsername})
+            .getOne());
     }
 
     public async acceptFriendRequest(friendOne: User, friendTwo: User): Promise<Friendship> {
@@ -71,7 +76,7 @@ export class FriendshipController {
         } else if (await this.friendRequestRepository.createQueryBuilder()
             .leftJoin("FriendRequest.sender", "Sender")
             .leftJoin("FriendRequest.user", "User")
-            .where("Sender.username=:username and User.username=:currentUsername", {currentUsername, username})
+            .where("Sender.username=:username and User.username=:currentUsername", { username, currentUsername})
             .getOne() !== undefined) {
             return FriendshipStatus.RECEIVED;
         }
@@ -91,4 +96,6 @@ export class FriendshipController {
             .where("User.id=:id", {id})
             .getMany();
     }
+
+
 }

@@ -4,6 +4,7 @@ import {User} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
 import {hasAdminRights} from "../middlewares/user.middleware";
 import {canCreateEvent, isEventOrganiser} from "../middlewares/event.middleware";
+import {UserController} from "../controllers/user.controller";
 
 const eventRouter = express.Router();
 
@@ -18,12 +19,11 @@ eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
 });
 
 
-eventRouter.get('/:eventId/join', ensureLoggedIn, async (req, res) => {
+eventRouter.post('/:eventId/join', ensureLoggedIn, async (req, res) => {
     try {
         const eventId = req.params.eventId;
-        const userId = (req.user as User).id;
         const eventController = await EventController.getInstance();
-        const event = await eventController.addParticipant(eventId, userId);
+        const event = await eventController.addParticipant(eventId, (req.user as User).id);
         res.json(event);
     } catch (err) {
         res.status(400).json(err);
