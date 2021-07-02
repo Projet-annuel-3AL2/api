@@ -3,6 +3,7 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {User} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
 import {hasAdminRights} from "../middlewares/user.middleware";
+import {isEventOrganiser} from "../middlewares/event.middleware";
 
 const eventRouter = express.Router();
 
@@ -108,13 +109,13 @@ eventRouter.get('/search/:name', ensureLoggedIn, async (req, res) => {
     }
 })
 
-eventRouter.delete('/:eventId', ensureLoggedIn, /*isEventOrganiser,*/ async (req, res) => {
+eventRouter.delete('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = await EventController.getInstance();
         await eventController.delete(eventId);
         res.status(204).end();
-    } catch (err){
+    } catch (err) {
         res.status(400).json(err);
     }
 });
@@ -131,7 +132,7 @@ eventRouter.delete('/:eventId/participant', ensureLoggedIn, async (req, res) => 
     }
 });
 
-eventRouter.put('/:eventId', ensureLoggedIn, async (req, res) => {
+eventRouter.put('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();
@@ -174,6 +175,17 @@ eventRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req,
         res.json(reports);
     } catch (err) {
         res.status(400).json(err);
+    }
+});
+
+eventRouter.get('/:organisationId/owner', ensureLoggedIn, async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = EventController.getInstance();
+        const owners = await eventController.getOwners(eventId);
+        res.json(owners);
+    } catch (err) {
+        res.status(404).json(err);
     }
 });
 
