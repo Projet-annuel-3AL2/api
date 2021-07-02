@@ -167,8 +167,10 @@ organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, isO
         const userId = req.params.userId;
         const organisationController = OrganisationController.getInstance();
         await organisationController.removeMember(organisationId, userId);
+
         res.status(204).end();
     } catch (err) {
+        console.log(err)
         res.status(400).json(err);
     }
 });
@@ -244,6 +246,7 @@ organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isN
         await organisationController.addAdmin(organisationId, userId);
         res.status(204).end();
     } catch (err) {
+        console.log(err);
         res.status(403).json(err);
     }
 });
