@@ -104,9 +104,7 @@ organisationRouter.put('/:organisationId/follow', ensureLoggedIn, async (req, re
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
-        const userController = await UserController.getInstance();
-        const userId = (await userController.getByUsername((req.user as User).username)).id
-        await organisationController.addFollower(organisationId, userId);
+        await organisationController.addFollower(organisationId, (req.user as User).id);
         res.status(204).end();
     } catch (err) {
         res.status(400).json(err);
@@ -117,9 +115,7 @@ organisationRouter.delete('/:organisationId/unfollow', ensureLoggedIn, async (re
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
-        const userController = await UserController.getInstance();
-        const userId = (await userController.getByUsername((req.user as User).username)).id
-        await organisationController.removeFollower(organisationId, userId);
+        await organisationController.removeFollower(organisationId, (req.user as User).id);
         res.status(204).end();
     } catch (err) {
         res.status(400).json(err);

@@ -33,9 +33,8 @@ friendshipRouter.post("/:username", ensureLoggedIn, async (req, res) => {
         const username = req.params.username;
         const userController = UserController.getInstance();
         const user = await userController.getByUsername(username);
-        const userSession = await userController.getByUsername((req.user as User).username)
         const friendshipController = FriendshipController.getInstance();
-        const friendship = await friendshipController.sendFriendRequest(userSession, user);
+        const friendship = await friendshipController.sendFriendRequest(req.user as User, user);
         res.json(friendship);
     } catch (err) {
         res.status(400).json(err);
