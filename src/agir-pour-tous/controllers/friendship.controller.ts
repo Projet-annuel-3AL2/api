@@ -27,6 +27,12 @@ export class FriendshipController {
     }
 
     public async cancelFriendRequest(senderUsername: string, username: string): Promise<void> {
+        console.log(await this.friendRequestRepository.createQueryBuilder()
+            .leftJoin("FriendRequest.user", "User")
+            .where("User.username=:username", {username})
+            .leftJoin("FriendRequest.sender", "Sender")
+            .andWhere("Sender.username=:senderUsername", {senderUsername})
+            .getOne());
         await this.friendRequestRepository.delete(await this.friendRequestRepository.createQueryBuilder()
             .leftJoin("FriendRequest.user", "User")
             .where("User.username=:username", {username})
@@ -37,6 +43,7 @@ export class FriendshipController {
 
     public async acceptFriendRequest(friendOne: User, friendTwo: User): Promise<Friendship> {
         const friendRequest = this.friendshipRepository.create({friendOne, friendTwo});
+        await this.cancelFriendRequest(friendOne.username, friendTwo.username);
         return this.friendshipRepository.save(friendRequest);
     }
 
