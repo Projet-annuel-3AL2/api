@@ -43,6 +43,7 @@ export class FriendshipController {
 
     public async acceptFriendRequest(friendOne: User, friendTwo: User): Promise<Friendship> {
         const friendRequest = this.friendshipRepository.create({friendOne, friendTwo});
+        await this.cancelFriendRequest(friendOne.username, friendTwo.username);
         return this.friendshipRepository.save(friendRequest);
     }
 
