@@ -27,7 +27,7 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
     }
 });
 
-certificationRouter.get("/:certificationRequestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.get("/request/:certificationRequestId/approve", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const certificationRequestId = req.params.certificationRequestId;
         const certificationController = CertificationController.getInstance();
@@ -42,8 +42,8 @@ certificationRouter.delete("/request/:certificationRequestId", ensureLoggedIn, h
     try {
         const certificationRequestId = req.params.certificationRequestId;
         const certificationController = CertificationController.getInstance();
-        const certification = await certificationController.rejectRequest(certificationRequestId);
-        res.json(certification);
+        await certificationController.rejectRequest(certificationRequestId);
+        res.status(204).end();
     } catch (err) {
         res.status(404).json(err);
     }
@@ -54,6 +54,17 @@ certificationRouter.post("/request", ensureLoggedIn, hasAdminRights, async (req,
         const certificationController = CertificationController.getInstance();
         const certificationRequest = await certificationController.requestCertification(req.user as User,{...req.body});
         res.json(certificationRequest);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
+certificationRouter.delete("/:certificationId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+    try {
+        const certificationId = req.params.certificationId;
+        const certificationController = CertificationController.getInstance();
+        await certificationController.revokeCertificate(certificationId);
+        res.status(204).end();
     } catch (err) {
         res.status(404).json(err);
     }
