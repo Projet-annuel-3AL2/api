@@ -6,6 +6,7 @@ import {Group} from "../models/group.model";
 import {GroupMembership} from "../models/group_membership.model";
 import {Event} from "../models/event.model";
 import {Report, ReportProps} from "../models/report.model";
+import {Organisation} from "../models/organisation.model";
 
 export class UserController {
 
@@ -71,6 +72,15 @@ export class UserController {
         return await getRepository(Event)
             .createQueryBuilder()
             .leftJoin("Event.participants", "User")
+            .where("User.username=:username", {username})
+            .getMany();
+    }
+
+    public async getOrganisations(username: string): Promise<Organisation[]> {
+        return await getRepository(Organisation)
+            .createQueryBuilder()
+            .leftJoin("Organisation.members", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.user", "User")
             .where("User.username=:username", {username})
             .getMany();
     }

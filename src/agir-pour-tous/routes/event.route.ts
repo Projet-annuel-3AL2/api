@@ -3,11 +3,11 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {User} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
 import {hasAdminRights} from "../middlewares/user.middleware";
-import {isEventOrganiser} from "../middlewares/event.middleware";
+import {canCreateEvent, isEventOrganiser} from "../middlewares/event.middleware";
 
 const eventRouter = express.Router();
 
-eventRouter.post('/', ensureLoggedIn, async (req, res) => {
+eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
         const event = await eventController.create(req.user as User, req.body);
