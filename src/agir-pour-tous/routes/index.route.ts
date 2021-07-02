@@ -13,6 +13,8 @@ import {categoryRouter} from "./category.route";
 import {friendshipRouter} from "./friendship.route";
 import {conversationRouter} from "./conversation.route";
 import {eventRouter} from "./event.route";
+import {ensureLoggedIn} from "../middlewares/auth.middleware";
+import {isConversationMember} from "../middlewares/conversation.middleware";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -37,7 +39,7 @@ export function buildAPTRoutes() {
     router.use("/organisation", organisationRouter);
     router.use("/post", postRouter);
     router.use("/friendship", friendshipRouter);
-    router.use("/conversation", conversationRouter);
+    router.use("/conversation", ensureLoggedIn, isConversationMember, conversationRouter);
     router.use("/event", eventRouter);
     return router;
 }

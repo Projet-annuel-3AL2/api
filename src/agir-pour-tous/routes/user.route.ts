@@ -93,6 +93,17 @@ userRouter.get("/:username/participation", async (req, res) => {
     }
 });
 
+userRouter.get("/:username/organisations", async (req, res) => {
+    try {
+        const username = req.params.username;
+        const userController = UserController.getInstance();
+        const organisations = await userController.getOrganisations(username);
+        res.json(organisations);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 userRouter.put("/:userId/block", ensureLoggedIn, isNotAskedUser, async (req, res) => {
     try {
         const userId = req.params.userId;

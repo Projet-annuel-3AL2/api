@@ -124,13 +124,12 @@ export class OrganisationController {
     }
 
     public async removeMember(organisationId: string, userId: string): Promise<void> {
-        await getRepository(OrganisationMembership).createQueryBuilder()
+        await getRepository(OrganisationMembership).softRemove(await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("OrganisationMembership.user", "User")
             .where("User.id=:userId", {userId})
             .andWhere("Organisation.id=:organisationId", {organisationId})
-            .softDelete()
-            .execute();
+            .getMany());
     }
 
     public async isAdmin(organisationId: string, username: string): Promise<boolean> {
@@ -158,7 +157,7 @@ export class OrganisationController {
             .update()
             .set({isAdmin: true})
             .where("Organisation.id=:organisationId", {organisationId})
-            .where("User.id=:userId", {userId})
+            .andWhere("User.id=:userId", {userId})
             .execute();
     }
 
@@ -169,7 +168,7 @@ export class OrganisationController {
             .update()
             .set({isAdmin: false})
             .where("Organisation.id=:organisationId", {organisationId})
-            .where("User.id=:userId", {userId})
+            .andWhere("User.id=:userId", {userId})
             .execute();
     }
 }

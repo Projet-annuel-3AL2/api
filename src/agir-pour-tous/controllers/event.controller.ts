@@ -4,6 +4,7 @@ import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {Post} from "../models/post.model";
 import {Report, ReportProps} from "../models/report.model";
+import {OrganisationMembership} from "../models/organisation_membership.model";
 
 export class EventController {
     private static instance: EventController;
@@ -115,23 +116,11 @@ export class EventController {
             .getMany();
     };
 
-    public async getWithNameRecherche(userRecherche: string): Promise<Event[]> {
+    public async searchByName(name: string): Promise<Event[]> {
         return this.eventRepository
             .createQueryBuilder()
-            .where("event.name like :userRecherche", {userRecherche: '%' + userRecherche + '%'})
+            .where("event.name like :name", {name: '%' + name + '%'})
             .getMany();
-    }
-
-    public async getWithName(eventName: string): Promise<Event> {
-        return this.eventRepository
-            .createQueryBuilder()
-            .where("event.name = :eventName", {eventName})
-            .getOne();
-    }
-
-    public async isNameNotUse(name): Promise<boolean> {
-        const event = await this.getWithName(name);
-        return event == null;
     }
 
     public async getEventMembers(eventId: string): Promise<User[]> {
@@ -158,5 +147,28 @@ export class EventController {
             .leftJoin("Report.reportedEvent", "ReportedEvent")
             .where("ReportedEvent.postId=:postId", {postId})
             .getMany();
+    }
+
+
+    public async getOwners(eventId: string): Promise<User[]> {
+        return (await this.getOrganisationOwners(eventId))
+            .concat(await this.getOwner(eventId));
+    }
+
+    public async getOrganisationOwners(eventId: string): Promise<User[]> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.organisations", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.organisation", "OrganisationMembership")
+            .leftJoin("Organisation.events", "Event")
+            .where("Event.id=:eventId", {eventId})
+            .andWhere("OrganisationMembership.isAdmin = true OR OrganisationMembership.isOwner = true")
+            .getMany();
+    }
+
+    public async getOwner(eventId: string): Promise<User> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.createdEvents", "Event")
+            .where("Event.id=:eventId", {eventId})
+            .getOne();
     }
 }
