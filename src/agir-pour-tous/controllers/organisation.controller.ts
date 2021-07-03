@@ -171,4 +171,33 @@ export class OrganisationController {
             .andWhere("User.id=:userId", {userId})
             .execute();
     }
+
+    public async inviteUser(organisationId: string, userId: string): Promise<void> {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("invitedUsers")
+            .of(organisationId)
+            .add(userId);
+    }
+
+    public async cancelInvitation(organisationId: string, userId: string): Promise<void> {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("invitedUsers")
+            .of(organisationId)
+            .remove(userId);
+    }
+
+    public async acceptInvitation(organisation: Organisation, user: User): Promise<void> {
+        const membership = getRepository(OrganisationMembership).create({
+            organisation,
+            user,
+            isOwner: false,
+            isAdmin: false
+        });
+        await getRepository(OrganisationMembership).save(membership);
+        await this.cancelInvitation(organisation.id, user.id);
+    }
+
+    public async rejectInvitation(organisationId: string, userId: string): Promise<void> {
+        await this.cancelInvitation(organisationId,userId);
+    }
 }
