@@ -108,6 +108,8 @@ export class User implements UserProps {
     eventsParticipation: Event[];
     @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true})
     organisations: OrganisationMembership[];
+    @ManyToMany(() => Organisation, organisation => organisation.invitedUsers)
+    organisationInvitations: Organisation[];
     @ManyToMany(() => Organisation, organisation => organisation.followers)
     @JoinTable()
     followedOrganisations: Organisation[];
