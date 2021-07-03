@@ -26,6 +26,7 @@ import {hash} from "bcrypt";
 import {Friendship} from "./friendship.model";
 import {FriendRequest} from "./friend_request.model";
 import {Organisation} from "./organisation.model";
+import {CertificationRequest} from "./certification_request.model";
 
 export enum UserType {
     USER = "USER",
@@ -94,6 +95,8 @@ export class User implements UserProps {
     @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
     @JoinColumn()
     certification: Certification;
+    @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
+    certificationRequest: CertificationRequest;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
     @OneToMany(() => GroupMembership, group => group.user, {cascade: true})
