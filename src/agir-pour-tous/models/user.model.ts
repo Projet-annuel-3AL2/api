@@ -27,6 +27,7 @@ import {Friendship} from "./friendship.model";
 import {FriendRequest} from "./friend_request.model";
 import {Organisation} from "./organisation.model";
 import {CertificationRequest} from "./certification_request.model";
+import {OrganisationCreationRequest} from "./organisation_creation_request.model";
 
 export enum UserType {
     USER = "USER",
@@ -106,6 +107,8 @@ export class User implements UserProps {
     @ManyToMany(() => Event, event => event.participants, {cascade: true})
     @JoinTable()
     eventsParticipation: Event[];
+    @OneToOne(()=>OrganisationCreationRequest,organisationCreationRequest=>organisationCreationRequest.user)
+    organisationCreationRequest: OrganisationCreationRequest;
     @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true})
     organisations: OrganisationMembership[];
     @ManyToMany(() => Organisation, organisation => organisation.invitedUsers)
