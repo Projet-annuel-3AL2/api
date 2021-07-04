@@ -83,7 +83,7 @@ groupRouter.post("/:groupName/posts", async (req, res) => {
     }
 });
 
-groupRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
+groupRouter.put("/:groupId/report", ensureLoggedIn, async (req, res) => {
     try {
         const groupId = req.params.groupId;
         const userReporter = (req.user as User);
