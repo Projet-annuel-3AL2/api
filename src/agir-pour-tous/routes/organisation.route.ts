@@ -11,17 +11,6 @@ import {
 
 const organisationRouter = express.Router();
 
-organisationRouter.post('/', async (req, res) => {
-    try {
-        const organisationController = await OrganisationController.getInstance();
-        const group = await organisationController.create(req.user as User, req.body);
-        res.json(group);
-    } catch (err) {
-        res.status(400).json(err);
-    }
-});
-
-
 organisationRouter.get('/', async (req, res) => {
     try {
         const organisationController = await OrganisationController.getInstance();
@@ -271,6 +260,48 @@ organisationRouter.delete('/:organisationId/invite/reject', ensureLoggedIn, asyn
         const userId = (req.user as User).id;
         const organisationController = await OrganisationController.getInstance();
         await organisationController.rejectInvitation(organisationId, userId);
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+organisationRouter.post('/request-creation', ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationController = await OrganisationController.getInstance();
+        await organisationController.requestCreation(req.user as User, {...req.body});
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+organisationRouter.get('/requests', ensureLoggedIn, hasAdminRights, async (req, res) => {
+    try {
+        const organisationController = await OrganisationController.getInstance();
+        await organisationController.getCreationRequests();
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+organisationRouter.put('/:organisationCreationRequestId/accept', ensureLoggedIn,hasAdminRights, async (req, res) => {
+    try {
+        const organisationCreationRequestId = req.params.organisationCreationRequestId;
+        const organisationController = await OrganisationController.getInstance();
+        await organisationController.acceptCreationDemand(organisationCreationRequestId);
+        res.status(204).end();
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+organisationRouter.delete('/:organisationCreationRequestId/reject', ensureLoggedIn,hasAdminRights, async (req, res) => {
+    try {
+        const organisationCreationRequestId = req.params.organisationCreationRequestId;
+        const organisationController = await OrganisationController.getInstance();
+        await organisationController.rejectCreationDemand(organisationCreationRequestId);
         res.status(204).end();
     } catch (err) {
         res.status(400).json(err);

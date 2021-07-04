@@ -5,6 +5,10 @@ import {validate} from "class-validator";
 import {Organisation, OrganisationProps} from "../models/organisation.model";
 import {OrganisationMembership} from "../models/organisation_membership.model";
 import {Report, ReportProps} from "../models/report.model";
+import {
+    OrganisationCreationRequest,
+    OrganisationCreationRequestProps
+} from "../models/organisation_creation_request.model";
 
 export class OrganisationController {
 
@@ -23,8 +27,8 @@ export class OrganisationController {
         return OrganisationController.instance;
     }
 
-    public async create(user: User, props: OrganisationProps): Promise<Organisation> {
-        const organisation = this.organisationRepository.create({...props});
+    private async create(user: User, name: string): Promise<Organisation> {
+        const organisation = this.organisationRepository.create({name});
         const creatorMembership = getRepository(OrganisationMembership).create({
             organisation,
             user,
@@ -199,5 +203,28 @@ export class OrganisationController {
 
     public async rejectInvitation(organisationId: string, userId: string): Promise<void> {
         await this.cancelInvitation(organisationId,userId);
+    }
+
+    public async requestCreation(user: User, props: OrganisationCreationRequestProps): Promise<OrganisationCreationRequest>{
+        const request = getRepository(OrganisationCreationRequest).create({...props,user});
+        return getRepository(OrganisationCreationRequest).save(request);
+    }
+
+    public async getCreationRequests(): Promise<OrganisationCreationRequest>{
+        return undefined;
+    }
+
+    public async getCreationRequestById(organisationCreationRequestId: string): Promise<OrganisationCreationRequest>{
+        return await getRepository(OrganisationCreationRequest).findOneOrFail(organisationCreationRequestId);
+    }
+
+    public async acceptCreationDemand(organisationCreationRequestId: string): Promise<Organisation>{
+        const request = await this.getCreationRequestById(organisationCreationRequestId);
+        await this.rejectCreationDemand(organisationCreationRequestId);
+        return this.create(request.user, request.name);
+    }
+
+    public async rejectCreationDemand(organisationCreationRequestId: string): Promise<void> {
+        await getRepository(OrganisationCreationRequest).softDelete(organisationCreationRequestId);
     }
 }
