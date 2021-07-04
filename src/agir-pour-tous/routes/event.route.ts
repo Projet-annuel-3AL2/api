@@ -178,7 +178,7 @@ eventRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req,
     }
 });
 
-eventRouter.get('/:organisationId/owner', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/:eventId/owner', ensureLoggedIn, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();
