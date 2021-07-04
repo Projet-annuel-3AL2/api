@@ -95,7 +95,7 @@ export class User implements UserProps {
     @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
     @JoinColumn()
     certification: Certification;
-    @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
+    @OneToOne(() => CertificationRequest, certification => certification.user, {eager: true, cascade: true})
     certificationRequest: CertificationRequest;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
