@@ -19,7 +19,7 @@ import {isConversationMember} from "../middlewares/conversation.middleware";
 export function buildAPTRoutes() {
     const router = Router();
     configure();
-    router.use(require('cors')({credentials: true, origin: '*'}));
+    router.use(require('cors')({credentials: true, origin: process.env.FRONT_BASE_URL}));
     router.use(require('express-session')({
         secret: process.env.ORG_APP_SECRET,
         resave: true,
