@@ -1,5 +1,4 @@
-FROM node:14-alpine
-RUN apk add g++ make python
+FROM node:14
 EXPOSE 4500
 WORKDIR /usr/src/app
 COPY . .
