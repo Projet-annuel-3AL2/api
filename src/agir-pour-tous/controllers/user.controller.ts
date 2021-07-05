@@ -150,4 +150,13 @@ export class UserController {
             .leftJoin("Conversation.messages", "Message")
             .getMany();
     }
+
+    async isFollowingOrganisation(username: string, organisationId: string) {
+        return await this.userRepository
+            .createQueryBuilder()
+            .leftJoin("User.followedOrganisations", "Organisation")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.username=:username", {username})
+            .getOne() != undefined ;
+    }
 }
