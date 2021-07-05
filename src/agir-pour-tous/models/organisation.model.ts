@@ -3,7 +3,9 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    Entity, JoinColumn,
+    Entity,
+    JoinColumn, JoinTable,
+    ManyToMany,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -37,12 +39,17 @@ export class Organisation {
     name: string;
     @OneToMany(() => OrganisationMembership, user => user.organisation)
     members: OrganisationMembership[];
+    @ManyToMany(() => User, user => user.organisationInvitations, {cascade: true})
+    invitedUsers: User[];
+    @ManyToMany(() => User, user => user.followedOrganisations, {cascade: true})
+    @JoinTable()
+    followers: User[];
     @OneToMany(() => Event, user => user.organisation, {cascade: true})
     events: Event[];
-    @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, cascade: true})
+    @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, cascade: true, eager: true})
     @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true, cascade: true})
+    @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true, cascade: true, eager: true})
     @JoinColumn()
     bannerPicture: Media;
     @OneToOne(() => Conversation, conversation => conversation.organisation, {nullable: false, cascade: true})

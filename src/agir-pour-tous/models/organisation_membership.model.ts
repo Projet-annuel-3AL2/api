@@ -2,6 +2,13 @@ import {Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, UpdateDat
 import {User} from "./user.model";
 import {Organisation} from "./organisation.model";
 
+export enum OrganisationMembershipStatus {
+    NONE,
+    PENDING,
+    RECEIVED,
+    JOINED
+}
+
 @Entity()
 export class OrganisationMembership {
     @ManyToOne(() => User, user => user.organisations, {primary: true})

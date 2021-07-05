@@ -1,5 +1,6 @@
-import {User} from "./user.model";
+import {User, UserType} from "./user.model";
 import {
+    Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
@@ -8,6 +9,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
+import {CertificationRequest} from "./certification_request.model";
 
 @Entity()
 export class Certification {
@@ -17,6 +19,8 @@ export class Certification {
     user: User;
     @ManyToOne(() => User, user => user.issuedCertifications)
     issuer: User;
+    @OneToOne(()=> CertificationRequest, request => request.certification)
+    request: CertificationRequest;
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()

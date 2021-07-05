@@ -13,11 +13,14 @@ import {categoryRouter} from "./category.route";
 import {friendshipRouter} from "./friendship.route";
 import {conversationRouter} from "./conversation.route";
 import {eventRouter} from "./event.route";
+import {ensureLoggedIn} from "../middlewares/auth.middleware";
+import {isConversationMember} from "../middlewares/conversation.middleware";
 
 export function buildAPTRoutes() {
     const router = Router();
     configure();
-    router.use(require('cors')({credentials: true, origin:"http://localhost:4200"}));
+    router.use(require('cors')({credentials: true, origin: process.env.FRONT_BASE_URL}));
+    console.log(process.env.FRONT_BASE_URL)
     router.use(require('express-session')({
         secret: process.env.ORG_APP_SECRET,
         resave: true,
@@ -37,7 +40,7 @@ export function buildAPTRoutes() {
     router.use("/organisation", organisationRouter);
     router.use("/post", postRouter);
     router.use("/friendship", friendshipRouter);
-    router.use("/conversation", conversationRouter);
+    router.use("/conversation", ensureLoggedIn, isConversationMember, conversationRouter);
     router.use("/event", eventRouter);
     return router;
 }

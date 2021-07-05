@@ -5,6 +5,8 @@ import {Conversation} from "../models/conversation.model";
 import {Group} from "../models/group.model";
 import {GroupMembership} from "../models/group_membership.model";
 import {Event} from "../models/event.model";
+import {Report, ReportProps} from "../models/report.model";
+import {Organisation} from "../models/organisation.model";
 
 export class UserController {
 
@@ -25,118 +27,136 @@ export class UserController {
         return UserController.instance;
     }
 
-    public async getById(id: string): Promise<User> {
-        return await this.userRepository.findOneOrFail(id);
-    }
-
-    public async getWithUsername(username: string): Promise<User> {
-        return await this.userRepository.findOne({
-            where: {
-                username: username
-            },
-            relations: []
-        })
-    }
-
-    public async getFullUser(username: string): Promise<User> {
-        return await this.userRepository.findOne({
-            where: {
-                username: username
-            },
-            relations: [
-                'eventsParticipation',
-                'eventsParticipation.organisation',
-                "eventsParticipation.category",
-                "eventsParticipation.participants",
-                "eventsParticipation.user"
-            ]
-        })
-    }
-
-    public async getPostWithUsername(username: string): Promise<User> {
-        return await this.userRepository.findOne({
-            where: {
-                username: username
-            }
-        })
+    public async getByUsername(username: string): Promise<User> {
+        return await this.userRepository.findOneOrFail({where: {username: username}});
     }
 
     public async getAll(): Promise<User[]> {
         return await this.userRepository.find();
     }
 
-    public async delete(id: string): Promise<void> {
-        await this.userRepository.softDelete(id);
+    public async delete(username: string): Promise<void> {
+        await this.userRepository.softDelete(username);
     }
 
-    public async update(id: string, props: UserProps): Promise<User> {
-        await this.userRepository.update(id, props);
-        return this.getById(id);
+    public async update(username: string, props: UserProps): Promise<User> {
+        await this.userRepository.update(username, props);
+        return this.getByUsername(username);
     }
 
-    public async getPosts(id: string): Promise<Post[]> {
+    public async getPosts(username: string): Promise<Post[]> {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoin("Post.user", "User")
-            .where("User.id=:id", {id})
+            .where("User.username=:username", {username})
             .getMany();
     }
 
-    public async getConversations(id: string): Promise<Conversation[]> {
-
-        return [].concat(await this.getOrganisationConversations(id))
-            .concat(await this.getGroupConversations(id))
-            .concat(await this.getFriendshipConversations(id))
-            .sort((a:Conversation, b:Conversation) => a.messages[a.messages?.length-1]?.createdAt.getTime() - b.messages[b.messages?.length-1]?.createdAt.getTime());
+    public async getConversations(username: string): Promise<Conversation[]> {
+        return [].concat(await this.getOrganisationConversations(username))
+            .concat(await this.getGroupConversations(username))
+            .concat(await this.getFriendshipConversations(username))
+            .sort((a: Conversation, b: Conversation) => a.messages[a.messages?.length - 1]?.createdAt.getTime() - b.messages[b.messages?.length - 1]?.createdAt.getTime());
     }
 
-    private async getOrganisationConversations(id: string): Promise<Conversation[]> {
+    public async getGroups(username: string): Promise<GroupMembership[]> {
+        return await getRepository(GroupMembership)
+            .createQueryBuilder()
+            .leftJoinAndMapMany("GroupMembership.group", "GroupMembership.group", "Group")
+            .leftJoin("GroupMembership.member", "User")
+            .where("User.username=:username", {username})
+            .getMany();
+    }
+
+    public async getEventsParticipation(username: string): Promise<Event[]> {
+        return await getRepository(Event)
+            .createQueryBuilder()
+            .leftJoin("Event.participants", "User")
+            .where("User.username=:username", {username})
+            .getMany();
+    }
+
+    public async getOrganisations(username: string): Promise<Organisation[]> {
+        return await getRepository(Organisation)
+            .createQueryBuilder()
+            .leftJoin("Organisation.members", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("User.username=:username", {username})
+            .getMany();
+    }
+
+    public async blockUser(currentUserId, id: string): Promise<void> {
+        await this.userRepository.createQueryBuilder()
+            .relation("blockedUsers")
+            .of(currentUserId)
+            .add(id);
+    }
+
+    public async unblockUser(currentUserId, id: string): Promise<void> {
+        await this.userRepository.createQueryBuilder()
+            .relation("blockedUsers")
+            .of(currentUserId)
+            .remove(id);
+    }
+
+    public async isBlocked(currentUserId: string, userId: string): Promise<boolean> {
+        return (await this.userRepository.createQueryBuilder()
+            .where("User.blockedUsers=:userId", {userId})
+            .andWhere("User.blockers=:currentUserId", {currentUserId})
+            .getOne() !== undefined);
+    }
+
+    public async reportUser(userReporter: User, reportedUser: User, props: ReportProps): Promise<Report> {
+        const report = getRepository(Report).create({...props, userReporter, reportedUser});
+        return await getRepository(Report).save(report);
+    }
+
+    public async getReports(username: string): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoin("Report.reportedUser", "ReportedUser")
+            .where("ReportedUser.username=:username", {username})
+            .getMany();
+    }
+
+    private async getOrganisationConversations(username: string): Promise<Conversation[]> {
         return await this.conversationRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Conversation.organisation", "Organisation")
             .leftJoinAndSelect("Organisation.members", "OrganisationMembership")
             .leftJoinAndSelect("OrganisationMembership.user", "OrganisationMember")
-            .where("OrganisationMember.id=:id", {id})
+            .where("OrganisationMember.username=:username", {username})
             .getMany();
     }
 
-    private async getFriendshipConversations(id: string): Promise<Conversation[]>{
+    private async getFriendshipConversations(username: string): Promise<Conversation[]> {
         return await this.conversationRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Conversation.friendship", "Friendship")
             .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
             .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
-            .where("FriendOne.id=:id", {id})
-            .orWhere("FriendTwo.id=:id", {id})
+            .where("FriendOne.username=:username", {username})
+            .orWhere("FriendTwo.username=:username", {username})
             .leftJoin("Conversation.messages", "Message")
             .getMany()
     }
 
-    private async getGroupConversations(id: string): Promise<Conversation[]>{
+    private async getGroupConversations(username: string): Promise<Conversation[]> {
         return await this.conversationRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Conversation.group", "Group")
             .leftJoinAndSelect("Group.members", "GroupMembership")
-            .leftJoinAndSelect("GroupMembership.user","GroupMember")
-            .where("GroupMember.id=:id", {id})
+            .leftJoinAndSelect("GroupMembership.user", "GroupMember")
+            .where("GroupMember.username=:username", {username})
             .leftJoin("Conversation.messages", "Message")
             .getMany();
     }
 
-    public async getGroups(id: string): Promise<GroupMembership[]> {
-        return await getRepository(GroupMembership)
+    async isFollowingOrganisation(userId: string, organisationId: string) {
+        return await this.userRepository
             .createQueryBuilder()
-            .leftJoinAndMapMany("GroupMembership.group", "GroupMembership.group", "Group")
-            .leftJoin("GroupMembership.member", "User")
-            .where("User.id=:id", {id})
-            .getMany();
-    }
-
-    public async getEventsParticipation(id: string): Promise<Event[]> {
-        return await getRepository(Event)
-            .createQueryBuilder()
-            .leftJoin("Event.participants", "User")
-            .where("User.id=:id", {id})
-            .getMany();
+            .leftJoin("User.followedOrganisations", "Organisation")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne() != undefined ;
     }
 }

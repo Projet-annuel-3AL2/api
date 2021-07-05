@@ -4,6 +4,7 @@ import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {Organisation, OrganisationProps} from "../models/organisation.model";
 import {OrganisationMembership} from "../models/organisation_membership.model";
+import {Report, ReportProps} from "../models/report.model";
 
 export class OrganisationController {
 
@@ -15,7 +16,7 @@ export class OrganisationController {
         this.organisationRepository = getRepository(Organisation);
     }
 
-    public static async getInstance(): Promise<OrganisationController> {
+    public static getInstance(): OrganisationController {
         if (OrganisationController.instance === undefined) {
             OrganisationController.instance = new OrganisationController();
         }
@@ -24,7 +25,12 @@ export class OrganisationController {
 
     public async create(user: User, props: OrganisationProps): Promise<Organisation> {
         const organisation = this.organisationRepository.create({...props});
-        const creatorMembership = getRepository(OrganisationMembership).create({organisation, user});
+        const creatorMembership = getRepository(OrganisationMembership).create({
+            organisation,
+            user,
+            isOwner: true,
+            isAdmin: true
+        });
         organisation.members = [creatorMembership];
         const err = await validate(organisation);
         if (err.length > 0) {
@@ -33,12 +39,8 @@ export class OrganisationController {
         return this.organisationRepository.save(organisation);
     }
 
-    public async getByName(organisationName: string): Promise<Organisation> {
-        return await this.organisationRepository.findOneOrFail({
-            where: {
-                name: organisationName
-            }
-        });
+    public async getById(id: string): Promise<Organisation> {
+        return await this.organisationRepository.findOneOrFail(id);
     }
 
     public async getAll(): Promise<Organisation[]> {
@@ -54,29 +56,42 @@ export class OrganisationController {
         })
     }
 
-    public async getFullOrganisation(organisationName: string): Promise<Organisation> {
-        return await this.organisationRepository.findOne({
-            where: {
-                name: organisationName
-            },
-            relations: ['members', 'members.user', 'bannerPicture', 'events', "events.organisation", "events.category", "events.participants", "events.user"]
-        })
-    }
-    public async delete(organisationName: string): Promise<void> {
-        await this.organisationRepository.softDelete(organisationName);
+    public async delete(id: string): Promise<void> {
+        await this.organisationRepository.softDelete(id);
     }
 
-    public async update(organisationName: string, props: OrganisationProps): Promise<Organisation> {
-        await this.organisationRepository.update(organisationName, props);
-        return this.getByName(organisationName);
+    public async update(id: string, props: OrganisationProps): Promise<Organisation> {
+        await this.organisationRepository.update(id, props);
+        return this.getById(id);
     }
 
-    public async getPosts(organisationName: string): Promise<Post[]> {
+    public async getPosts(id: string): Promise<Post[]> {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoin("Post.organisation", "Organisation")
-            .where("Organisation.name=:groupName", {organisationName})
+            .where("Organisation.id=:id", {id})
             .getMany();
+    }
+
+    public async getFollowers(id: string): Promise<User[]> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.followedOrganisations", "Organisation")
+            .where("Organisation.id=:id", {id})
+            .getMany();
+    }
+
+    public async addFollower(id: string, userId: string): Promise<void> {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("followers")
+            .of(userId)
+            .add(id);
+    }
+
+    public async removeFollower(id: string, userId: string): Promise<void> {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("followers")
+            .of(userId)
+            .remove(id);
     }
 
     public async addPost(organisation: Organisation, creator: User, props: PostProps): Promise<Post> {
@@ -86,5 +101,103 @@ export class OrganisationController {
             throw err;
         }
         return getRepository(Post).save(post);
+    }
+
+    public async reportOrganisation(userReporter: User, reportedOrganisation: Organisation, props: ReportProps): Promise<Report> {
+        const report = getRepository(Report).create({...props, userReporter, reportedOrganisation});
+        return await getRepository(Report).save(report);
+    }
+
+    public async getReports(organisationId: string): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoin("Report.reportedOrganisation", "ReportedOrganisation")
+            .where("ReportedOrganisation.id=:organisationId", {organisationId})
+            .getMany();
+    }
+
+    public async getMembers(organisationId: string): Promise<User[]> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.organisations", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .getMany();
+    }
+
+    public async removeMember(organisationId: string, userId: string): Promise<void> {
+        await getRepository(OrganisationMembership).softRemove(await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("User.id=:userId", {userId})
+            .andWhere("Organisation.id=:organisationId", {organisationId})
+            .getMany());
+    }
+
+    public async isAdmin(organisationId: string, userId: string): Promise<boolean> {
+        return (await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne()).isAdmin;
+    }
+
+    public async isOwner(organisationId: string, userId: string): Promise<boolean> {
+        return (await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne()).isOwner;
+    }
+
+    public async addAdmin(organisationId: string, userId: string): Promise<void> {
+        await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
+            .update()
+            .set({isAdmin: true})
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .execute();
+    }
+
+    public async removeAdmin(organisationId: string, userId: string): Promise<void> {
+        await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
+            .update()
+            .set({isAdmin: false})
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .execute();
+    }
+
+    public async inviteUser(organisationId: string, userId: string): Promise<void> {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("invitedUsers")
+            .of(organisationId)
+            .add(userId);
+    }
+
+    public async cancelInvitation(organisationId: string, userId: string): Promise<void> {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("invitedUsers")
+            .of(organisationId)
+            .remove(userId);
+    }
+
+    public async acceptInvitation(organisation: Organisation, user: User): Promise<void> {
+        const membership = getRepository(OrganisationMembership).create({
+            organisation,
+            user,
+            isOwner: false,
+            isAdmin: false
+        });
+        await getRepository(OrganisationMembership).save(membership);
+        await this.cancelInvitation(organisation.id, user.id);
+    }
+
+    public async rejectInvitation(organisationId: string, userId: string): Promise<void> {
+        await this.cancelInvitation(organisationId,userId);
     }
 }
