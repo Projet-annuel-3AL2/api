@@ -18,7 +18,7 @@ eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
 });
 
 
-eventRouter.get('/:eventId/join', ensureLoggedIn, async (req, res) => {
+eventRouter.post('/:eventId/join', ensureLoggedIn, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const userId = (req.user as User).id;
@@ -37,6 +37,16 @@ eventRouter.get('/', ensureLoggedIn, async (req, res) => {
         res.json(event);
     } catch (err) {
         res.status(400).json(err);
+    }
+});
+
+eventRouter.get('/suggestions/events', ensureLoggedIn, async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const events = await eventController.getSuggestion();
+        res.json(events);
+    } catch (err) {
+        res.status(404).json(err);
     }
 });
 
@@ -186,6 +196,16 @@ eventRouter.get('/:eventId/owner', ensureLoggedIn, async (req, res) => {
         res.json(owners);
     } catch (err) {
         res.status(404).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/profil', ensureLoggedIn, async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const events = await eventController.getProfil(req.params.eventId);
+        res.json(events);
+    } catch (err) {
+        res.status(400).json(err);
     }
 });
 

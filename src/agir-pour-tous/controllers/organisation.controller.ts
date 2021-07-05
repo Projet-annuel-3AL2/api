@@ -83,15 +83,15 @@ export class OrganisationController {
     public async addFollower(id: string, userId: string): Promise<void> {
         await this.organisationRepository.createQueryBuilder()
             .relation("followers")
-            .of(id)
-            .add(userId);
+            .of(userId)
+            .add(id);
     }
 
     public async removeFollower(id: string, userId: string): Promise<void> {
         await this.organisationRepository.createQueryBuilder()
             .relation("followers")
-            .of(id)
-            .remove(userId);
+            .of(userId)
+            .remove(id);
     }
 
     public async addPost(organisation: Organisation, creator: User, props: PostProps): Promise<Post> {
