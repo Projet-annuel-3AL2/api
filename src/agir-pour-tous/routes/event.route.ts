@@ -40,6 +40,16 @@ eventRouter.get('/', ensureLoggedIn, async (req, res) => {
     }
 });
 
+eventRouter.get('/suggestions/events', ensureLoggedIn, async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const events = await eventController.getSuggestion();
+        res.json(events);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
 eventRouter.get('/is-finished', ensureLoggedIn, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
@@ -186,16 +196,6 @@ eventRouter.get('/:eventId/owner', ensureLoggedIn, async (req, res) => {
         res.json(owners);
     } catch (err) {
         res.status(404).json(err);
-    }
-});
-
-eventRouter.get('/suggestion', ensureLoggedIn, async (req, res) => {
-    try {
-        const eventController = await EventController.getInstance();
-        const events = await eventController.getSuggestion();
-        res.json(events);
-    } catch (err) {
-        res.status(400).json(err);
     }
 });
 
