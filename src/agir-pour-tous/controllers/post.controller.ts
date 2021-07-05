@@ -77,7 +77,6 @@ export class PostController {
     }
 
     public async getTimeline(userId: string, offset: number, limit: number): Promise<Post[]> {
-        console.log(await this.getOwnPosts(userId))
         return [].concat(await this.getOwnPosts(userId))
             .concat(await this.getFriendOnePosts(userId))
             .concat(await this.getFriendTwoPosts(userId))

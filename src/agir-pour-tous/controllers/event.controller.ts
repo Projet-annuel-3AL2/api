@@ -38,7 +38,7 @@ export class EventController {
             where: {
                 endDate: MoreThan(dateNow)
             },
-            relations: ['organisation', 'category']
+            relations: ['organisation', 'category', 'user']
         })
     }
 
@@ -106,7 +106,7 @@ export class EventController {
 
     public async getEventMembers(eventId: string): Promise<User[]> {
         return await this.userRepository.createQueryBuilder()
-            .leftJoin("User.eventParticipation", "Event")
+            .leftJoin("User.eventsParticipation", "Event")
             .where("Event.id=:eventId", {eventId})
             .getMany();
     }
@@ -151,5 +151,25 @@ export class EventController {
             .leftJoin("User.createdEvents", "Event")
             .where("Event.id=:eventId", {eventId})
             .getOne();
+    }
+
+
+    public async getSuggestion(): Promise<Event[]> {
+        const dateNow = new Date(Date.now());
+        return await this.eventRepository.find({
+            where: {
+                endDate: MoreThan(dateNow)
+            },
+            take: 3
+        })
+    }
+
+    public async getProfil(eventId: string): Promise<Event> {
+        return await this.eventRepository.findOneOrFail({
+            where: {
+                id: eventId
+            },
+            relations: ['user', 'organisation', 'category' ]
+        })
     }
 }
