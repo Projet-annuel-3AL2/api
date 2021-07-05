@@ -151,12 +151,12 @@ export class UserController {
             .getMany();
     }
 
-    async isFollowingOrganisation(username: string, organisationId: string) {
+    async isFollowingOrganisation(userId: string, organisationId: string) {
         return await this.userRepository
             .createQueryBuilder()
             .leftJoin("User.followedOrganisations", "Organisation")
             .where("Organisation.id=:organisationId", {organisationId})
-            .andWhere("User.username=:username", {username})
+            .andWhere("User.id=:userId", {userId})
             .getOne() != undefined ;
     }
 }

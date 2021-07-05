@@ -186,7 +186,7 @@ userRouter.get("/is-following-orga/:organisationId", ensureLoggedIn, async (req,
     try {
         const organisationId = req.params.organisationId;
         const userController = UserController.getInstance();
-        const isFollowing = await userController.isFollowingOrganisation((req.user as User).username, organisationId);
+        const isFollowing = await userController.isFollowingOrganisation((req.user as User).id, organisationId);
         res.json(isFollowing);
     } catch (err) {
         res.status(400).json(err);
