@@ -24,8 +24,7 @@ export class AuthController {
         const token = require('crypto').randomBytes(5).toString('hex');
         const user: User = (await this.userRepository.createQueryBuilder()
             .update()
-            .set({resetToken: token})
-            .set({resetTokenExpiration: new Date(Date.now() + 600000)})
+            .set({resetToken: token,resetTokenExpiration: new Date(Date.now() + 600000)})
             .where('username = :username', {username})
             .returning("*")
             .execute()).raw[0];
@@ -41,12 +40,13 @@ export class AuthController {
     }
 
     public async resetPassword(resetToken: string, password: string) {
+        console.log(password)
         const encryptedPass = await hash(password, 8);
         await this.userRepository.createQueryBuilder()
             .update()
             .set({password: encryptedPass, resetTokenExpiration: null, resetToken: null})
             .where('resetToken = :resetToken', {resetToken})
-            .where('resetTokenExpiration > NOW()')
+            .andWhere('resetTokenExpiration > NOW()')
             .execute();
     }
 }

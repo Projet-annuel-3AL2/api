@@ -16,6 +16,16 @@ userRouter.get('/', async (req, res) => {
     }
 });
 
+userRouter.get("/conversations", ensureLoggedIn, async (req, res) => {
+    try {
+        const userController = UserController.getInstance();
+        const conversations = await userController.getConversations((req.user as User).username);
+        res.json(conversations);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 userRouter.get('/:username', async (req, res) => {
     try {
         const username = req.params.username;
@@ -31,8 +41,8 @@ userRouter.get('/:username/posts', async (req, res) => {
     try {
         const username = req.params.username;
         const userController = await UserController.getInstance();
-        const user = await userController.getPosts(username);
-        res.json(user);
+        const posts = await userController.getPosts(username);
+        res.json(posts);
     } catch (err) {
         res.status(404).json(err);
     }
@@ -55,17 +65,6 @@ userRouter.put('/:username', ensureLoggedIn, isAskedUser, async (req, res) => {
         const userController = UserController.getInstance();
         await userController.update(username, {...req.body});
         res.status(204).end();
-    } catch (err) {
-        res.status(400).json(err);
-    }
-});
-
-userRouter.get("/:username/conversations", ensureLoggedIn, isAskedUser, async (req, res) => {
-    try {
-        const username = req.params.username;
-        const userController = UserController.getInstance();
-        const conversations = await userController.getConversations(username);
-        res.json(conversations);
     } catch (err) {
         res.status(400).json(err);
     }
@@ -177,6 +176,17 @@ userRouter.get("/:username/reports", ensureLoggedIn, hasAdminRights, async (req,
         const userController = UserController.getInstance();
         const reports = await userController.getReports(username);
         res.json(reports);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+userRouter.get("/is-following-orga/:organisationId", ensureLoggedIn, async (req, res) =>{
+    try {
+        const organisationId = req.params.organisationId;
+        const userController = UserController.getInstance();
+        const isFollowing = await userController.isFollowingOrganisation((req.user as User).id, organisationId);
+        res.json(isFollowing);
     } catch (err) {
         res.status(400).json(err);
     }

@@ -8,6 +8,7 @@ import {
     isOrganisationAdmin,
     isOrganisationOwner
 } from "../middlewares/organisation.middleware";
+import {UserController} from "../controllers/user.controller";
 
 const organisationRouter = express.Router();
 
@@ -194,6 +195,22 @@ organisationRouter.get('/:organisationId/is-owner', ensureLoggedIn, async (req, 
     }
 });
 
+organisationRouter.get('/:organisationId/is-user-owner/:username', ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const username = req.params.username;
+
+        const userController = UserController.getInstance();
+        const user = await userController.getByUsername(username);
+
+        const organisationController = await OrganisationController.getInstance();
+        const isOwner = await organisationController.isOwner(organisationId, user.id);
+        res.json(isOwner);
+    } catch (err) {
+        res.status(404).json(err);
+    }
+});
+
 organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isNotAskedUser, isOrganisationOwner, isNotOrganisationUserOwner, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
@@ -266,6 +283,18 @@ organisationRouter.delete('/:organisationId/invite/reject', ensureLoggedIn, asyn
     }
 });
 
+organisationRouter.get('/:organisationId/is-user-admin/:username', ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const username = req.params.username;
+        const organisationController = await OrganisationController.getInstance();
+        const isAdmin = await organisationController.isAdmin(organisationId, username);
+        res.json(isAdmin);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 organisationRouter.post('/request-creation', ensureLoggedIn, async (req, res) => {
     try {
         const organisationController = await OrganisationController.getInstance();
@@ -286,22 +315,22 @@ organisationRouter.get('/requests', ensureLoggedIn, hasAdminRights, async (req, 
     }
 });
 
-organisationRouter.put('/:organisationCreationRequestId/accept', ensureLoggedIn,hasAdminRights, async (req, res) => {
+organisationRouter.put('/:requestId/accept', ensureLoggedIn,hasAdminRights, async (req, res) => {
     try {
-        const organisationCreationRequestId = req.params.organisationCreationRequestId;
+        const requestId = req.params.requestId;
         const organisationController = await OrganisationController.getInstance();
-        await organisationController.acceptCreationDemand(organisationCreationRequestId);
+        await organisationController.acceptCreationDemand(requestId);
         res.status(204).end();
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
-organisationRouter.delete('/:organisationCreationRequestId/reject', ensureLoggedIn,hasAdminRights, async (req, res) => {
+organisationRouter.delete('/:requestId/reject', ensureLoggedIn,hasAdminRights, async (req, res) => {
     try {
-        const organisationCreationRequestId = req.params.organisationCreationRequestId;
+        const requestId = req.params.requestId;
         const organisationController = await OrganisationController.getInstance();
-        await organisationController.rejectCreationDemand(organisationCreationRequestId);
+        await organisationController.rejectCreationDemand(requestId);
         res.status(204).end();
     } catch (err) {
         res.status(400).json(err);

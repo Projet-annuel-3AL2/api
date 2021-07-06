@@ -35,6 +35,9 @@ export class Event {
     @Length(5, 50)
     @Column({nullable: false, length: 50})
     name: string;
+    @Length(0, 200)
+    @Column({nullable: false, length: 200})
+    description: string;
     @Column({nullable: false})
     startDate: Date;
     @Column({nullable: false})
@@ -57,7 +60,7 @@ export class Event {
     posts: Post[];
     @ManyToOne(() => Category, category => category.events, {nullable: false})
     category: Category;
-    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true})
     picture: Media;
     @OneToMany(() => Report, report => report.reportedEvent)
     reported: Report[];

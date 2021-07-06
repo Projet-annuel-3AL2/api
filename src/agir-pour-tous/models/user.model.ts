@@ -61,6 +61,9 @@ export class User implements UserProps {
     mail: string;
     @Column({unique: true, nullable: false, select: false})
     password: string;
+    @Length(0, 200)
+    @Column({nullable:true,length: 200})
+    bio: string;
     @Column({select: false, nullable: true})
     resetToken: string;
     @Column({select: false, nullable: true})
@@ -87,16 +90,16 @@ export class User implements UserProps {
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
     comments: Comment[];
-    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true})
     @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true})
     @JoinColumn()
     bannerPicture: Media;
-    @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
+    @OneToOne(() => Certification, certification => certification.user, {cascade: true})
     @JoinColumn()
     certification: Certification;
-    @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
+    @OneToOne(() => CertificationRequest, certification => certification.user, {cascade: true})
     certificationRequest: CertificationRequest;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
