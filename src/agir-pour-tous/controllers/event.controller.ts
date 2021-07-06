@@ -46,7 +46,7 @@ export class EventController {
         let event = this.eventRepository.create({...props, user: user});
         const err = await validate(event, {validationError: {target: false}});
         if (err.length > 0) {
-            throw err;
+           // throw err;
         }
         return this.eventRepository.save(event);
 

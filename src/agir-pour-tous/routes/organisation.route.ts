@@ -306,6 +306,15 @@ organisationRouter.get('/:organisationId/is-user-admin/:username', ensureLoggedI
     }
 });
 
+organisationRouter.get("/list-orga/where-user-is-admin", ensureLoggedIn, async (req, res) =>{
+    try {
+        const organisationController = OrganisationController.getInstance();
+        const organisations = await organisationController.getWhereUserIsAdmin((req.user as User).id);
+        res.json(organisations);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
 /*
 organisationRouter.get("/suggestion/:id", async (req, res) => {
     try {
