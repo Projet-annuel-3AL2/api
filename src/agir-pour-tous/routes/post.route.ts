@@ -91,7 +91,6 @@ postRouter.delete("/:postId/like", ensureLoggedIn, async (req, res) => {
         const likes = await postController.dislikePost(postId, userId);
         res.json(likes);
     } catch (err) {
-        console.log(err)
         res.status(400).json(err);
     }
 });
@@ -115,7 +114,6 @@ postRouter.get("/timeline/:offset/:limit", async (req, res) => {
         const posts = await postController.getTimeline((req.user as User).id, offset, limit);
         res.json(posts);
     } catch (err) {
-        console.log(err)
         res.status(400).json(err);
     }
 });

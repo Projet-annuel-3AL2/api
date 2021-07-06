@@ -18,7 +18,6 @@ userRouter.get('/', async (req, res) => {
 
 userRouter.get("/conversations", ensureLoggedIn, async (req, res) => {
     try {
-        console.log("aaaaaaaaaaaaa")
         const userController = UserController.getInstance();
         const conversations = await userController.getConversations((req.user as User).username);
         res.json(conversations);
