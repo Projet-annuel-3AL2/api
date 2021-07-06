@@ -3,7 +3,7 @@ import {Post, PostProps} from "../models/post.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {Report, ReportProps} from "../models/report.model";
-import {Comment} from "../models/comment.model";
+import {Comment, CommentProps} from "../models/comment.model";
 
 export class PostController {
 
@@ -139,5 +139,11 @@ export class PostController {
             .leftJoin("Comment.post", "Post")
             .where("Post.id=:postId", {postId})
             .getMany();
+    }
+
+    public async addComment(postId: string, creator: User, commentProps: CommentProps) {
+        const post = await this.getById(postId);
+        let comment = getRepository(Comment).create({...commentProps, creator, post});
+        return await getRepository(Comment).save(comment);
     }
 }

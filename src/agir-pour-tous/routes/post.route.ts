@@ -166,6 +166,17 @@ postRouter.get("/:postId/is-owner", async (req, res) => {
     }
 });
 
+postRouter.post("/:postId/comment", async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const postController = PostController.getInstance();
+        const comment = await postController.addComment(postId, req.user as User,{...req.body});
+        res.json(comment);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 export {
     postRouter
 }
