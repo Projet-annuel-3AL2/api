@@ -61,7 +61,7 @@ export class User implements UserProps {
     @Column({unique: true, nullable: false, select: false})
     password: string;
     @Length(0, 200)
-    @Column({unique: true, nullable: false, length: 200})
+    @Column({nullable:true,length: 200})
     bio: string;
     @Column({select: false, nullable: true})
     resetToken: string;
