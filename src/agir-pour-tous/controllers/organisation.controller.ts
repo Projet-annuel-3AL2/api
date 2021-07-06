@@ -200,4 +200,13 @@ export class OrganisationController {
     public async rejectInvitation(organisationId: string, userId: string): Promise<void> {
         await this.cancelInvitation(organisationId,userId);
     }
+
+    async getWhereUserIsAdmin(userId: string) {
+        return await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("OrganisationMembership.isAdmin= true")
+            .andWhere("User.id=:userId", {userId})
+            .getMany();
+    }
 }
