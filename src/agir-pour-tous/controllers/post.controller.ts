@@ -136,6 +136,7 @@ export class PostController {
     public async getComments(postId: string): Promise<Comment[]> {
         return getRepository(Comment)
             .createQueryBuilder()
+            .leftJoinAndSelect("Comment.creator","User")
             .leftJoin("Comment.post", "Post")
             .where("Post.id=:postId", {postId})
             .getMany();
