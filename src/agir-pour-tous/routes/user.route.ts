@@ -16,6 +16,16 @@ userRouter.get('/', async (req, res) => {
     }
 });
 
+userRouter.get("/conversations", ensureLoggedIn, isAskedUser, async (req, res) => {
+    try {
+        const userController = UserController.getInstance();
+        const conversations = await userController.getConversations((req.user as User).username);
+        res.json(conversations);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 userRouter.get('/:username', async (req, res) => {
     try {
         const username = req.params.username;
@@ -55,17 +65,6 @@ userRouter.put('/:username', ensureLoggedIn, isAskedUser, async (req, res) => {
         const userController = UserController.getInstance();
         await userController.update(username, {...req.body});
         res.status(204).end();
-    } catch (err) {
-        res.status(400).json(err);
-    }
-});
-
-userRouter.get("/:username/conversations", ensureLoggedIn, isAskedUser, async (req, res) => {
-    try {
-        const username = req.params.username;
-        const userController = UserController.getInstance();
-        const conversations = await userController.getConversations(username);
-        res.json(conversations);
     } catch (err) {
         res.status(400).json(err);
     }
