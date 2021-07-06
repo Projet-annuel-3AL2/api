@@ -99,7 +99,7 @@ postRouter.get("/:postId/likes", async (req, res) => {
     try {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
-        const likes = postController.getLikes(postId)
+        const likes = await postController.getLikes(postId);
         res.json(likes);
     } catch (err) {
         res.status(400).json(err);
