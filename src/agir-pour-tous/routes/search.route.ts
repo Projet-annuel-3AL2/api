@@ -9,7 +9,7 @@ searchRouter.get("/:data", async (req, res) => {
         const result = await searchController.search(data);
         res.json(result);
     } catch (err) {
-        res.status(404).json(err);
+        res.status(400).json(err);
     }
 });
 

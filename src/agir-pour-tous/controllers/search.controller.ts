@@ -50,7 +50,6 @@ export class SearchController {
         return await this.eventRepository.createQueryBuilder()
             .where("Event.name like %:data%",{data})
             .orWhere("Event.description like %:data%",{data})
-            .orWhere("Event.lastname like %:data%",{data})
             .getMany();
     }
 
