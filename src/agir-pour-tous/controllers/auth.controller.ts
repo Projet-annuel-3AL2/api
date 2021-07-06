@@ -30,13 +30,11 @@ export class AuthController {
         return await this.userRepository.save(user);
     }
 
-
     public async forgotPassword(username: string) {
         const token = require('crypto').randomBytes(10).toString('hex');
         const user: User = (await this.userRepository.createQueryBuilder()
             .update()
-            .set({resetToken: token})
-            .set({resetTokenExpiration: new Date(Date.now() + 600000)})
+            .set({resetToken: token,resetTokenExpiration: new Date(Date.now() + 600000)})
             .where('username = :username', {username})
             .returning("*")
             .execute()).raw[0];
@@ -57,7 +55,7 @@ export class AuthController {
             .update()
             .set({password: encryptedPass, resetTokenExpiration: null, resetToken: null})
             .where('resetToken = :resetToken', {resetToken})
-            .where('resetTokenExpiration > NOW()')
+            .andWhere('resetTokenExpiration > NOW()')
             .execute();
     }
 }
