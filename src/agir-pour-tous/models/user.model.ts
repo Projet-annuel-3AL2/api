@@ -60,6 +60,9 @@ export class User implements UserProps {
     mail: string;
     @Column({unique: true, nullable: false, select: false})
     password: string;
+    @Length(0, 200)
+    @Column({unique: true, nullable: false, length: 200})
+    bio: string;
     @Column({select: false, nullable: true})
     resetToken: string;
     @Column({select: false, nullable: true})
