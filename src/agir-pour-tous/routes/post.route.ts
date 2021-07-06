@@ -72,6 +72,17 @@ postRouter.get("/:postId/like", ensureLoggedIn, async (req, res) => {
     }
 });
 
+postRouter.get("/:postId/comments", ensureLoggedIn, async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const postController = PostController.getInstance();
+        const comments = await postController.getComments(postId);
+        res.json(comments);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 postRouter.delete("/:postId/like", ensureLoggedIn, async (req, res) => {
     try {
         const postId = req.params.postId;
