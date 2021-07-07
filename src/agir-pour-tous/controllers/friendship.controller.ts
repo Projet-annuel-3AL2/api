@@ -42,13 +42,13 @@ export class FriendshipController {
     }
 
     public async removeFriendship(friendOneUsername: string, friendTwoUsername: string): Promise<void> {
-        await this.friendshipRepository.createQueryBuilder()
-            .leftJoin("Friendship.friendOne", "FriendOne")
-            .where("FriendOne.username=:friendOneUsername", {friendOneUsername})
-            .leftJoin("FriendRequest.friendTwo", "FriendTwo")
-            .andWhere("FriendTwo.username=:friendTwoUsername", {friendTwoUsername})
-            .softDelete()
-            .execute();
+
+        await this.friendshipRepository.remove(await this.friendshipRepository.createQueryBuilder()
+            .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
+            .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
+            .where("FriendOne.username=:friendOneUsername and FriendTwo.username=:friendTwoUsername ", {friendOneUsername, friendTwoUsername})
+            .orWhere("FriendOne.username=:friendTwoUsername or FriendTwo.username=:friendOneUsername", {friendTwoUsername, friendOneUsername})
+            .getOne());
     }
 
     public async isFriendshipRequested(currentUsername: string, username: string): Promise<FriendshipStatus> {
