@@ -129,11 +129,11 @@ export class OrganisationController {
 
     public async removeMember(organisationId: string, userId: string): Promise<void> {
         await getRepository(OrganisationMembership).softRemove(await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation", "Organisation")
-            .leftJoin("OrganisationMembership.user", "User")
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("User.id=:userId", {userId})
             .andWhere("Organisation.id=:organisationId", {organisationId})
-            .getMany());
+            .getOne());
     }
 
     public async isAdmin(organisationId: string, userId: string): Promise<boolean> {
