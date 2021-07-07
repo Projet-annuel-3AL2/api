@@ -26,19 +26,19 @@ export class CertificationController {
         return CertificationController.instance;
     }
 
-    public async getById(certificationId: string): Promise<Certification>{
+    public async getById(certificationId: string): Promise<Certification> {
         return this.certificationRepository.findOneOrFail(certificationId);
     }
 
-    public async getAll(): Promise<Certification[]>{
+    public async getAll(): Promise<Certification[]> {
         return this.certificationRepository.find();
     }
 
-    public async getRequestById(certificationRequestId: string): Promise<CertificationRequest>{
+    public async getRequestById(certificationRequestId: string): Promise<CertificationRequest> {
         return this.certificationRequestRepository.findOneOrFail(certificationRequestId);
     }
 
-    public async getAllRequests(): Promise<CertificationRequest[]>{
+    public async getAllRequests(): Promise<CertificationRequest[]> {
         return this.certificationRequestRepository.find();
     }
 
@@ -47,14 +47,14 @@ export class CertificationController {
         return await this.certificationRequestRepository.save(certificationRequest);
     }
 
-    public async approveRequest(certificationRequestId: string,issuer:User): Promise<Certification> {
+    public async approveRequest(certificationRequestId: string, issuer: User): Promise<Certification> {
         let request = await this.getRequestById(certificationRequestId);
         request.certificationRequestStatus = CertificationRequestStatus.ACCEPTED;
         const user = await getRepository(User).createQueryBuilder()
-            .leftJoin("User.certificationRequest","CertificationRequest")
-            .where("CertificationRequest.id=:certificationRequestId",{certificationRequestId})
+            .leftJoin("User.certificationRequest", "CertificationRequest")
+            .where("CertificationRequest.id=:certificationRequestId", {certificationRequestId})
             .getOne();
-        const certificate = this.certificationRepository.create({user,issuer, request});
+        const certificate = this.certificationRepository.create({user, issuer, request});
         return await this.certificationRepository.save(certificate);
     }
 
@@ -62,10 +62,10 @@ export class CertificationController {
         await this.certificationRequestRepository.createQueryBuilder()
             .update()
             .set({certificationRequestStatus: CertificationRequestStatus.REJECTED})
-            .where("id=:certificationRequestId",{certificationRequestId});
+            .where("id=:certificationRequestId", {certificationRequestId});
     }
 
-    public async revokeCertificate(certificateId: string): Promise<void>{
+    public async revokeCertificate(certificateId: string): Promise<void> {
         await this.certificationRepository.delete(certificateId);
     }
 }

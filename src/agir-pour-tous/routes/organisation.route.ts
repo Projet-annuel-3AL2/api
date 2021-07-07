@@ -6,7 +6,8 @@ import {OrganisationController} from "../controllers/organisation.controller";
 import {
     isNotOrganisationUserOwner,
     isOrganisationAdmin,
-    isOrganisationOwner, isOrganisationUserMember
+    isOrganisationOwner,
+    isOrganisationUserMember
 } from "../middlewares/organisation.middleware";
 import {UserController} from "../controllers/user.controller";
 
@@ -316,7 +317,7 @@ organisationRouter.get('/requests', ensureLoggedIn, hasAdminRights, async (req, 
     }
 });
 
-organisationRouter.put('/:requestId/accept', ensureLoggedIn,hasAdminRights, async (req, res) => {
+organisationRouter.put('/:requestId/accept', ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const requestId = req.params.requestId;
         const organisationController = await OrganisationController.getInstance();
@@ -327,7 +328,7 @@ organisationRouter.put('/:requestId/accept', ensureLoggedIn,hasAdminRights, asyn
     }
 });
 
-organisationRouter.delete('/:requestId/reject', ensureLoggedIn,hasAdminRights, async (req, res) => {
+organisationRouter.delete('/:requestId/reject', ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const requestId = req.params.requestId;
         const organisationController = await OrganisationController.getInstance();

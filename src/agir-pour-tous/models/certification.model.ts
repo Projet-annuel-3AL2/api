@@ -1,6 +1,5 @@
-import {User, UserType} from "./user.model";
+import {User} from "./user.model";
 import {
-    Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
@@ -19,7 +18,7 @@ export class Certification {
     user: User;
     @ManyToOne(() => User, user => user.issuedCertifications)
     issuer: User;
-    @OneToOne(()=> CertificationRequest, request => request.certification)
+    @OneToOne(() => CertificationRequest, request => request.certification)
     request: CertificationRequest;
     @CreateDateColumn()
     createdAt: Date;

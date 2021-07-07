@@ -1,5 +1,6 @@
 import express from "express";
 import {SearchController} from "../controllers/search.controller";
+
 const searchRouter = express.Router();
 
 searchRouter.get("/:data", async (req, res) => {

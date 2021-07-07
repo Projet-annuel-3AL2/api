@@ -169,7 +169,7 @@ export class EventController {
             where: {
                 id: eventId
             },
-            relations: ['user', 'organisation', 'category' ]
+            relations: ['user', 'organisation', 'category']
         })
     }
 }

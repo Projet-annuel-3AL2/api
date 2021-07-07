@@ -27,22 +27,6 @@ export class OrganisationController {
         return OrganisationController.instance;
     }
 
-    private async create(user: User, name: string): Promise<Organisation> {
-        const organisation = this.organisationRepository.create({name});
-        const creatorMembership = getRepository(OrganisationMembership).create({
-            organisation,
-            user,
-            isOwner: true,
-            isAdmin: true
-        });
-        organisation.members = [creatorMembership];
-        const err = await validate(organisation);
-        if (err.length > 0) {
-            throw err;
-        }
-        return this.organisationRepository.save(organisation);
-    }
-
     public async getById(id: string): Promise<Organisation> {
         return await this.organisationRepository.findOneOrFail(id);
     }
@@ -181,7 +165,7 @@ export class OrganisationController {
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
             .getOne();
-        organisationMembership.isAdmin= false;
+        organisationMembership.isAdmin = false;
         await getRepository(OrganisationMembership).save(organisationMembership);
     }
 
@@ -211,23 +195,23 @@ export class OrganisationController {
     }
 
     public async rejectInvitation(organisationId: string, userId: string): Promise<void> {
-        await this.cancelInvitation(organisationId,userId);
+        await this.cancelInvitation(organisationId, userId);
     }
 
-    public async requestCreation(user: User, props: OrganisationCreationRequestProps): Promise<OrganisationCreationRequest>{
-        const request = getRepository(OrganisationCreationRequest).create({...props,user});
+    public async requestCreation(user: User, props: OrganisationCreationRequestProps): Promise<OrganisationCreationRequest> {
+        const request = getRepository(OrganisationCreationRequest).create({...props, user});
         return getRepository(OrganisationCreationRequest).save(request);
     }
 
-    public async getCreationRequests(): Promise<OrganisationCreationRequest>{
+    public async getCreationRequests(): Promise<OrganisationCreationRequest> {
         return undefined;
     }
 
-    public async getCreationRequestById(organisationCreationRequestId: string): Promise<OrganisationCreationRequest>{
+    public async getCreationRequestById(organisationCreationRequestId: string): Promise<OrganisationCreationRequest> {
         return await getRepository(OrganisationCreationRequest).findOneOrFail(organisationCreationRequestId);
     }
 
-    public async acceptCreationDemand(organisationCreationRequestId: string): Promise<Organisation>{
+    public async acceptCreationDemand(organisationCreationRequestId: string): Promise<Organisation> {
         const request = await this.getCreationRequestById(organisationCreationRequestId);
         await this.rejectCreationDemand(organisationCreationRequestId);
         return this.create(request.user, request.name);
@@ -235,5 +219,21 @@ export class OrganisationController {
 
     public async rejectCreationDemand(organisationCreationRequestId: string): Promise<void> {
         await getRepository(OrganisationCreationRequest).softDelete(organisationCreationRequestId);
+    }
+
+    private async create(user: User, name: string): Promise<Organisation> {
+        const organisation = this.organisationRepository.create({name});
+        const creatorMembership = getRepository(OrganisationMembership).create({
+            organisation,
+            user,
+            isOwner: true,
+            isAdmin: true
+        });
+        organisation.members = [creatorMembership];
+        const err = await validate(organisation);
+        if (err.length > 0) {
+            throw err;
+        }
+        return this.organisationRepository.save(organisation);
     }
 }

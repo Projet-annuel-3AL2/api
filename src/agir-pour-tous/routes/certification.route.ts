@@ -73,7 +73,7 @@ certificationRouter.delete("/request/:certificationRequestId", ensureLoggedIn, h
 certificationRouter.post("/request", ensureLoggedIn, async (req, res) => {
     try {
         const certificationController = CertificationController.getInstance();
-        const certificationRequest = await certificationController.requestCertification(req.user as User,{...req.body});
+        const certificationRequest = await certificationController.requestCertification(req.user as User, {...req.body});
         res.json(certificationRequest);
     } catch (err) {
         res.status(400).json(err);

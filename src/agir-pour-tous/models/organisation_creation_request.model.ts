@@ -1,7 +1,8 @@
 import {
     Column,
     CreateDateColumn,
-    DeleteDateColumn, Entity,
+    DeleteDateColumn,
+    Entity,
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -22,7 +23,7 @@ export class OrganisationCreationRequest {
     name: string;
     @Column()
     comment: string;
-    @OneToOne(()=>User,user=>user.organisationCreationRequest, {nullable:false, eager:true})
+    @OneToOne(() => User, user => user.organisationCreationRequest, {nullable: false, eager: true})
     @JoinColumn()
     user: User;
     @CreateDateColumn()

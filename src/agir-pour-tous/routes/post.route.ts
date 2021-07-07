@@ -170,7 +170,7 @@ postRouter.post("/:postId/comment", async (req, res) => {
     try {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
-        const comment = await postController.addComment(postId, req.user as User,{...req.body});
+        const comment = await postController.addComment(postId, req.user as User, {...req.body});
         res.json(comment);
     } catch (err) {
         res.status(400).json(err);

@@ -17,8 +17,8 @@ export async function canCreateEvent(req, res, next) {
     const organisationController = OrganisationController.getInstance();
     const organisations = (await userController.getOrganisations((req.user as User).username));
     if (!req.user && ((req.user as User).certification !== undefined ||
-        organisations.some(organisation => organisationController.isOwner(organisation.id,(req.user as User).id)
-            || organisationController.isAdmin(organisation.id,(req.user as User).id)))) {
+        organisations.some(organisation => organisationController.isOwner(organisation.id, (req.user as User).id)
+            || organisationController.isAdmin(organisation.id, (req.user as User).id)))) {
         return res.status(403).end();
     }
     next();

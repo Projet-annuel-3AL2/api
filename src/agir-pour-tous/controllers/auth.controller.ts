@@ -34,7 +34,7 @@ export class AuthController {
         const token = require('crypto').randomBytes(10).toString('hex');
         const user: User = (await this.userRepository.createQueryBuilder()
             .update()
-            .set({resetToken: token,resetTokenExpiration: new Date(Date.now() + 600000)})
+            .set({resetToken: token, resetTokenExpiration: new Date(Date.now() + 600000)})
             .where('username = :username', {username})
             .returning("*")
             .execute()).raw[0];

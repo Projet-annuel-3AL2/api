@@ -62,7 +62,7 @@ export class User implements UserProps {
     @Column({unique: true, nullable: false, select: false})
     password: string;
     @Length(0, 200)
-    @Column({nullable:true,length: 200})
+    @Column({nullable: true, length: 200})
     bio: string;
     @Column({select: false, nullable: true})
     resetToken: string;
@@ -110,7 +110,7 @@ export class User implements UserProps {
     @ManyToMany(() => Event, event => event.participants, {cascade: true})
     @JoinTable()
     eventsParticipation: Event[];
-    @OneToOne(()=>OrganisationCreationRequest,organisationCreationRequest=>organisationCreationRequest.user)
+    @OneToOne(() => OrganisationCreationRequest, organisationCreationRequest => organisationCreationRequest.user)
     organisationCreationRequest: OrganisationCreationRequest;
     @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true})
     organisations: OrganisationMembership[];
