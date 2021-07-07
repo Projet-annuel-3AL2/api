@@ -35,6 +35,9 @@ export class Event {
     @Length(5, 50)
     @Column({nullable: false, length: 50})
     name: string;
+    @Length(0, 200)
+    @Column({nullable: false, length: 200})
+    description: string;
     @Column({nullable: false})
     startDate: Date;
     @Column({nullable: false})

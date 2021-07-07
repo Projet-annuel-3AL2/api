@@ -72,6 +72,17 @@ postRouter.get("/:postId/like", ensureLoggedIn, async (req, res) => {
     }
 });
 
+postRouter.get("/:postId/comments", ensureLoggedIn, async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const postController = PostController.getInstance();
+        const comments = await postController.getComments(postId);
+        res.json(comments);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
 postRouter.delete("/:postId/like", ensureLoggedIn, async (req, res) => {
     try {
         const postId = req.params.postId;
@@ -80,7 +91,6 @@ postRouter.delete("/:postId/like", ensureLoggedIn, async (req, res) => {
         const likes = await postController.dislikePost(postId, userId);
         res.json(likes);
     } catch (err) {
-        console.log(err)
         res.status(400).json(err);
     }
 });
@@ -89,7 +99,7 @@ postRouter.get("/:postId/likes", async (req, res) => {
     try {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
-        const likes = postController.getLikes(postId)
+        const likes = await postController.getLikes(postId);
         res.json(likes);
     } catch (err) {
         res.status(400).json(err);
@@ -104,7 +114,6 @@ postRouter.get("/timeline/:offset/:limit", async (req, res) => {
         const posts = await postController.getTimeline((req.user as User).id, offset, limit);
         res.json(posts);
     } catch (err) {
-        console.log(err)
         res.status(400).json(err);
     }
 });
@@ -152,6 +161,17 @@ postRouter.get("/:postId/is-owner", async (req, res) => {
         const postController = PostController.getInstance();
         const isOwner = await postController.isPostOwner(postId, userId);
         res.json({isOwner});
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
+
+postRouter.post("/:postId/comment", async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const postController = PostController.getInstance();
+        const comment = await postController.addComment(postId, req.user as User, {...req.body});
+        res.json(comment);
     } catch (err) {
         res.status(400).json(err);
     }

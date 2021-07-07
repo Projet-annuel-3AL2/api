@@ -118,6 +118,15 @@ export class UserController {
             .getMany();
     }
 
+    async isFollowingOrganisation(userId: string, organisationId: string) {
+        return await this.userRepository
+            .createQueryBuilder()
+            .leftJoin("User.followedOrganisations", "Organisation")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne() != undefined;
+    }
+
     private async getOrganisationConversations(username: string): Promise<Conversation[]> {
         return await this.conversationRepository
             .createQueryBuilder()
@@ -149,14 +158,5 @@ export class UserController {
             .where("GroupMember.username=:username", {username})
             .leftJoin("Conversation.messages", "Message")
             .getMany();
-    }
-
-    async isFollowingOrganisation(userId: string, organisationId: string) {
-        return await this.userRepository
-            .createQueryBuilder()
-            .leftJoin("User.followedOrganisations", "Organisation")
-            .where("Organisation.id=:organisationId", {organisationId})
-            .andWhere("User.id=:userId", {userId})
-            .getOne() != undefined ;
     }
 }

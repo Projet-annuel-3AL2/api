@@ -30,7 +30,7 @@ eventRouter.post('/:eventId/join', ensureLoggedIn, async (req, res) => {
     }
 });
 
-eventRouter.get('/', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/', async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
         const event = await eventController.getAll();
@@ -40,7 +40,7 @@ eventRouter.get('/', ensureLoggedIn, async (req, res) => {
     }
 });
 
-eventRouter.get('/suggestions/events', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/suggestions/events', async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
         const events = await eventController.getSuggestion();
@@ -50,7 +50,7 @@ eventRouter.get('/suggestions/events', ensureLoggedIn, async (req, res) => {
     }
 });
 
-eventRouter.get('/is-finished', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/is-finished', async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
         const events = await eventController.getAllNotEnd();
@@ -108,7 +108,7 @@ eventRouter.get('/getEventWithUserLocationNotEnd/:userLocationX/:userLocationY/:
     }
 });
 
-eventRouter.get('/search/:name', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/search/:name', async (req, res) => {
     try {
         const name = req.params.name;
         const eventController = await EventController.getInstance();
@@ -188,7 +188,7 @@ eventRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req,
     }
 });
 
-eventRouter.get('/:eventId/owner', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/:eventId/owner', async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();
@@ -199,7 +199,7 @@ eventRouter.get('/:eventId/owner', ensureLoggedIn, async (req, res) => {
     }
 });
 
-eventRouter.get('/:eventId/profil', ensureLoggedIn, async (req, res) => {
+eventRouter.get('/:eventId/profil', async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
         const events = await eventController.getProfil(req.params.eventId);

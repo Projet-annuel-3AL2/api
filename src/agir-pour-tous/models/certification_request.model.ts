@@ -2,12 +2,13 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    Entity, JoinColumn,
+    Entity,
+    JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
-import {User, UserType} from "./user.model";
+import {User} from "./user.model";
 import {Certification} from "./certification.model";
 
 export interface CertificationRequestProps {
@@ -27,12 +28,17 @@ export class CertificationRequest {
     id: string;
     @Column()
     comment: string;
-    @Column({type: "enum", enum: CertificationRequestStatus, default: CertificationRequestStatus.PENDING, nullable: false})
+    @Column({
+        type: "enum",
+        enum: CertificationRequestStatus,
+        default: CertificationRequestStatus.PENDING,
+        nullable: false
+    })
     certificationRequestStatus: CertificationRequestStatus;
-    @OneToOne(()=>User,user=>user.certificationRequest, {nullable:false})
+    @OneToOne(() => User, user => user.certificationRequest, {nullable: false})
     @JoinColumn()
     user: User;
-    @OneToOne(()=> Certification, certification => certification.request, {nullable: true})
+    @OneToOne(() => Certification, certification => certification.request, {nullable: true})
     @JoinColumn()
     certification: Certification;
     @CreateDateColumn()

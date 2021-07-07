@@ -27,6 +27,7 @@ import {Friendship} from "./friendship.model";
 import {FriendRequest} from "./friend_request.model";
 import {Organisation} from "./organisation.model";
 import {CertificationRequest} from "./certification_request.model";
+import {OrganisationCreationRequest} from "./organisation_creation_request.model";
 
 export enum UserType {
     USER = "USER",
@@ -58,8 +59,11 @@ export class User implements UserProps {
     @IsEmail()
     @Column({unique: true, nullable: false})
     mail: string;
-    @Column({unique: true, nullable: false, select: false})
+    @Column({unique: false, nullable: false, select: false})
     password: string;
+    @Length(0, 200)
+    @Column({nullable: true, length: 200})
+    bio: string;
     @Column({select: false, nullable: true})
     resetToken: string;
     @Column({select: false, nullable: true})
@@ -86,16 +90,16 @@ export class User implements UserProps {
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
     comments: Comment[];
-    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true})
     @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true})
     @JoinColumn()
     bannerPicture: Media;
-    @OneToOne(() => Certification, certification => certification.user, {eager: true, cascade: true})
+    @OneToOne(() => Certification, certification => certification.user, {cascade: true})
     @JoinColumn()
     certification: Certification;
-    @OneToOne(() => CertificationRequest, certification => certification.user, {eager: true, cascade: true})
+    @OneToOne(() => CertificationRequest, certification => certification.user, {cascade: true})
     certificationRequest: CertificationRequest;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
@@ -106,6 +110,8 @@ export class User implements UserProps {
     @ManyToMany(() => Event, event => event.participants, {cascade: true})
     @JoinTable()
     eventsParticipation: Event[];
+    @OneToOne(() => OrganisationCreationRequest, organisationCreationRequest => organisationCreationRequest.user)
+    organisationCreationRequest: OrganisationCreationRequest;
     @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true})
     organisations: OrganisationMembership[];
     @ManyToMany(() => Organisation, organisation => organisation.invitedUsers)

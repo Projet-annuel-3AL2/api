@@ -5,6 +5,10 @@ import {validate} from "class-validator";
 import {Organisation, OrganisationProps} from "../models/organisation.model";
 import {OrganisationMembership} from "../models/organisation_membership.model";
 import {Report, ReportProps} from "../models/report.model";
+import {
+    OrganisationCreationRequest,
+    OrganisationCreationRequestProps
+} from "../models/organisation_creation_request.model";
 
 export class OrganisationController {
 
@@ -21,22 +25,6 @@ export class OrganisationController {
             OrganisationController.instance = new OrganisationController();
         }
         return OrganisationController.instance;
-    }
-
-    public async create(user: User, props: OrganisationProps): Promise<Organisation> {
-        const organisation = this.organisationRepository.create({...props});
-        const creatorMembership = getRepository(OrganisationMembership).create({
-            organisation,
-            user,
-            isOwner: true,
-            isAdmin: true
-        });
-        organisation.members = [creatorMembership];
-        const err = await validate(organisation);
-        if (err.length > 0) {
-            throw err;
-        }
-        return this.organisationRepository.save(organisation);
     }
 
     public async getById(id: string): Promise<Organisation> {
@@ -125,8 +113,8 @@ export class OrganisationController {
 
     public async removeMember(organisationId: string, userId: string): Promise<void> {
         await getRepository(OrganisationMembership).softRemove(await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation", "Organisation")
-            .leftJoin("OrganisationMembership.user", "User")
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("User.id=:userId", {userId})
             .andWhere("Organisation.id=:organisationId", {organisationId})
             .getMany());
@@ -134,8 +122,8 @@ export class OrganisationController {
 
     public async isAdmin(organisationId: string, userId: string): Promise<boolean> {
         return (await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation", "Organisation")
-            .leftJoin("OrganisationMembership.user", "User")
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
             .getOne()).isAdmin;
@@ -143,33 +131,42 @@ export class OrganisationController {
 
     public async isOwner(organisationId: string, userId: string): Promise<boolean> {
         return (await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation", "Organisation")
-            .leftJoin("OrganisationMembership.user", "User")
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
             .getOne()).isOwner;
     }
 
-    public async addAdmin(organisationId: string, userId: string): Promise<void> {
-        await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation", "Organisation")
-            .leftJoin("OrganisationMembership.user", "User")
-            .update()
-            .set({isAdmin: true})
+    public async getMember(organisationId: string, userId: string): Promise<OrganisationMembership> {
+        return await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .execute();
+            .getOne();
+    }
+
+    public async addAdmin(organisationId: string, userId: string): Promise<void> {
+        const organisationMembership = await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne();
+        organisationMembership.isAdmin = true;
+        await getRepository(OrganisationMembership).save(organisationMembership);
     }
 
     public async removeAdmin(organisationId: string, userId: string): Promise<void> {
-        await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation", "Organisation")
-            .leftJoin("OrganisationMembership.user", "User")
-            .update()
-            .set({isAdmin: false})
+        const organisationMembership = await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .execute();
+            .getOne();
+        organisationMembership.isAdmin = false;
+        await getRepository(OrganisationMembership).save(organisationMembership);
     }
 
     public async inviteUser(organisationId: string, userId: string): Promise<void> {
@@ -198,6 +195,45 @@ export class OrganisationController {
     }
 
     public async rejectInvitation(organisationId: string, userId: string): Promise<void> {
-        await this.cancelInvitation(organisationId,userId);
+        await this.cancelInvitation(organisationId, userId);
+    }
+
+    public async requestCreation(user: User, props: OrganisationCreationRequestProps): Promise<OrganisationCreationRequest> {
+        const request = getRepository(OrganisationCreationRequest).create({...props, user});
+        return getRepository(OrganisationCreationRequest).save(request);
+    }
+
+    public async getCreationRequests(): Promise<OrganisationCreationRequest> {
+        return undefined;
+    }
+
+    public async getCreationRequestById(organisationCreationRequestId: string): Promise<OrganisationCreationRequest> {
+        return await getRepository(OrganisationCreationRequest).findOneOrFail(organisationCreationRequestId);
+    }
+
+    public async acceptCreationDemand(organisationCreationRequestId: string): Promise<Organisation> {
+        const request = await this.getCreationRequestById(organisationCreationRequestId);
+        await this.rejectCreationDemand(organisationCreationRequestId);
+        return this.create(request.user, request.name);
+    }
+
+    public async rejectCreationDemand(organisationCreationRequestId: string): Promise<void> {
+        await getRepository(OrganisationCreationRequest).softDelete(organisationCreationRequestId);
+    }
+
+    private async create(user: User, name: string): Promise<Organisation> {
+        const organisation = this.organisationRepository.create({name});
+        const creatorMembership = getRepository(OrganisationMembership).create({
+            organisation,
+            user,
+            isOwner: true,
+            isAdmin: true
+        });
+        organisation.members = [creatorMembership];
+        const err = await validate(organisation);
+        if (err.length > 0) {
+            throw err;
+        }
+        return this.organisationRepository.save(organisation);
     }
 }

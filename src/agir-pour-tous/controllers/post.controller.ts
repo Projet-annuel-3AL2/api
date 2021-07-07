@@ -3,6 +3,7 @@ import {Post, PostProps} from "../models/post.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {Report, ReportProps} from "../models/report.model";
+import {Comment, CommentProps} from "../models/comment.model";
 
 export class PostController {
 
@@ -77,9 +78,11 @@ export class PostController {
     }
 
     public async getTimeline(userId: string, offset: number, limit: number): Promise<Post[]> {
-        return [].concat(await this.getOwnPosts(userId))
+        return Array.from(new Set((([] as Post[]).concat(await this.getOwnPosts(userId))
             .concat(await this.getFriendOnePosts(userId))
             .concat(await this.getFriendTwoPosts(userId))
+            .concat(await this.getFollowedOrganisationPosts(userId))
+            .concat(await this.getMemberOrganisationPosts(userId)))))
             .sort((a: Post, b: Post) => b.createdAt.getTime() - a.createdAt.getTime());
     }
 
@@ -102,6 +105,21 @@ export class PostController {
             .where("User.id=:userId", {userId})
             .andWhere("Post.id=:postId", {postId})
             .getOne() !== undefined);
+    }
+
+    public async getComments(postId: string): Promise<Comment[]> {
+        return getRepository(Comment)
+            .createQueryBuilder()
+            .leftJoinAndSelect("Comment.creator", "User")
+            .leftJoin("Comment.post", "Post")
+            .where("Post.id=:postId", {postId})
+            .getMany();
+    }
+
+    public async addComment(postId: string, creator: User, commentProps: CommentProps) {
+        const post = await this.getById(postId);
+        let comment = getRepository(Comment).create({...commentProps, creator, post});
+        return await getRepository(Comment).save(comment);
     }
 
     private getOwnPosts(userId: string): Promise<Post[]> {
@@ -129,6 +147,25 @@ export class PostController {
             .leftJoin("User.friendsTwo", "FriendTwo")
             .leftJoin("FriendTwo.friendOne", "FriendOne")
             .where("FriendOne.id=:userId", {userId})
+            .getMany();
+    }
+
+    private getFollowedOrganisationPosts(userId: string): Promise<Post[]> {
+        return this.postRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Post.organisation", "Organisation")
+            .leftJoin("Organisation.followers", "Follower")
+            .where("Follower.id=:userId", {userId})
+            .getMany();
+    }
+
+    private getMemberOrganisationPosts(userId: string): Promise<Post[]> {
+        return this.postRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Post.organisation", "Organisation")
+            .leftJoin("Organisation.members", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("User.id=:userId", {userId})
             .getMany();
     }
 }

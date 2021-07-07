@@ -5,7 +5,7 @@ import {CreateDateColumn, Entity, ManyToOne} from "typeorm";
 export class FriendRequest {
     @ManyToOne(() => User, user => user, {primary: true, eager: true})
     sender: User;
-    @ManyToOne(() => User, user => user, {primary: true})
+    @ManyToOne(() => User, user => user, {primary: true, eager: true})
     user: User;
     @CreateDateColumn()
     createdAt: Date;

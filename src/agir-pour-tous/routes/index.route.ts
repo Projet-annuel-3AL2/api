@@ -15,12 +15,12 @@ import {conversationRouter} from "./conversation.route";
 import {eventRouter} from "./event.route";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {isConversationMember} from "../middlewares/conversation.middleware";
+import {searchRouter} from "./search.route";
 
 export function buildAPTRoutes() {
     const router = Router();
     configure();
     router.use(require('cors')({credentials: true, origin: process.env.FRONT_BASE_URL}));
-    console.log(process.env.FRONT_BASE_URL)
     router.use(require('express-session')({
         secret: process.env.ORG_APP_SECRET,
         resave: true,
@@ -42,5 +42,6 @@ export function buildAPTRoutes() {
     router.use("/friendship", friendshipRouter);
     router.use("/conversation", ensureLoggedIn, isConversationMember, conversationRouter);
     router.use("/event", eventRouter);
+    router.use("/search", searchRouter);
     return router;
 }

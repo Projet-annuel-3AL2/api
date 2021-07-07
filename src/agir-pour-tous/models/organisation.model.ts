@@ -4,7 +4,8 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    JoinColumn, JoinTable,
+    JoinColumn,
+    JoinTable,
     ManyToMany,
     OneToMany,
     OneToOne,
@@ -25,10 +26,6 @@ export interface OrganisationProps {
     owner: User;
 }
 
-export interface OrganisationProps {
-    name: string;
-}
-
 @Entity()
 export class Organisation {
     @PrimaryGeneratedColumn("uuid")
@@ -46,10 +43,10 @@ export class Organisation {
     followers: User[];
     @OneToMany(() => Event, user => user.organisation, {cascade: true})
     events: Event[];
-    @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, cascade: true})
     @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true, cascade: true})
     @JoinColumn()
     bannerPicture: Media;
     @OneToOne(() => Conversation, conversation => conversation.organisation, {nullable: false, cascade: true})
