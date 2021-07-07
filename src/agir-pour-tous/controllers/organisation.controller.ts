@@ -155,25 +155,25 @@ export class OrganisationController {
     }
 
     public async addAdmin(organisationId: string, userId: string): Promise<void> {
-        await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation", "Organisation")
-            .leftJoin("OrganisationMembership.user", "User")
-            .update()
-            .set({isAdmin: true})
+        const membership = await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .execute();
+            .getOne();
+        membership.isAdmin = true;
+        await getRepository(OrganisationMembership).save(membership);
     }
 
     public async removeAdmin(organisationId: string, userId: string): Promise<void> {
-        await getRepository(OrganisationMembership).createQueryBuilder()
-            .leftJoin("OrganisationMembership.organisation", "Organisation")
-            .leftJoin("OrganisationMembership.user", "User")
-            .update()
-            .set({isAdmin: false})
+        const membership = await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .execute();
+            .getOne();
+        membership.isAdmin = false;
+        await getRepository(OrganisationMembership).save(membership);
     }
 
     public async inviteUser(organisationId: string, userId: string): Promise<void> {
