@@ -137,21 +137,23 @@ export class OrganisationController {
     }
 
     public async isAdmin(organisationId: string, userId: string): Promise<boolean> {
-        return (await getRepository(OrganisationMembership).createQueryBuilder()
+        const memberShip = await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .getOne()).isAdmin;
+            .getOne();
+        return memberShip != undefined ? memberShip.isAdmin: false;
     }
 
     public async isOwner(organisationId: string, userId: string): Promise<boolean> {
-        return (await getRepository(OrganisationMembership).createQueryBuilder()
+        const memberShip = await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .getOne()).isOwner;
+            .getOne();
+        return memberShip != undefined ? memberShip.isOwner: false;
     }
 
     public async addAdmin(organisationId: string, userId: string): Promise<void> {
