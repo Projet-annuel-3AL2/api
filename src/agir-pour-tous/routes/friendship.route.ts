@@ -72,6 +72,7 @@ friendshipRouter.put("/:username", ensureLoggedIn, async (req, res) => {
         const friendship = await friendshipController.acceptFriendRequest(user, req.user as User);
         res.json(friendship);
     } catch (err) {
+        console.log(err)
         res.status(400).json(err);
     }
 });
