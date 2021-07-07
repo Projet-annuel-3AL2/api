@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import {ensureLoggedIn, ensureLoggedOut} from "../middlewares/auth.middleware";
+import {ensureLoggedIn, ensureLoggedOut, isValidResetPasswordToken} from "../middlewares/auth.middleware";
 import {AuthController} from "../controllers/auth.controller";
 
 const authRouter = express.Router();
@@ -24,21 +24,36 @@ authRouter.get("/forgot-password/:username", ensureLoggedOut, async (req, res) =
     const username = req.params.username;
     try {
         const authController = await AuthController.getInstance();
-        const token = await authController.forgotPassword(username);
-        res.send(token);
+        await authController.forgotPassword(username);
+        res.status(204).end();
     } catch (err) {
         res.status(400).json(err);
     }
 });
 
-authRouter.post("/reset-password/:resetToken", ensureLoggedOut, async (req, res) => {
+authRouter.get("/is-valid-token/:username/:resetToken", ensureLoggedOut, async (req, res) => {
     const resetToken = req.params.resetToken;
+    const username = req.params.username;
     try {
         const authController = await AuthController.getInstance();
-        await authController.resetPassword(resetToken, req.body.password);
-        res.end();
+        const isValid = await authController.isValidToken(resetToken, username);
+        res.json(isValid);
     } catch (err) {
         res.status(400).json(err);
+    }
+});
+
+authRouter.post("/reset-password/:username/:resetToken", ensureLoggedOut, isValidResetPasswordToken, async (req, res) => {
+    const resetToken = req.params.resetToken;
+    const username = req.params.username;
+    const password = req.body.password;
+    try {
+        const authController = await AuthController.getInstance();
+        await authController.resetPassword(resetToken, username, password);
+        res.end();
+    } catch (err) {
+        console.log(err)
+        res.status(404).json(err);
     }
 });
 
