@@ -78,11 +78,11 @@ export class PostController {
     }
 
     public async getTimeline(userId: string, offset: number, limit: number): Promise<Post[]> {
-        return [].concat(await this.getOwnPosts(userId))
+        return Array.from(new Set((([] as Post[]).concat(await this.getOwnPosts(userId))
             .concat(await this.getFriendOnePosts(userId))
             .concat(await this.getFriendTwoPosts(userId))
             .concat(await this.getFollowedOrganisationPosts(userId))
-            .concat(await this.getMemberOrganisationPosts(userId))
+            .concat(await this.getMemberOrganisationPosts(userId)))))
             .sort((a: Post, b: Post) => b.createdAt.getTime() - a.createdAt.getTime());
     }
 
