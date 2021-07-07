@@ -25,10 +25,6 @@ export interface OrganisationProps {
     owner: User;
 }
 
-export interface OrganisationProps {
-    name: string;
-}
-
 @Entity()
 export class Organisation {
     @PrimaryGeneratedColumn("uuid")
