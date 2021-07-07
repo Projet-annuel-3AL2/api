@@ -6,7 +6,7 @@ import {OrganisationController} from "../controllers/organisation.controller";
 import {
     isNotOrganisationUserOwner,
     isOrganisationAdmin,
-    isOrganisationOwner
+    isOrganisationOwner, isOrganisationUserMember
 } from "../middlewares/organisation.middleware";
 import {UserController} from "../controllers/user.controller";
 
@@ -146,7 +146,7 @@ organisationRouter.get("/:organisationId/members", ensureLoggedIn, async (req, r
     }
 });
 
-organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, isOrganisationAdmin, async (req, res) => {
+organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, isOrganisationAdmin, isOrganisationUserMember, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const userId = req.params.userId;
@@ -195,7 +195,7 @@ organisationRouter.get('/:organisationId/is-owner', ensureLoggedIn, async (req, 
     }
 });
 
-organisationRouter.get('/:organisationId/is-user-owner/:username', ensureLoggedIn, async (req, res) => {
+organisationRouter.get('/:organisationId/is-user-owner/:username', ensureLoggedIn, isOrganisationUserMember, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const username = req.params.username;
@@ -211,7 +211,7 @@ organisationRouter.get('/:organisationId/is-user-owner/:username', ensureLoggedI
     }
 });
 
-organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isNotAskedUser, isOrganisationOwner, isNotOrganisationUserOwner, async (req, res) => {
+organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isNotAskedUser, isOrganisationUserMember, isOrganisationOwner, isNotOrganisationUserOwner, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const userId = req.params.userId;
@@ -222,7 +222,8 @@ organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isN
         res.status(400).json(err);
     }
 });
-organisationRouter.put('/:organisationId/remove-admin/:userId', ensureLoggedIn, isNotAskedUser, isOrganisationOwner, isNotOrganisationUserOwner, async (req, res) => {
+
+organisationRouter.put('/:organisationId/remove-admin/:userId', ensureLoggedIn, isNotAskedUser, isOrganisationUserMember, isOrganisationOwner, isNotOrganisationUserOwner, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const userId = req.params.userId;
@@ -283,7 +284,7 @@ organisationRouter.delete('/:organisationId/invite/reject', ensureLoggedIn, asyn
     }
 });
 
-organisationRouter.get('/:organisationId/is-user-admin/:username', ensureLoggedIn, async (req, res) => {
+organisationRouter.get('/:organisationId/is-user-admin/:username', ensureLoggedIn, isOrganisationUserMember, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const username = req.params.username;

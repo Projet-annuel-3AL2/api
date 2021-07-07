@@ -154,6 +154,15 @@ export class OrganisationController {
             .getOne()).isOwner;
     }
 
+    public async getMember(organisationId: string, userId: string): Promise<OrganisationMembership> {
+        return await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne();
+    }
+
     public async addAdmin(organisationId: string, userId: string): Promise<void> {
         const organisationMembership = await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")

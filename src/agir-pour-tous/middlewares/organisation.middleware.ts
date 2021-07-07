@@ -38,3 +38,13 @@ export function isOrganisationUserNotAdmin(req, res, next) {
     }
     next();
 }
+
+export function isOrganisationUserMember(req, res, next) {
+    const organisationId = req.params.organisationId;
+    const userId = req.params.userId;
+    const organisationController = OrganisationController.getInstance();
+    if (!req.user && !(organisationController.getMember(organisationId, userId) !== undefined)) {
+        return res.status(404).end();
+    }
+    next();
+}
