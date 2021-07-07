@@ -59,7 +59,7 @@ export class User implements UserProps {
     @IsEmail()
     @Column({unique: true, nullable: false})
     mail: string;
-    @Column({unique: true, nullable: false, select: false})
+    @Column({unique: false, nullable: false, select: false})
     password: string;
     @Length(0, 200)
     @Column({nullable: true, length: 200})
