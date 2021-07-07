@@ -53,13 +53,10 @@ export class FriendshipController {
 
     public async isFriendshipRequested(currentUsername: string, username: string): Promise<FriendshipStatus> {
         if (await this.friendshipRepository.createQueryBuilder()
-            .leftJoin("Friendship.friendOne", "FriendOne")
-            .leftJoin("Friendship.friendTwo", "FriendTwo")
-            .where("FriendOne.username=:currentUsername AND FriendTwo.username=:username", {currentUsername, username})
-            .orWhere("FriendOne.username=:username AND FriendTwo.username=:currentUsername", {
-                currentUsername,
-                username
-            })
+            .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
+            .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
+            .where("(FriendOne.username=:currentUsername AND FriendTwo.username=:username)", {currentUsername, username})
+            .orWhere("(FriendOne.username=:username AND FriendTwo.username=:currentUsername)", {currentUsername,username})
             .getOne() !== undefined) {
             return FriendshipStatus.BEFRIENDED;
         } else if (await this.friendRequestRepository.createQueryBuilder()
