@@ -81,6 +81,8 @@ export class PostController {
         return [].concat(await this.getOwnPosts(userId))
             .concat(await this.getFriendOnePosts(userId))
             .concat(await this.getFriendTwoPosts(userId))
+            .concat(await this.getFollowedOrganisationPosts(userId))
+            .concat(await this.getMemberOrganisationPosts(userId))
             .sort((a: Post, b: Post) => b.createdAt.getTime() - a.createdAt.getTime());
     }
 
@@ -145,6 +147,25 @@ export class PostController {
             .leftJoin("User.friendsTwo", "FriendTwo")
             .leftJoin("FriendTwo.friendOne", "FriendOne")
             .where("FriendOne.id=:userId", {userId})
+            .getMany();
+    }
+
+    private getFollowedOrganisationPosts(userId: string): Promise<Post[]> {
+        return this.postRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Post.organisation", "Organisation")
+            .leftJoin("Organisation.followers", "Follower")
+            .where("Follower.id=:userId", {userId})
+            .getMany();
+    }
+
+    private getMemberOrganisationPosts(userId: string): Promise<Post[]> {
+        return this.postRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Post.organisation", "Organisation")
+            .leftJoin("Organisation.members", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("User.id=:userId", {userId})
             .getMany();
     }
 }
