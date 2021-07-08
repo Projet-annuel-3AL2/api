@@ -17,6 +17,7 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {isConversationMember} from "../middlewares/conversation.middleware";
 import {searchRouter} from "./search.route";
 import {logger} from "../config/logging.config";
+import {certificationRouter} from "./certification.route";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -45,5 +46,6 @@ export function buildAPTRoutes() {
     router.use("/conversation", ensureLoggedIn, isConversationMember, conversationRouter);
     router.use("/event", eventRouter);
     router.use("/search", searchRouter);
+    router.use("/certification", certificationRouter);
     return router;
 }
