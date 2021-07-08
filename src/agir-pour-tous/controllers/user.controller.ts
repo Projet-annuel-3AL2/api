@@ -40,7 +40,11 @@ export class UserController {
     }
 
     public async update(username: string, props: UserProps): Promise<User> {
-        await this.userRepository.update(username, props);
+        await this.userRepository.createQueryBuilder()
+            .update()
+            .set(props)
+            .where("username=:username", {username})
+            .execute()
         return this.getByUsername(username);
     }
 
