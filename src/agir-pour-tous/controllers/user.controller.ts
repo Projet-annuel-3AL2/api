@@ -165,8 +165,6 @@ export class UserController {
     }
 
     public async getFriends(username: string): Promise<User[]>{
-        console.log(await this.getFriendsOne(username))
-        console.log(await this.getFriendsTwo(username))
         return (await this.getFriendsOne(username))
             .concat(await this.getFriendsTwo(username));
     }
