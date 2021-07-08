@@ -3,6 +3,7 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {hasAdminRights} from "../middlewares/user.middleware";
 import {CertificationController} from "../controllers/certification.controller";
 import {User} from "../models/user.model";
+import {logger} from "../config/logging.config";
 
 const certificationRouter = express.Router();
 
@@ -13,6 +14,7 @@ certificationRouter.get("/:certificateId", ensureLoggedIn, hasAdminRights, async
         const certificationRequest = await certificationController.getById(certificateId);
         res.json(certificationRequest);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -23,17 +25,19 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
         const certificationRequests = await certificationController.getAll();
         res.json(certificationRequests);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
 
-certificationRouter.get("/request/:certificateRequestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.get("/request/:requestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
-        const certificateRequestId = req.params.certificateRequestId;
+        const requestId = req.params.requestId;
         const certificationController = CertificationController.getInstance();
-        const certificationRequest = await certificationController.getRequestById(certificateRequestId);
+        const certificationRequest = await certificationController.getRequestById(requestId);
         res.json(certificationRequest);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -44,28 +48,31 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
         const certificationRequests = await certificationController.getAllRequests();
         res.json(certificationRequests);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
 
-certificationRouter.put("/request/:certificationRequestId/approve", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.put("/request/:requestId/approve", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
-        const certificationRequestId = req.params.certificationRequestId;
+        const requestId = req.params.requestId;
         const certificationController = CertificationController.getInstance();
-        const certification = await certificationController.approveRequest(certificationRequestId, req.user as User);
+        const certification = await certificationController.approveRequest(requestId, req.user as User);
         res.json(certification);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
 
-certificationRouter.delete("/request/:certificationRequestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.delete("/request/:requestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
-        const certificationRequestId = req.params.certificationRequestId;
+        const requestId = req.params.requestId;
         const certificationController = CertificationController.getInstance();
-        await certificationController.rejectRequest(certificationRequestId);
+        await certificationController.rejectRequest(requestId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -76,6 +83,7 @@ certificationRouter.post("/request", ensureLoggedIn, async (req, res) => {
         const certificationRequest = await certificationController.requestCertification(req.user as User, {...req.body});
         res.json(certificationRequest);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -87,6 +95,7 @@ certificationRouter.delete("/:certificationId", ensureLoggedIn, hasAdminRights, 
         await certificationController.revokeCertificate(certificationId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });

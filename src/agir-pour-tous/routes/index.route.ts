@@ -16,10 +16,12 @@ import {eventRouter} from "./event.route";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {isConversationMember} from "../middlewares/conversation.middleware";
 import {searchRouter} from "./search.route";
+import {logger} from "../config/logging.config";
 
 export function buildAPTRoutes() {
     const router = Router();
     configure();
+    logger.info("Init APT routes")
     router.use(require('cors')({credentials: true, origin: process.env.FRONT_BASE_URL}));
     router.use(require('express-session')({
         secret: process.env.ORG_APP_SECRET,
