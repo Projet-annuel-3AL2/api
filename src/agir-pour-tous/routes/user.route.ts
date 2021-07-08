@@ -209,6 +209,18 @@ userRouter.get("/is-following-orga/:organisationId", ensureLoggedIn, async (req,
     }
 });
 
+userRouter.get("/:usernameId/friends", ensureLoggedIn, async (req, res) => {
+    try {
+        const usernameId = req.params.usernameId;
+        const userController = UserController.getInstance();
+        const isFollowing = await userController.getFriends(usernameId);
+        res.json(isFollowing);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
+    }
+});
+
 export {
     userRouter
 }
