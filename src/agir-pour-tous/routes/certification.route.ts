@@ -30,11 +30,11 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
     }
 });
 
-certificationRouter.get("/request/:certificateRequestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.get("/request/:requestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
-        const certificateRequestId = req.params.certificateRequestId;
+        const requestId = req.params.requestId;
         const certificationController = CertificationController.getInstance();
-        const certificationRequest = await certificationController.getRequestById(certificateRequestId);
+        const certificationRequest = await certificationController.getRequestById(requestId);
         res.json(certificationRequest);
     } catch (err) {
         logger.error(err);
@@ -53,11 +53,11 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
     }
 });
 
-certificationRouter.put("/request/:certificationRequestId/approve", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.put("/request/:requestId/approve", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
-        const certificationRequestId = req.params.certificationRequestId;
+        const requestId = req.params.requestId;
         const certificationController = CertificationController.getInstance();
-        const certification = await certificationController.approveRequest(certificationRequestId, req.user as User);
+        const certification = await certificationController.approveRequest(requestId, req.user as User);
         res.json(certification);
     } catch (err) {
         logger.error(err);
@@ -65,11 +65,11 @@ certificationRouter.put("/request/:certificationRequestId/approve", ensureLogged
     }
 });
 
-certificationRouter.delete("/request/:certificationRequestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.delete("/request/:requestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
-        const certificationRequestId = req.params.certificationRequestId;
+        const requestId = req.params.requestId;
         const certificationController = CertificationController.getInstance();
-        await certificationController.rejectRequest(certificationRequestId);
+        await certificationController.rejectRequest(requestId);
         res.status(204).end();
     } catch (err) {
         logger.error(err);
