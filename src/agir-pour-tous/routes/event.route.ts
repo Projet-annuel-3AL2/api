@@ -4,6 +4,7 @@ import {User} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
 import {hasAdminRights} from "../middlewares/user.middleware";
 import {canCreateEvent, isEventOrganiser} from "../middlewares/event.middleware";
+import {logger} from "../config/logging.config";
 
 const eventRouter = express.Router();
 
@@ -13,6 +14,7 @@ eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
         const event = await eventController.create(req.user as User, req.body);
         res.json(event);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -26,6 +28,7 @@ eventRouter.post('/:eventId/join', ensureLoggedIn, async (req, res) => {
         const event = await eventController.addParticipant(eventId, userId);
         res.json(event);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -36,6 +39,7 @@ eventRouter.get('/', async (req, res) => {
         const event = await eventController.getAll();
         res.json(event);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -46,6 +50,7 @@ eventRouter.get('/suggestions/events', async (req, res) => {
         const events = await eventController.getSuggestion();
         res.json(events);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -56,6 +61,7 @@ eventRouter.get('/is-finished', async (req, res) => {
         const events = await eventController.getAllNotEnd();
         res.json(events);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -67,6 +73,7 @@ eventRouter.get('/:eventId', async (req, res) => {
         const event = await eventController.getById(eventId);
         res.status(200).json(event);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -78,6 +85,7 @@ eventRouter.get('/:eventId/getMembers', async (req, res) => {
         const event = await eventController.getEventMembers(eventId);
         res.status(200).json(event);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -91,6 +99,7 @@ eventRouter.get('/getEventWithUserLocation/:userLocationX/:userLocationY/:range'
         let events = await eventController.getEventWithLocation(Number(userLocationX), Number(userLocationY), Number(range));
         res.json(events);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -104,6 +113,7 @@ eventRouter.get('/getEventWithUserLocationNotEnd/:userLocationX/:userLocationY/:
         let events = await eventController.getEventWithLocationNotEnd(Number(userLocationX), Number(userLocationY), Number(range));
         res.status(200).json(events);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -115,6 +125,7 @@ eventRouter.get('/search/:name', async (req, res) => {
         const events = await eventController.searchByName(name);
         res.json(events)
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 })
@@ -126,6 +137,7 @@ eventRouter.delete('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, re
         await eventController.delete(eventId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -138,6 +150,7 @@ eventRouter.delete('/:eventId/participant', ensureLoggedIn, async (req, res) => 
         await eventController.removeParticipant(eventId, userId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -149,6 +162,7 @@ eventRouter.put('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, res) 
         const event = await eventController.update(eventId, {...req.body});
         res.json(event);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -160,6 +174,7 @@ eventRouter.get('/:eventId/posts', async (req, res) => {
         const posts = await eventController.getPosts(eventId);
         res.json(posts);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -173,6 +188,7 @@ eventRouter.put("/:eventId/report", ensureLoggedIn, async (req, res) => {
         const report = await eventController.reportEvent(userReporter, reportedEvent, {...req.body});
         res.json(report);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -184,6 +200,7 @@ eventRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req,
         const reports = await eventController.getReports(eventId);
         res.json(reports);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -195,6 +212,7 @@ eventRouter.get('/:eventId/owner', async (req, res) => {
         const owners = await eventController.getOwners(eventId);
         res.json(owners);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -205,6 +223,7 @@ eventRouter.get('/:eventId/profil', async (req, res) => {
         const events = await eventController.getProfil(req.params.eventId);
         res.json(events);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });

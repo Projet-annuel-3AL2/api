@@ -10,6 +10,7 @@ import {
     isOrganisationUserMember
 } from "../middlewares/organisation.middleware";
 import {UserController} from "../controllers/user.controller";
+import {logger} from "../config/logging.config";
 
 const organisationRouter = express.Router();
 
@@ -19,6 +20,7 @@ organisationRouter.get('/', async (req, res) => {
         const organisations = await organisationController.getAll();
         res.json(organisations);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -30,6 +32,7 @@ organisationRouter.get('/:organisationId', async (req, res) => {
         const organisation = await organisationController.getById(organisationId);
         res.json(organisation);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -41,6 +44,7 @@ organisationRouter.get('/:organisationId/posts', async (req, res) => {
         const posts = await organisationController.getPosts(organisationId);
         res.json(posts);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -53,6 +57,7 @@ organisationRouter.put('/:organisationId/post',/* isMember,*/ async (req, res) =
         const posts = await organisationController.addPost(organisation, req.user as User, {...req.body});
         res.json(posts);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -64,6 +69,7 @@ organisationRouter.delete('/:organisationId', ensureLoggedIn, isOrganisationOwne
         await organisationController.delete(organisationId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -75,6 +81,7 @@ organisationRouter.put('/:organisationId', ensureLoggedIn, isOrganisationAdmin, 
         await organisationController.update(organisationId, {...req.body});
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -86,6 +93,7 @@ organisationRouter.get('/:organisationId/followers', async (req, res) => {
         const followers = await organisationController.getFollowers(organisationId);
         res.json(followers);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -97,6 +105,7 @@ organisationRouter.put('/:organisationId/follow', ensureLoggedIn, async (req, re
         await organisationController.addFollower(organisationId, (req.user as User).id);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -108,6 +117,7 @@ organisationRouter.delete('/:organisationId/unfollow', ensureLoggedIn, async (re
         await organisationController.removeFollower(organisationId, (req.user as User).id);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -121,6 +131,7 @@ organisationRouter.put("/:organisationId/report", ensureLoggedIn, async (req, re
         const report = await organisationController.reportOrganisation(userReporter, reportedOrganisation, {...req.body});
         res.json(report);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -132,6 +143,7 @@ organisationRouter.get("/:organisationId/reports", ensureLoggedIn, hasAdminRight
         const reports = await organisationController.getReports(organisationId);
         res.json(reports);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -143,6 +155,7 @@ organisationRouter.get("/:organisationId/members", ensureLoggedIn, async (req, r
         const members = await organisationController.getMembers(organisationId);
         res.json(members);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -155,6 +168,7 @@ organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, isO
         await organisationController.removeMember(organisationId, userId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -167,6 +181,7 @@ organisationRouter.delete("/:organisationId/leave", ensureLoggedIn, async (req, 
         await organisationController.removeMember(organisationId, userId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -180,6 +195,7 @@ organisationRouter.get('/:organisationId/is-admin', ensureLoggedIn, async (req, 
         const isAdmin = await organisationController.isAdmin(organisationId, userId);
         res.json(isAdmin);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -192,6 +208,7 @@ organisationRouter.get('/:organisationId/is-owner', ensureLoggedIn, async (req, 
         const isOwner = await organisationController.isOwner(organisationId, userId);
         res.json(isOwner);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -208,6 +225,7 @@ organisationRouter.get('/:organisationId/is-user-owner/:username', ensureLoggedI
         const isOwner = await organisationController.isOwner(organisationId, user.id);
         res.json(isOwner);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -220,6 +238,7 @@ organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isN
         await organisationController.addAdmin(organisationId, userId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -232,6 +251,7 @@ organisationRouter.put('/:organisationId/remove-admin/:userId', ensureLoggedIn, 
         await organisationController.removeAdmin(organisationId, userId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -244,6 +264,7 @@ organisationRouter.post('/:organisationId/invite/:userId', ensureLoggedIn, async
         await organisationController.inviteUser(organisationId, userId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -256,6 +277,7 @@ organisationRouter.delete('/:organisationId/cancel/:userId', ensureLoggedIn, asy
         await organisationController.cancelInvitation(organisationId, userId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -269,6 +291,7 @@ organisationRouter.put('/:organisationId/invite/accept', ensureLoggedIn, async (
         await organisationController.acceptInvitation(organisation, user);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -281,6 +304,7 @@ organisationRouter.delete('/:organisationId/invite/reject', ensureLoggedIn, asyn
         await organisationController.rejectInvitation(organisationId, userId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -293,6 +317,7 @@ organisationRouter.get('/:organisationId/is-user-admin/:username', ensureLoggedI
         const isAdmin = await organisationController.isAdmin(organisationId, username);
         res.json(isAdmin);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -303,6 +328,7 @@ organisationRouter.post('/request-creation', ensureLoggedIn, async (req, res) =>
         await organisationController.requestCreation(req.user as User, {...req.body});
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -313,6 +339,7 @@ organisationRouter.get('/requests', ensureLoggedIn, hasAdminRights, async (req, 
         await organisationController.getCreationRequests();
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -324,6 +351,7 @@ organisationRouter.put('/:requestId/accept', ensureLoggedIn, hasAdminRights, asy
         await organisationController.acceptCreationDemand(requestId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -335,6 +363,7 @@ organisationRouter.delete('/:requestId/reject', ensureLoggedIn, hasAdminRights, 
         await organisationController.rejectCreationDemand(requestId);
         res.status(204).end();
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -347,6 +376,7 @@ organisationRouter.get("/suggestion/:id", async (req, res) => {
         const organisations = await organisationController.getSuggestionOrganisation();
         res.json(organisations);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });

@@ -1,4 +1,4 @@
-import {BeforeInsert, Entity, JoinColumn, ManyToOne, OneToOne} from "typeorm";
+import {BeforeInsert, Entity, getRepository, JoinColumn, ManyToOne, OneToOne} from "typeorm";
 import {User} from "./user.model";
 import {Conversation} from "./conversation.model";
 
@@ -21,6 +21,6 @@ export class Friendship {
 
     @BeforeInsert()
     async setConversation() {
-        this.conversation = new Conversation();
+        this.conversation = await getRepository(Conversation).save(new Conversation());
     }
 }

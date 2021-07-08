@@ -4,6 +4,7 @@ import {PostController} from "../controllers/post.controller";
 import {User} from "../models/user.model";
 import {hasAdminRights} from "../middlewares/user.middleware";
 import {isPostOwner} from "../middlewares/post.middleware";
+import {logger} from "../config/logging.config";
 
 const postRouter = express.Router();
 
@@ -13,6 +14,7 @@ postRouter.post('/', ensureLoggedIn, async (req, res) => {
         const post = await postController.create(req.user as User, req.body);
         res.json(post);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -23,6 +25,7 @@ postRouter.get('/', async (req, res) => {
         const post = await postController.getAll();
         res.json(post);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -34,6 +37,7 @@ postRouter.get('/:postId', async (req, res) => {
         const post = await postController.getById(postId);
         res.json(post);
     } catch (err) {
+        logger.error(err);
         res.status(404).json(err);
     }
 });
@@ -45,6 +49,7 @@ postRouter.delete('/:postId', ensureLoggedIn, isPostOwner, async (req, res) => {
         const post = await postController.delete(postId);
         res.json(post);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -56,6 +61,7 @@ postRouter.put('/:postId', ensureLoggedIn, isPostOwner, async (req, res) => {
         const post = await postController.update(postId, {...req.body});
         res.json(post);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -68,6 +74,7 @@ postRouter.get("/:postId/like", ensureLoggedIn, async (req, res) => {
         const likes = await postController.likePost(postId, userId);
         res.json(likes);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -79,6 +86,7 @@ postRouter.get("/:postId/comments", ensureLoggedIn, async (req, res) => {
         const comments = await postController.getComments(postId);
         res.json(comments);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -91,6 +99,7 @@ postRouter.delete("/:postId/like", ensureLoggedIn, async (req, res) => {
         const likes = await postController.dislikePost(postId, userId);
         res.json(likes);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -102,6 +111,7 @@ postRouter.get("/:postId/likes", async (req, res) => {
         const likes = await postController.getLikes(postId);
         res.json(likes);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -114,6 +124,7 @@ postRouter.get("/timeline/:offset/:limit", async (req, res) => {
         const posts = await postController.getTimeline((req.user as User).id, offset, limit);
         res.json(posts);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -126,6 +137,7 @@ postRouter.get("/:postId/is-liked", ensureLoggedIn, async (req, res) => {
         const likes = await postController.isLiked(postId, userId);
         res.json(likes);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -139,6 +151,7 @@ postRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
         const report = await postController.reportPost(userReporter, reportedPost, {...req.body});
         res.json(report);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -150,6 +163,7 @@ postRouter.get("/:postId/reports", ensureLoggedIn, hasAdminRights, async (req, r
         const reports = await postController.getReports(postId);
         res.json(reports);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -162,6 +176,7 @@ postRouter.get("/:postId/is-owner", async (req, res) => {
         const isOwner = await postController.isPostOwner(postId, userId);
         res.json({isOwner});
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
@@ -173,6 +188,7 @@ postRouter.post("/:postId/comment", async (req, res) => {
         const comment = await postController.addComment(postId, req.user as User, {...req.body});
         res.json(comment);
     } catch (err) {
+        logger.error(err);
         res.status(400).json(err);
     }
 });
