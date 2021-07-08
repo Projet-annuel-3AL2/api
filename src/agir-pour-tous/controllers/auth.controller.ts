@@ -3,6 +3,7 @@ import {getRepository, Repository} from "typeorm";
 import {validate} from "class-validator";
 import {sendMail} from "../config/mail.config";
 import {hash} from "bcrypt";
+import {logger} from "../config/logging.config";
 
 export class AuthController {
 
@@ -46,7 +47,7 @@ export class AuthController {
             from: `"Agir pour tous" <${process.env.MAILER_USER}>`,
             subject: "Récupération du mot de passe",
             text: `Afin de réinitialiser votre mot de passe veuillez cliquer sur le lien suivant : ${process.env.FRONT_BASE_URL}/reset-password/${username}/${token} celui-ci expire dans 10 minutes`
-        });
+        }).catch(logger.error);
     }
 
     public async isValidToken(resetToken: string, username: string): Promise<boolean>{
