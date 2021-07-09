@@ -40,7 +40,6 @@ export class AuthController {
     }
 
     public async resetPassword(resetToken: string, password: string) {
-        console.log(password)
         const encryptedPass = await hash(password, 8);
         await this.userRepository.createQueryBuilder()
             .update()
