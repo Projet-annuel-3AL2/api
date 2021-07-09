@@ -40,14 +40,18 @@ export class UserController {
     }
 
     public async update(username: string, props: UserProps): Promise<User> {
-        await this.userRepository.update(username, props);
+        await this.userRepository.createQueryBuilder()
+            .update()
+            .set(props)
+            .where("username=:username", {username})
+            .execute()
         return this.getByUsername(username);
     }
 
     public async getPosts(username: string): Promise<Post[]> {
         return await getRepository(Post)
             .createQueryBuilder()
-            .leftJoin("Post.user", "User")
+            .leftJoinAndSelect("Post.creator", "User")
             .where("User.username=:username", {username})
             .getMany();
     }
@@ -157,6 +161,27 @@ export class UserController {
             .leftJoinAndSelect("GroupMembership.user", "GroupMember")
             .where("GroupMember.username=:username", {username})
             .leftJoin("Conversation.messages", "Message")
+            .getMany();
+    }
+
+    public async getFriends(username: string): Promise<User[]>{
+        return (await this.getFriendsOne(username))
+            .concat(await this.getFriendsTwo(username));
+    }
+
+    private async getFriendsOne(username: string): Promise<User[]>{
+        return this.userRepository.createQueryBuilder()
+            .leftJoin("User.friendsTwo","FriendshipTwo")
+            .leftJoin("FriendshipTwo.friendOne","FriendOne")
+            .where("FriendOne.username=:username",{username})
+            .getMany();
+    }
+
+    private async getFriendsTwo(username: string): Promise<User[]>{
+        return this.userRepository.createQueryBuilder()
+            .leftJoin("User.friendsOne","FriendshipOne")
+            .leftJoin("FriendshipOne.friendTwo","FriendTwo")
+            .where("FriendTwo.username=:username",{username})
             .getMany();
     }
 }

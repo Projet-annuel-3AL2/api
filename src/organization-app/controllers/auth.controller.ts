@@ -36,11 +36,10 @@ export class AuthController {
             from: `"Organisation app" <${process.env.MAILER_USER}>`,
             subject: "Récupération du mot de passe",
             text: `Veuillez saisir le code suivant: ${token} celui-ci expire dans 10 minutes`
-        });
+        }).then();
     }
 
     public async resetPassword(resetToken: string, password: string) {
-        console.log(password)
         const encryptedPass = await hash(password, 8);
         await this.userRepository.createQueryBuilder()
             .update()

@@ -15,7 +15,16 @@ import {
 } from "typeorm";
 import {Category} from "./category.model";
 import {Report} from "./report.model";
-import {IsLatitude, IsLongitude, Length} from "class-validator";
+import {
+    IsDate,
+    IsDefined,
+    IsLatitude,
+    IsLongitude,
+    IsNotEmpty,
+    IsUUID,
+    Length,
+    MaxLength
+} from "class-validator";
 import {Media} from "./media.model";
 
 export interface EventProps {
@@ -35,11 +44,15 @@ export class Event {
     @Length(5, 50)
     @Column({nullable: false, length: 50})
     name: string;
-    @Length(0, 200)
+    @MaxLength(200)
     @Column({nullable: false, length: 200})
     description: string;
+    @IsDate()
+    @IsDefined()
     @Column({nullable: false})
     startDate: Date;
+    @IsDate()
+    @IsDefined()
     @Column({nullable: false})
     endDate: Date;
     @IsLatitude()
@@ -48,7 +61,7 @@ export class Event {
     @IsLongitude()
     @Column({type: "float", nullable: false})
     longitude: number;
-    @Column({nullable: true})
+    @Column({nullable: false, default:-1})
     participantsLimit: number;
     @ManyToOne(() => Organisation, organisation => organisation.events)
     organisation: Organisation;
@@ -58,6 +71,8 @@ export class Event {
     participants: User[];
     @OneToMany(() => Post, post => post.sharedEvent)
     posts: Post[];
+    @IsNotEmpty()
+    @IsUUID()
     @ManyToOne(() => Category, category => category.events, {nullable: false})
     category: Category;
     @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true})

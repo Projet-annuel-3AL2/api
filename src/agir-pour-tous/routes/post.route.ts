@@ -181,6 +181,18 @@ postRouter.get("/:postId/is-owner", async (req, res) => {
     }
 });
 
+postRouter.get("/:postId/shares", async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const postController = PostController.getInstance();
+        const sharedPost = await postController.getSharedPost(postId);
+        res.json(sharedPost);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
+    }
+});
+
 postRouter.post("/:postId/comment", async (req, res) => {
     try {
         const postId = req.params.postId;

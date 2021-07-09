@@ -57,7 +57,6 @@ authRouter.post("/reset-password/:username/:resetToken", ensureLoggedOut, isVali
         res.end();
     } catch (err) {
         logger.error(err);
-        console.log(err)
         res.status(404).json(err);
     }
 });
