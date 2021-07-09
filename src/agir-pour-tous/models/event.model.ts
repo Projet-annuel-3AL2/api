@@ -20,7 +20,7 @@ import {
     IsDefined,
     IsLatitude,
     IsLongitude,
-    IsNotEmpty,
+    IsNotEmpty, IsOptional,
     IsUUID,
     Length,
     MaxLength
@@ -44,6 +44,7 @@ export class Event {
     @Length(5, 50)
     @Column({nullable: false, length: 50})
     name: string;
+    @IsOptional()
     @MaxLength(200)
     @Column({nullable: false, length: 200})
     description: string;
