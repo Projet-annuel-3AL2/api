@@ -21,7 +21,7 @@ import {Event} from "./event.model";
 import {Report} from "./report.model";
 import {GroupMembership} from "./group_membership.model";
 import {OrganisationMembership} from "./organisation_membership.model";
-import {IsEmail, IsNotEmpty, Length, MaxLength} from "class-validator";
+import {IsEmail, IsNotEmpty, IsOptional, Length, MaxLength} from "class-validator";
 import {hash} from "bcrypt";
 import {Friendship} from "./friendship.model";
 import {FriendRequest} from "./friend_request.model";
@@ -61,6 +61,7 @@ export class User implements UserProps {
     mail: string;
     @Column({unique: false, nullable: false, select: false})
     password: string;
+    @IsOptional()
     @MaxLength(200)
     @Column({nullable: true, length: 200})
     bio: string;
