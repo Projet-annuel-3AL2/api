@@ -43,7 +43,8 @@ export class EventController {
     }
 
     public async create(user: User, props: EventProps) {
-        let event = this.eventRepository.create({...props, user: user});
+        let event = this.eventRepository.create({...props, user: user, startDate:new Date(props.startDate), endDate: new Date(props.endDate)});
+        console.log(event)
         const err = await validate(event, {validationError: {target: false}});
         if (err.length > 0) {
             throw err;
