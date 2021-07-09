@@ -15,7 +15,7 @@ import {
 } from "typeorm";
 import {Category} from "./category.model";
 import {Report} from "./report.model";
-import {IsLatitude, IsLongitude, Length} from "class-validator";
+import {IsLatitude, IsLongitude, Length, MaxLength} from "class-validator";
 import {Media} from "./media.model";
 
 export interface EventProps {
@@ -35,7 +35,7 @@ export class Event {
     @Length(5, 50)
     @Column({nullable: false, length: 50})
     name: string;
-    @Length(0, 200)
+    @MaxLength(200)
     @Column({nullable: false, length: 200})
     description: string;
     @Column({nullable: false})
