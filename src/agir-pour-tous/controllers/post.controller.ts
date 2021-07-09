@@ -116,6 +116,15 @@ export class PostController {
             .getMany();
     }
 
+    public async getSharedPost(postId: string): Promise<Post> {
+        return this.postRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Post.creator","Creator")
+            .leftJoin("Post.sharedPosts", "Shares")
+            .where("Shares.id=:postId", {postId})
+            .getOne();
+    }
+
     public async addComment(postId: string, creator: User, commentProps: CommentProps) {
         const post = await this.getById(postId);
         let comment = getRepository(Comment).create({...commentProps, creator, post});
