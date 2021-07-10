@@ -6,6 +6,7 @@ import {User} from "../models/user.model";
 import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {MediaController} from "../controllers/media.controller";
+import {isPicture} from "../../utils/file.utils";
 
 const userRouter = express.Router();
 
@@ -223,7 +224,7 @@ userRouter.get("/:username/friends", ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.post("/profilePicture", ensureLoggedIn, upload.single("profilePicture"), async (req, res) => {
+userRouter.post("/profilePicture", ensureLoggedIn, upload.single("profilePicture"),isPicture, async (req, res) => {
     try {
         const userId = (req.user as User).id;
         const userController = UserController.getInstance();

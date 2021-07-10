@@ -8,9 +8,10 @@ import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {MediaController} from "../controllers/media.controller";
 import {Media} from "../models/media.model";
+import {arePicturesFiles} from "../middlewares/media.middleware";
 
 const postRouter = express.Router();
-postRouter.post('/', ensureLoggedIn, upload.array("post_medias",5), async (req, res) => {
+postRouter.post('/', ensureLoggedIn, upload.array("post_medias",5), arePicturesFiles, async (req, res) => {
     try {
         const postController = await PostController.getInstance();
         const mediaController = await MediaController.getInstance();
