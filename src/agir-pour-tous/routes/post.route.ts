@@ -5,13 +5,22 @@ import {User} from "../models/user.model";
 import {hasAdminRights} from "../middlewares/user.middleware";
 import {isPostOwner} from "../middlewares/post.middleware";
 import {logger} from "../config/logging.config";
+import {upload} from "./index.route";
+import {MediaController} from "../controllers/media.controller";
+import {Media} from "../models/media.model";
 
 const postRouter = express.Router();
-
-postRouter.post('/', ensureLoggedIn, async (req, res) => {
+postRouter.post('/', ensureLoggedIn, upload.array("post_medias",5), async (req, res) => {
     try {
         const postController = await PostController.getInstance();
-        const post = await postController.create(req.user as User, req.body);
+        const mediaController = await MediaController.getInstance();
+        let medias: Media[] = [];
+        if(req.files) {
+            for (const file of req.files as Express.Multer.File[]) {
+                medias.push(await mediaController.create(file));
+            }
+        }
+        const post = await postController.create(req.user as User, {...req.body, medias});
         res.json(post);
     } catch (err) {
         logger.error(err);
