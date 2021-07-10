@@ -19,6 +19,9 @@ import {searchRouter} from "./search.route";
 import {logger} from "../config/logging.config";
 import {certificationRouter} from "./certification.route";
 
+const multer  = require('multer');
+export const upload = multer({ dest: 'uploads/', limits:{fileSize:10*1024*1024, files:5}});
+
 export function buildAPTRoutes() {
     const router = Router();
     configure();
