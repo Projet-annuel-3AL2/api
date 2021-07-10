@@ -1,4 +1,15 @@
-import {Router} from "express";
+import multer from "multer";
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, process.env.FILE_UPLOADS_PATH)
+    },
+    filename: function (req, file, cb) {
+        fs.mkdirSync(process.env.FILE_UPLOADS_PATH +'/'+ file.fieldname, { recursive: true });
+        cb(null, file.fieldname + '/' +  Math.round(Math.random() * 1E10)+ extname(file.originalname))
+    }
+})
+export const upload = multer({limits:{fileSize:10*1024*1024, files:5},storage})
+import express, {Router} from "express";
 import passport from "passport";
 import {TypeormStore} from "connect-typeorm";
 import {getRepository} from "typeorm";
@@ -18,9 +29,8 @@ import {isConversationMember} from "../middlewares/conversation.middleware";
 import {searchRouter} from "./search.route";
 import {logger} from "../config/logging.config";
 import {certificationRouter} from "./certification.route";
-
-const multer  = require('multer');
-export const upload = multer({ dest: 'uploads/', limits:{fileSize:10*1024*1024, files:5}});
+import {extname} from "../../utils/file.utils";
+import * as fs from "fs";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -39,6 +49,7 @@ export function buildAPTRoutes() {
     }));
     router.use(passport.initialize());
     router.use(passport.session());
+    router.use(express.static(process.env.FILE_UPLOADS_PATH))
     router.use("/auth", authRouter);
     router.use("/user", userRouter);
     router.use("/category", categoryRouter);
