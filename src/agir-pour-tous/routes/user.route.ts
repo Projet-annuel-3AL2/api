@@ -4,6 +4,8 @@ import {UserController} from "../controllers/user.controller";
 import {hasAdminRights, isAskedUser, isNotAskedUser} from "../middlewares/user.middleware";
 import {User} from "../models/user.model";
 import {logger} from "../config/logging.config";
+import {upload} from "./index.route";
+import {MediaController} from "../controllers/media.controller";
 
 const userRouter = express.Router();
 
@@ -209,12 +211,40 @@ userRouter.get("/is-following-orga/:organisationId", ensureLoggedIn, async (req,
     }
 });
 
-userRouter.get("/:usernameId/friends", ensureLoggedIn, async (req, res) => {
+userRouter.get("/:username/friends", ensureLoggedIn, async (req, res) => {
     try {
-        const usernameId = req.params.usernameId;
+        const username = req.params.username;
         const userController = UserController.getInstance();
-        const isFollowing = await userController.getFriends(usernameId);
-        res.json(isFollowing);
+        const friends = await userController.getFriends(username);
+        res.json(friends);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
+    }
+});
+
+userRouter.post("/profilePicture", ensureLoggedIn, upload.single("profilePicture"), async (req, res) => {
+    try {
+        const userId = (req.user as User).id;
+        const userController = UserController.getInstance();
+        const mediaController = MediaController.getInstance();
+        const profilePicture = mediaController.create(req.file);
+         await userController.setProfilePicture(userId,profilePicture);
+        res.status(204).end();
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
+    }
+});
+
+userRouter.delete("/profilePicture", ensureLoggedIn, async (req, res) => {
+    try {
+        const userId = (req.user as User).id;
+        const userController = UserController.getInstance();
+        const mediaController = MediaController.getInstance();
+        const profilePicture = mediaController.create(req.file);
+        await userController.removeProfilePicture(userId);
+        res.json(profilePicture);
     } catch (err) {
         logger.error(err);
         res.status(400).json(err);
