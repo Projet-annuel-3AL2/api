@@ -78,7 +78,7 @@ eventRouter.get('/:eventId', async (req, res) => {
     }
 });
 
-eventRouter.get('/:eventId/getMembers', async (req, res) => {
+eventRouter.get('/:eventId/participants', async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = await EventController.getInstance();
@@ -209,8 +209,20 @@ eventRouter.get('/:eventId/owner', async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();
-        const owners = await eventController.getOwners(eventId);
+        const owners = await eventController.getOwner(eventId);
         res.json(owners);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/is-member', async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = EventController.getInstance();
+        const isMember = await eventController.isMember((req.user as User).id,eventId);
+        res.json(isMember);
     } catch (err) {
         logger.error(err);
         res.status(404).json(err);
@@ -225,6 +237,28 @@ eventRouter.get('/:eventId/profil', async (req, res) => {
     } catch (err) {
         logger.error(err);
         res.status(400).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/category', async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const category = await eventController.getCategory(req.params.eventId);
+        res.json(category);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/organisation', async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const organisation = await eventController.getOrganisation(req.params.eventId);
+        res.json(organisation);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
     }
 });
 
