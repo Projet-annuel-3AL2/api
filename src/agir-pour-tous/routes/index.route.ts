@@ -42,6 +42,9 @@ export function buildAPTRoutes() {
         secret: process.env.ORG_APP_SECRET,
         resave: true,
         saveUninitialized: true,
+        cookie:{
+            maxAge:259200
+        },
         store: new TypeormStore({
             cleanupLimit: 2,
             limitSubquery: false,
