@@ -160,6 +160,18 @@ organisationRouter.get("/:organisationId/members", ensureLoggedIn, async (req, r
     }
 });
 
+organisationRouter.get("/:organisationId/membership", ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = OrganisationController.getInstance();
+        const members = await organisationController.getMembership(organisationId);
+        res.json(members);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
+    }
+});
+
 organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, isOrganisationAdmin, isOrganisationUserMember, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
