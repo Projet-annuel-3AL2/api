@@ -42,6 +42,8 @@ export interface UserProps {
     mail: string;
     password: string;
     userType?: UserType;
+    profilePicture?: Media;
+    bannerPicture?: Media;
 }
 
 @Entity()

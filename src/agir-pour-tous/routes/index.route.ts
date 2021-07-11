@@ -31,6 +31,7 @@ import {logger} from "../config/logging.config";
 import {certificationRouter} from "./certification.route";
 import {extname} from "../../utils/file.utils";
 import * as fs from "fs";
+import {mediaRouter} from "./media.route";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -61,5 +62,6 @@ export function buildAPTRoutes() {
     router.use("/event", eventRouter);
     router.use("/search", searchRouter);
     router.use("/certification", certificationRouter);
+    router.use("/media", mediaRouter);
     return router;
 }
