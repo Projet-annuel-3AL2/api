@@ -40,10 +40,12 @@ export function buildAPTRoutes() {
     router.use(require('cors')({credentials: true, origin: [process.env.FRONT_BASE_URL,process.env.BACK_BASE_URL]}));
     router.use(require('express-session')({
         secret: process.env.ORG_APP_SECRET,
-        resave: true,
-        saveUninitialized: true,
+        resave: false,
+        saveUninitialized: false,
         cookie:{
-            maxAge:259200
+            maxAge:259200000,
+            secure:false,
+            sameSite:"strict"
         },
         store: new TypeormStore({
             cleanupLimit: 2,
