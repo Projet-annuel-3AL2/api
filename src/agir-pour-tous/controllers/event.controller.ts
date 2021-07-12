@@ -141,7 +141,7 @@ export class EventController {
     public async getOrganisationOwners(eventId: string): Promise<User[]> {
         return await getRepository(User).createQueryBuilder()
             .leftJoin("User.organisations", "OrganisationMembership")
-            .leftJoin("OrganisationMembership.organisation", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("Organisation.events", "Event")
             .where("Event.id=:eventId", {eventId})
             .andWhere("OrganisationMembership.isAdmin = true OR OrganisationMembership.isOwner = true")

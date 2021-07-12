@@ -135,6 +135,7 @@ export class PostController {
         return this.postRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
+            .leftJoinAndSelect("User.certification", "Cert")
             .where("User.id=:userId", {userId})
             .getMany();
     }
@@ -143,6 +144,7 @@ export class PostController {
         return this.postRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
+            .leftJoinAndSelect("User.certification", "Cert")
             .leftJoin("User.friendsOne", "FriendOne")
             .leftJoin("FriendOne.friendTwo", "FriendTwo")
             .where("FriendTwo.id=:userId", {userId})
@@ -153,6 +155,7 @@ export class PostController {
         return this.postRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
+            .leftJoinAndSelect("User.certification", "Cert")
             .leftJoin("User.friendsTwo", "FriendTwo")
             .leftJoin("FriendTwo.friendOne", "FriendOne")
             .where("FriendOne.id=:userId", {userId})
