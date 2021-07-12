@@ -19,7 +19,7 @@ certificationRouter.get("/:certificateId", ensureLoggedIn, hasAdminRights, async
     }
 });
 
-certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.get("/", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const certificationController = CertificationController.getInstance();
         const certificationRequests = await certificationController.getAll();
