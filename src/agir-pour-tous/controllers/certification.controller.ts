@@ -31,7 +31,9 @@ export class CertificationController {
     }
 
     public async getAll(): Promise<Certification[]> {
-        return this.certificationRepository.find();
+        return this.certificationRepository.find({
+            relations: ['user', 'issuer']
+        });
     }
 
     public async getRequestById(certificationRequestId: string): Promise<CertificationRequest> {
@@ -66,6 +68,11 @@ export class CertificationController {
     }
 
     public async revokeCertificate(certificateId: string): Promise<void> {
+        await getRepository(User).createQueryBuilder()
+            .where("certificationId=:certificateId", {certificateId})
+            .update()
+            .set({certification: null})
+            .execute();
         await this.certificationRepository.delete(certificateId);
     }
 }
