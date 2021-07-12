@@ -345,11 +345,11 @@ organisationRouter.post('/request-creation', ensureLoggedIn, async (req, res) =>
     }
 });
 
-organisationRouter.get('/requests', ensureLoggedIn, hasAdminRights, async (req, res) => {
+organisationRouter.get('/requests/organisation', ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const organisationController = await OrganisationController.getInstance();
-        await organisationController.getCreationRequests();
-        res.status(204).end();
+        const organisationRequest = await organisationController.getCreationRequests();
+        res.json(organisationRequest);
     } catch (err) {
         logger.error(err);
         res.status(400).json(err);

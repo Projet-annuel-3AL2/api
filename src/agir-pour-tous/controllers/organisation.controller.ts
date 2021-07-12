@@ -203,16 +203,23 @@ export class OrganisationController {
         return getRepository(OrganisationCreationRequest).save(request);
     }
 
-    public async getCreationRequests(): Promise<OrganisationCreationRequest> {
-        return undefined;
+    public async getCreationRequests(): Promise<OrganisationCreationRequest[]> {
+        return getRepository(OrganisationCreationRequest).find({
+            relations: ['user']
+        });
     }
 
     public async getCreationRequestById(organisationCreationRequestId: string): Promise<OrganisationCreationRequest> {
-        return await getRepository(OrganisationCreationRequest).findOneOrFail(organisationCreationRequestId);
+        return await getRepository(OrganisationCreationRequest).findOne({
+            where: {
+                id:organisationCreationRequestId
+            }
+        });
     }
 
     public async acceptCreationDemand(organisationCreationRequestId: string): Promise<Organisation> {
         const request = await this.getCreationRequestById(organisationCreationRequestId);
+        console.log(request)
         await this.rejectCreationDemand(organisationCreationRequestId);
         return this.create(request.user, request.name);
     }
