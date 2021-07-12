@@ -37,7 +37,10 @@ export class UserController {
     }
 
     public async delete(username: string): Promise<void> {
-        await this.userRepository.softDelete(username);
+        await this.userRepository.createQueryBuilder()
+            .where("username=:username", {username})
+            .delete()
+            .execute();
     }
 
     public async update(username: string, props: UserProps): Promise<User> {
