@@ -24,7 +24,7 @@ export interface PostProps {
     group?: Group;
     organisation?: Organisation;
     sharedEvent?: Event;
-    sharedPost?: Post;
+    sharesPost?: Post;
 }
 
 @Entity()
