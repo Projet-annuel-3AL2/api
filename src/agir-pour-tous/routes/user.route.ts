@@ -1,7 +1,7 @@
 import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {UserController} from "../controllers/user.controller";
-import {hasAdminRights, isAskedUser, isNotAskedUser} from "../middlewares/user.middleware";
+import {hasAdminRights, isNotAskedUser} from "../middlewares/user.middleware";
 import {User, UserProps} from "../models/user.model";
 import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
@@ -14,9 +14,9 @@ userRouter.get('/', async (req, res) => {
         const userController = UserController.getInstance();
         const user = await userController.getAll();
         res.json(user);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -25,9 +25,9 @@ userRouter.get("/conversations", ensureLoggedIn, async (req, res) => {
         const userController = UserController.getInstance();
         const conversations = await userController.getConversations((req.user as User).username);
         res.json(conversations);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -37,9 +37,9 @@ userRouter.get('/:username', async (req, res) => {
         const userController = await UserController.getInstance();
         const user = await userController.getByUsername(username);
         res.json(user);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -49,9 +49,9 @@ userRouter.get('/:username/posts', async (req, res) => {
         const userController = await UserController.getInstance();
         const posts = await userController.getPosts(username);
         res.json(posts);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
     }
 });
 
@@ -60,10 +60,11 @@ userRouter.delete('/', ensureLoggedIn, async (req, res) => {
         const username = (req.user as User).username;
         const userController = UserController.getInstance();
         await userController.delete(username);
+        logger.info(`User ${(req.user as User).username} has deleted his account`);
         res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -82,10 +83,11 @@ userRouter.put('/', ensureLoggedIn, upload.fields([{ name: "profilePicture", max
             }
         }
         await userController.update(username, user);
+        logger.info(`User ${(req.user as User).username} has updated his account informations`);
         res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -95,9 +97,9 @@ userRouter.get("/:username/groups", async (req, res) => {
         const userController = UserController.getInstance();
         const groups = await userController.getGroups(username);
         res.json(groups);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -107,9 +109,9 @@ userRouter.get("/:username/participation", async (req, res) => {
         const userController = UserController.getInstance();
         const eventParticipation = await userController.getEventsParticipation(username);
         res.json(eventParticipation);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -119,9 +121,9 @@ userRouter.get("/:username/organisations", async (req, res) => {
         const userController = UserController.getInstance();
         const organisations = await userController.getOrganisations(username);
         res.json(organisations);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -131,10 +133,11 @@ userRouter.put("/:userId/block", ensureLoggedIn, isNotAskedUser, async (req, res
         const currentUserId = (req.user as User).id;
         const userController = UserController.getInstance();
         await userController.blockUser(currentUserId, userId);
+        logger.info(`User ${(req.user as User).username} has blocked an user with id ${userId}`);
         res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -144,10 +147,11 @@ userRouter.delete("/:userId/unblock", ensureLoggedIn, isNotAskedUser, async (req
         const currentUserId = (req.user as User).id;
         const userController = UserController.getInstance();
         await userController.unblockUser(currentUserId, userId);
+        logger.info(`User ${(req.user as User).username} has unblocked an user with id ${userId}`);
         res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -161,9 +165,9 @@ userRouter.get("/:userId/is-blocked", ensureLoggedIn, isNotAskedUser, async (req
         const userController = UserController.getInstance();
         const isBlocked = await userController.isBlocked(currentUserId, userId);
         res.json(isBlocked);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -177,9 +181,9 @@ userRouter.get("/:userId/blocked", ensureLoggedIn, isNotAskedUser, async (req, r
         const userController = UserController.getInstance();
         const isBlocked = await userController.isBlocked(userId, currentUserId);
         res.json(isBlocked);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -190,10 +194,11 @@ userRouter.put("/:username/report", ensureLoggedIn, isNotAskedUser, async (req, 
         const userController = UserController.getInstance();
         const reportedUser = await userController.getByUsername(username);
         const report = await userController.reportUser(userReporter, reportedUser, {...req.body});
+        logger.info(`User ${(req.user as User).username} has reported an user called ${username}`);
         res.json(report);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -203,9 +208,9 @@ userRouter.get("/:username/reports", ensureLoggedIn, hasAdminRights, async (req,
         const userController = UserController.getInstance();
         const reports = await userController.getReports(username);
         res.json(reports);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -215,9 +220,9 @@ userRouter.get("/is-following-orga/:organisationId", ensureLoggedIn, async (req,
         const userController = UserController.getInstance();
         const isFollowing = await userController.isFollowingOrganisation((req.user as User).id, organisationId);
         res.json(isFollowing);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -227,9 +232,9 @@ userRouter.get("/:username/friends", ensureLoggedIn, async (req, res) => {
         const userController = UserController.getInstance();
         const friends = await userController.getFriends(username);
         res.json(friends);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
