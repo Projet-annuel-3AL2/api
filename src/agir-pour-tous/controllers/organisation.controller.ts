@@ -9,6 +9,8 @@ import {
     OrganisationCreationRequest,
     OrganisationCreationRequestProps
 } from "../models/organisation_creation_request.model";
+import {Event} from "../models/event.model";
+import {Media} from "../models/media.model";
 
 export class OrganisationController {
 
@@ -219,7 +221,6 @@ export class OrganisationController {
 
     public async acceptCreationDemand(organisationCreationRequestId: string): Promise<Organisation> {
         const request = await this.getCreationRequestById(organisationCreationRequestId);
-        console.log(request)
         await this.rejectCreationDemand(organisationCreationRequestId);
         return this.create(request.user, request.name);
     }
@@ -251,5 +252,43 @@ export class OrganisationController {
             .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
             .where("Organisation.id=:organisationId", {organisationId})
             .getMany();
+    }
+
+    async getRelatedEvent(organisationId: string): Promise<Event[]> {
+        return getRepository(Event)
+            .createQueryBuilder()
+            .leftJoinAndSelect("Event.organisation", "Organisation")
+            .leftJoinAndSelect("Event.user", "User")
+            .leftJoinAndSelect("Event.category", "Category")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .getMany();
+    }
+
+    async setProfilePicture(organisationId: string, profilePicture: Promise<Media>) {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("profilePicture")
+            .of(organisationId)
+            .set(profilePicture);
+    }
+
+    async setBannerPicture(organisationId: string, profilePicture: Promise<Media>) {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("bannerPicture")
+            .of(organisationId)
+            .set(profilePicture);
+    }
+
+    async removeProfilePicture(organisationId: any) {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("bannerPicture")
+            .of(organisationId)
+            .set(null);
+    }
+
+    async removeBannerPicture(organisationId: any) {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("bannerPicture")
+            .of(organisationId)
+            .set(null);
     }
 }
