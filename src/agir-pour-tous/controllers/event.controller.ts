@@ -5,6 +5,8 @@ import {validate} from "class-validator";
 import {Post} from "../models/post.model";
 import {Report, ReportProps} from "../models/report.model";
 import {OrganisationMembership} from "../models/organisation_membership.model";
+import {Category} from "../models/category.model";
+import {Organisation} from "../models/organisation.model";
 
 export class EventController {
     private static instance: EventController;
@@ -139,7 +141,7 @@ export class EventController {
     public async getOrganisationOwners(eventId: string): Promise<User[]> {
         return await getRepository(User).createQueryBuilder()
             .leftJoin("User.organisations", "OrganisationMembership")
-            .leftJoin("OrganisationMembership.organisation", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.organisation", "Organisation")
             .leftJoin("Organisation.events", "Event")
             .where("Event.id=:eventId", {eventId})
             .andWhere("OrganisationMembership.isAdmin = true OR OrganisationMembership.isOwner = true")
@@ -153,6 +155,13 @@ export class EventController {
             .getOne();
     }
 
+    public async isMember(userId: string,eventId: string): Promise<boolean> {
+        return (await getRepository(Event).createQueryBuilder()
+            .leftJoin("Event.participants", "User")
+            .where("Event.id=:eventId", {eventId})
+            .andWhere("User.id=:userId", {userId})
+            .getOne() !== undefined || (await this.getOwners(eventId)).some(user => user.id === userId));
+    }
 
     public async getSuggestion(): Promise<Event[]> {
         const dateNow = new Date(Date.now());
@@ -171,5 +180,19 @@ export class EventController {
             },
             relations: ['user', 'organisation', 'category']
         })
+    }
+
+    public async getCategory(eventId: string): Promise<Category>{
+        return await getRepository(Category).createQueryBuilder()
+            .leftJoin("Category.events","Event")
+            .where("Event.id=:eventId",{eventId})
+            .getOne();
+    }
+
+    public async getOrganisation(eventId: string): Promise<Category>{
+        return await getRepository(Organisation).createQueryBuilder()
+            .leftJoin("Organisation.events","Event")
+            .where("Event.id=:eventId",{eventId})
+            .getOne();
     }
 }

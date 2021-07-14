@@ -41,20 +41,20 @@ export class GroupController {
         return await this.groupRepository.find();
     }
 
-    public async delete(groupName: string): Promise<void> {
-        await this.groupRepository.softDelete(groupName);
+    public async delete(groupId: string): Promise<void> {
+        await this.groupRepository.softDelete(groupId);
     }
 
-    public async update(groupName: string, props: GroupProps): Promise<Group> {
-        await this.groupRepository.update(groupName, props);
-        return this.getById(groupName);
+    public async update(groupId: string, props: GroupProps): Promise<Group> {
+        await this.groupRepository.update(groupId, props);
+        return this.getById(groupId);
     }
 
-    public async getPosts(groupName: string): Promise<Post[]> {
+    public async getPosts(groupId: string): Promise<Post[]> {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoin("Post.group", "Group")
-            .where("Group.name=:groupName", {groupName})
+            .where("Group.id=:groupId", {groupId})
             .getMany();
     }
 

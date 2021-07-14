@@ -13,9 +13,9 @@ friendshipRouter.get("/sent-friendship-request", ensureLoggedIn, async (req, res
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.sentFriendshipRequest(username);
         res.json(friendship);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -25,9 +25,9 @@ friendshipRouter.get("/received-friendship-request", ensureLoggedIn, async (req,
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.receivedFriendshipRequest(username);
         res.json(friendship);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -38,10 +38,11 @@ friendshipRouter.post("/:username", ensureLoggedIn, async (req, res) => {
         const user = await userController.getByUsername(username);
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.sendFriendRequest(req.user as User, user);
+        logger.info(`User ${(req.user as User).username} has sent a friend request to user ${username}`);
         res.json(friendship);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -50,10 +51,11 @@ friendshipRouter.delete("/:username/cancel", ensureLoggedIn, async (req, res) =>
         const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.cancelFriendRequest((req.user as User).username, username);
+        logger.info(`User ${(req.user as User).username} has canceled the friend request sent to user ${username}`);
         res.json(friendship);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -62,10 +64,11 @@ friendshipRouter.delete("/:username/reject", ensureLoggedIn, async (req, res) =>
         const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.cancelFriendRequest(username, (req.user as User).username);
+        logger.info(`User ${(req.user as User).username} has rejected the friend request sent by user ${username}`);
         res.json(friendship);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -76,10 +79,11 @@ friendshipRouter.put("/:username", ensureLoggedIn, async (req, res) => {
         const user = await userController.getByUsername(username)
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.acceptFriendRequest(user, req.user as User);
+        logger.info(`User ${(req.user as User).username} has accepted the friend request sent by user ${username}`);
         res.json(friendship);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -88,10 +92,11 @@ friendshipRouter.delete("/:username/remove", ensureLoggedIn, async (req, res) =>
         const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.removeFriendship(username, (req.user as User).username);
+        logger.info(`User ${(req.user as User).username} has removed user ${username} from his friends list`);
         res.json(friendship);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -101,9 +106,9 @@ friendshipRouter.get("/:username/friendship-status", ensureLoggedIn, async (req,
         const friendshipController = FriendshipController.getInstance();
         const isFriendshipRequested = await friendshipController.isFriendshipRequested((req.user as User).username, username);
         res.json(isFriendshipRequested);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
