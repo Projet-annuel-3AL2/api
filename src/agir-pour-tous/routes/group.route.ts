@@ -11,11 +11,10 @@ groupRouter.post('/', ensureLoggedIn, async (req, res) => {
     try {
         const groupController = GroupController.getInstance();
         const group = await groupController.create(req.user as User, req.body);
-        logger.info(`User ${(req.user as User).username} created a group called ${group.name}`);
         res.json(group);
-    } catch (error) {
-        logger.error({route: req.route, error});
-        res.status(400).json(error);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
     }
 });
 
@@ -25,9 +24,9 @@ groupRouter.get('/', async (req, res) => {
         const groupController = GroupController.getInstance();
         const groups = await groupController.getAll();
         res.json(groups);
-    } catch (error) {
-        logger.error({route: req.route, error});
-        res.status(400).json(error);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
     }
 });
 
@@ -37,35 +36,33 @@ groupRouter.get('/:groupName', async (req, res) => {
         const groupController = GroupController.getInstance();
         const group = await groupController.getById(groupName);
         res.json(group);
-    } catch (error) {
-        logger.error({route: req.route, error});
-        res.status(404).json(error);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
     }
 });
 
-groupRouter.delete('/:groupId', ensureLoggedIn, async (req, res) => {
+groupRouter.delete('/:groupName', ensureLoggedIn, async (req, res) => {
     try {
-        const groupId = req.params.groupId;
+        const groupName = req.params.groupName;
         const groupController = GroupController.getInstance();
-        await groupController.delete(groupId);
-        logger.info(`User ${(req.user as User).username} deleted a group with id ${groupId}`);
+        await groupController.delete(groupName);
         res.status(204).end();
-    } catch (error) {
-        logger.error({route: req.route, error});
-        res.status(400).json(error);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
     }
 });
 
-groupRouter.put('/:groupId', ensureLoggedIn, isAskedUser, async (req, res) => {
+groupRouter.put('/:groupName', ensureLoggedIn, isAskedUser, async (req, res) => {
     try {
-        const groupId = req.params.groupId;
+        const groupName = req.params.groupName;
         const groupController = GroupController.getInstance();
-        await groupController.update(groupId, {...req.body});
-        logger.info(`User ${(req.user as User).username} modified a group with id ${groupId}`);
+        await groupController.update(groupName, {...req.body});
         res.status(204).end();
-    } catch (error) {
-        logger.error({route: req.route, error});
-        res.status(400).json(error);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
     }
 });
 
@@ -75,9 +72,9 @@ groupRouter.get("/:groupName/posts", async (req, res) => {
         const groupController = GroupController.getInstance();
         const posts = await groupController.getPosts(groupName)
         res.json(posts);
-    } catch (error) {
-        logger.error({route: req.route, error});
-        res.status(400).json(error);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
     }
 });
 
@@ -88,9 +85,9 @@ groupRouter.post("/:groupName/posts", async (req, res) => {
         const group = await groupController.getById(groupName);
         const post = await groupController.addPost(group, req.user as User, req.body)
         res.json(post);
-    } catch (error) {
-        logger.error({route: req.route, error});
-        res.status(400).json(error);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
     }
 });
 
@@ -101,11 +98,10 @@ groupRouter.put("/:groupId/report", ensureLoggedIn, async (req, res) => {
         const groupController = GroupController.getInstance();
         const reportedGroup = await groupController.getById(groupId);
         const report = await groupController.reportGroup(userReporter, reportedGroup, {...req.body});
-        logger.info(`User ${(req.user as User).username} reported a group with id ${groupId}`);
         res.json(report);
-    } catch (error) {
-        logger.error({route: req.route, error});
-        res.status(400).json(error);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
     }
 });
 
@@ -115,9 +111,9 @@ groupRouter.get("/:groupId/reports", ensureLoggedIn, hasAdminRights, async (req,
         const groupController = GroupController.getInstance();
         const reports = await groupController.getReports(groupId);
         res.json(reports);
-    } catch (error) {
-        logger.error({route: req.route, error});
-        res.status(400).json(error);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
     }
 });
 export {

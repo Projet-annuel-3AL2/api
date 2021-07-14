@@ -135,8 +135,6 @@ export class PostController {
         return this.postRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
-            .leftJoinAndSelect("User.certification", "Cert")
             .where("User.id=:userId", {userId})
             .getMany();
     }
@@ -145,8 +143,6 @@ export class PostController {
         return this.postRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
-            .leftJoinAndSelect("User.certification", "Cert")
             .leftJoin("User.friendsOne", "FriendOne")
             .leftJoin("FriendOne.friendTwo", "FriendTwo")
             .where("FriendTwo.id=:userId", {userId})
@@ -157,8 +153,6 @@ export class PostController {
         return this.postRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
-            .leftJoinAndSelect("User.certification", "Cert")
             .leftJoin("User.friendsTwo", "FriendTwo")
             .leftJoin("FriendTwo.friendOne", "FriendOne")
             .where("FriendOne.id=:userId", {userId})
@@ -169,7 +163,6 @@ export class PostController {
         return this.postRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Post.organisation", "Organisation")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
             .leftJoin("Organisation.followers", "Follower")
             .where("Follower.id=:userId", {userId})
             .getMany();
@@ -179,7 +172,6 @@ export class PostController {
         return this.postRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Post.organisation", "Organisation")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
             .leftJoin("Organisation.members", "OrganisationMembership")
             .leftJoin("OrganisationMembership.user", "User")
             .where("User.id=:userId", {userId})

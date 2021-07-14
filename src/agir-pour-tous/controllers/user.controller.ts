@@ -7,7 +7,6 @@ import {GroupMembership} from "../models/group_membership.model";
 import {Event} from "../models/event.model";
 import {Report, ReportProps} from "../models/report.model";
 import {Organisation} from "../models/organisation.model";
-import {Media} from "../models/media.model";
 
 export class UserController {
 
@@ -54,7 +53,6 @@ export class UserController {
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
             .where("User.username=:username", {username})
-            .orderBy("Post.createdAt","DESC")
             .getMany();
     }
 
@@ -185,19 +183,5 @@ export class UserController {
             .leftJoin("FriendshipOne.friendTwo","FriendTwo")
             .where("FriendTwo.username=:username",{username})
             .getMany();
-    }
-
-    public async setProfilePicture(userId: string, profilePicture: Promise<Media>) {
-        await this.userRepository.createQueryBuilder()
-            .relation("profilePicture")
-            .of(userId)
-            .set(profilePicture);
-    }
-
-    public async removeProfilePicture(userId: string) {
-        await this.userRepository.createQueryBuilder()
-            .relation("profilePicture")
-            .of(userId)
-            .set(null);
     }
 }

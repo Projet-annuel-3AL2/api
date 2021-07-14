@@ -236,13 +236,4 @@ export class OrganisationController {
         }
         return this.organisationRepository.save(organisation);
     }
-
-    async getMembership(organisationId: string): Promise<OrganisationMembership[]> {
-        return getRepository(OrganisationMembership)
-            .createQueryBuilder()
-            .leftJoinAndSelect("OrganisationMembership.user", "User")
-            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
-            .where("Organisation.id=:organisationId", {organisationId})
-            .getMany();
-    }
 }
