@@ -12,14 +12,12 @@ import {
     UpdateDateColumn
 } from "typeorm";
 import {Comment} from "./comment.model";
-import {IsUrl} from "class-validator";
 import {Event} from "./event.model";
 
 @Entity()
 export class Media {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @IsUrl()
     @Column({nullable: false})
     link: string;
     @OneToOne(() => User, user => user.profilePicture)
