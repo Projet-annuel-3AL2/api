@@ -13,9 +13,9 @@ certificationRouter.get("/:certificateId", ensureLoggedIn, hasAdminRights, async
         const certificationController = CertificationController.getInstance();
         const certificationRequest = await certificationController.getById(certificateId);
         res.json(certificationRequest);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
     }
 });
 
@@ -24,9 +24,9 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
         const certificationController = CertificationController.getInstance();
         const certificationRequests = await certificationController.getAll();
         res.json(certificationRequests);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
     }
 });
 
@@ -36,9 +36,9 @@ certificationRouter.get("/request/:requestId", ensureLoggedIn, hasAdminRights, a
         const certificationController = CertificationController.getInstance();
         const certificationRequest = await certificationController.getRequestById(requestId);
         res.json(certificationRequest);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
     }
 });
 
@@ -47,9 +47,9 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
         const certificationController = CertificationController.getInstance();
         const certificationRequests = await certificationController.getAllRequests();
         res.json(certificationRequests);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
     }
 });
 
@@ -59,9 +59,9 @@ certificationRouter.put("/request/:requestId/approve", ensureLoggedIn, hasAdminR
         const certificationController = CertificationController.getInstance();
         const certification = await certificationController.approveRequest(requestId, req.user as User);
         res.json(certification);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -71,9 +71,9 @@ certificationRouter.delete("/request/:requestId", ensureLoggedIn, hasAdminRights
         const certificationController = CertificationController.getInstance();
         await certificationController.rejectRequest(requestId);
         res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -82,9 +82,9 @@ certificationRouter.post("/request", ensureLoggedIn, async (req, res) => {
         const certificationController = CertificationController.getInstance();
         const certificationRequest = await certificationController.requestCertification(req.user as User, {...req.body});
         res.json(certificationRequest);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -94,9 +94,9 @@ certificationRouter.delete("/:certificationId", ensureLoggedIn, hasAdminRights, 
         const certificationController = CertificationController.getInstance();
         await certificationController.revokeCertificate(certificationId);
         res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 

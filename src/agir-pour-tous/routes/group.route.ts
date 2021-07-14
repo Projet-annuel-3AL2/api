@@ -12,9 +12,9 @@ groupRouter.post('/', ensureLoggedIn, async (req, res) => {
         const groupController = GroupController.getInstance();
         const group = await groupController.create(req.user as User, req.body);
         res.json(group);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -24,9 +24,9 @@ groupRouter.get('/', async (req, res) => {
         const groupController = GroupController.getInstance();
         const groups = await groupController.getAll();
         res.json(groups);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -36,9 +36,9 @@ groupRouter.get('/:groupName', async (req, res) => {
         const groupController = GroupController.getInstance();
         const group = await groupController.getById(groupName);
         res.json(group);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
     }
 });
 
@@ -48,9 +48,9 @@ groupRouter.delete('/:groupName', ensureLoggedIn, async (req, res) => {
         const groupController = GroupController.getInstance();
         await groupController.delete(groupName);
         res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -60,9 +60,9 @@ groupRouter.put('/:groupName', ensureLoggedIn, isAskedUser, async (req, res) => 
         const groupController = GroupController.getInstance();
         await groupController.update(groupName, {...req.body});
         res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -72,9 +72,9 @@ groupRouter.get("/:groupName/posts", async (req, res) => {
         const groupController = GroupController.getInstance();
         const posts = await groupController.getPosts(groupName)
         res.json(posts);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -85,9 +85,9 @@ groupRouter.post("/:groupName/posts", async (req, res) => {
         const group = await groupController.getById(groupName);
         const post = await groupController.addPost(group, req.user as User, req.body)
         res.json(post);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -99,9 +99,9 @@ groupRouter.put("/:groupId/report", ensureLoggedIn, async (req, res) => {
         const reportedGroup = await groupController.getById(groupId);
         const report = await groupController.reportGroup(userReporter, reportedGroup, {...req.body});
         res.json(report);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -111,9 +111,9 @@ groupRouter.get("/:groupId/reports", ensureLoggedIn, hasAdminRights, async (req,
         const groupController = GroupController.getInstance();
         const reports = await groupController.getReports(groupId);
         res.json(reports);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 export {

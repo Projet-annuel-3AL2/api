@@ -11,9 +11,9 @@ categoryRouter.post("/", ensureLoggedIn, hasAdminRights, async (req, res) => {
         const categoryController = CategoryController.getInstance();
         const category = await categoryController.create(req.body);
         res.json(category);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
     }
 });
 
@@ -22,9 +22,9 @@ categoryRouter.get("/", async (req, res) => {
         const categoryController = await CategoryController.getInstance();
         const category = await categoryController.getAll();
         res.json(category);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
     }
 });
 
@@ -34,9 +34,9 @@ categoryRouter.get("/:categoryId", async (req, res) => {
         const categoryController = CategoryController.getInstance();
         const category = await categoryController.getById(categoryId);
         res.json(category);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
     }
 });
 
@@ -46,9 +46,9 @@ categoryRouter.put("/:categoryId", ensureLoggedIn, hasAdminRights, async (req, r
         const categoryController = CategoryController.getInstance();
         const category = await categoryController.update(categoryId, {...req.body});
         res.json(category);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -58,9 +58,9 @@ categoryRouter.delete("/:categoryId", ensureLoggedIn, hasAdminRights, async (req
         const categoryController = CategoryController.getInstance();
         const category = await categoryController.delete(categoryId);
         res.json(category);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -70,9 +70,9 @@ categoryRouter.get("/:categoryId/events", async (req, res) => {
         const categoryController = CategoryController.getInstance();
         const events = categoryController.getEvents(categoryId);
         res.json(events);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 

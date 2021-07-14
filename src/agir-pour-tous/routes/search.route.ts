@@ -10,9 +10,9 @@ searchRouter.get("/:data", async (req, res) => {
         const searchController = SearchController.getInstance();
         const result = await searchController.search('%' + data + '%');
         res.json(result);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
@@ -22,9 +22,9 @@ searchRouter.get("/:data/event", async (req, res) => {
         const searchController = SearchController.getInstance();
         const result = await searchController.getEvents('%' + data + '%');
         res.json(result);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 
