@@ -38,12 +38,12 @@ export class EventController {
             where: {
                 endDate: MoreThan(dateNow)
             },
-            relations: ['organisation', 'category', 'user']
+            relations: ['organisation', 'category', 'user', 'picture']
         })
     }
 
     public async create(user: User, props: EventProps) {
-        let event = this.eventRepository.create({...props, user: user, startDate:new Date(props.startDate), endDate: new Date(props.endDate)});
+        let event = await this.eventRepository.create({...props, user: user, startDate:new Date(props.startDate), endDate: new Date(props.endDate)});
         const err = await validate(event, {validationError: {target: false}});
         if (err.length > 0) {
             throw err;
@@ -169,7 +169,15 @@ export class EventController {
             where: {
                 id: eventId
             },
-            relations: ['user', 'organisation', 'category']
+            relations: ['user', 'organisation', 'category', 'picture']
         })
+    }
+
+    public async getCategory(eventId: string): Promise<Event>{
+        return await this.eventRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Event.category", "Category")
+            .where("Event.id=:eventId", {eventId})
+            .getOne()
     }
 }
