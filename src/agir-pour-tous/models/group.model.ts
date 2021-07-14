@@ -29,6 +29,7 @@ export class Group {
     name: string;
     @OneToMany(() => GroupMembership, user => user.group)
     members: GroupMembership[];
+
     @OneToMany(() => Post, post => post.group)
     posts: Post[];
     @OneToMany(() => Report, report => report.reportedGroup, {cascade: true})

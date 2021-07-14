@@ -42,8 +42,6 @@ export interface UserProps {
     mail: string;
     password: string;
     userType?: UserType;
-    profilePicture?: Media;
-    bannerPicture?: Media;
 }
 
 @Entity()
@@ -99,7 +97,7 @@ export class User implements UserProps {
     @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true})
     @JoinColumn()
     bannerPicture: Media;
-    @OneToOne(() => Certification, certification => certification.user, {cascade: true, eager:true})
+    @OneToOne(() => Certification, certification => certification.user, {cascade: true})
     @JoinColumn()
     certification: Certification;
     @OneToOne(() => CertificationRequest, certification => certification.user, {cascade: true})
