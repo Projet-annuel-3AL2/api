@@ -243,11 +243,23 @@ eventRouter.get('/:eventId/owner', async (req, res) => {
     }
 });
 
+eventRouter.get('/:eventId/is-owner', async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = EventController.getInstance();
+        const isMember = await eventController.isOwner((req.user as User).id, eventId);
+        res.json(isMember);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(404).json(error);
+    }
+});
+
 eventRouter.get('/:eventId/is-member', async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();
-        const isMember = await eventController.isMember((req.user as User).id,eventId);
+        const isMember = await eventController.isMember((req.user as User).id, eventId);
         res.json(isMember);
     } catch (error) {
         logger.error({route: req.route, error});

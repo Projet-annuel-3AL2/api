@@ -132,6 +132,9 @@ export class EventController {
             .getMany();
     }
 
+    public async isOwner(eventId:string, userId:string):Promise<boolean>{
+        return (await this.getOwners(eventId)).some(user => user.id === userId);
+    }
 
     public async getOwners(eventId: string): Promise<User[]> {
         return (await this.getOrganisationOwners(eventId))
@@ -160,7 +163,7 @@ export class EventController {
             .leftJoin("Event.participants", "User")
             .where("Event.id=:eventId", {eventId})
             .andWhere("User.id=:userId", {userId})
-            .getOne() !== undefined || (await this.getOwners(eventId)).some(user => user.id === userId));
+            .getOne() !== undefined);
     }
 
     public async getSuggestion(): Promise<Event[]> {
