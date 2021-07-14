@@ -7,6 +7,7 @@ import {logger} from "../config/logging.config";
 
 const certificationRouter = express.Router();
 
+// TODO : hasAdminRights ne fonctionne pas
 certificationRouter.get("/:certificateId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const certificateId = req.params.certificateId;
@@ -19,7 +20,7 @@ certificationRouter.get("/:certificateId", ensureLoggedIn, hasAdminRights, async
     }
 });
 
-certificationRouter.get("/", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.get("/", ensureLoggedIn, async (req, res) => {
     try {
         const certificationController = CertificationController.getInstance();
         const certificationRequests = await certificationController.getAll();
@@ -42,7 +43,7 @@ certificationRouter.get("/request/:requestId", ensureLoggedIn, hasAdminRights, a
     }
 });
 
-certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.get("/requests", ensureLoggedIn, async (req, res) => {
     try {
         const certificationController = CertificationController.getInstance();
         const certificationRequests = await certificationController.getAllRequests();
@@ -53,7 +54,7 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
     }
 });
 
-certificationRouter.put("/request/:requestId/approve", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.put("/request/:requestId/approve", ensureLoggedIn, async (req, res) => {
     try {
         const requestId = req.params.requestId;
         const certificationController = CertificationController.getInstance();
@@ -65,7 +66,7 @@ certificationRouter.put("/request/:requestId/approve", ensureLoggedIn, hasAdminR
     }
 });
 
-certificationRouter.delete("/request/:requestId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.delete("/request/:requestId", ensureLoggedIn, async (req, res) => {
     try {
         const requestId = req.params.requestId;
         const certificationController = CertificationController.getInstance();
@@ -88,7 +89,7 @@ certificationRouter.post("/request", ensureLoggedIn, async (req, res) => {
     }
 });
 
-certificationRouter.delete("/:certificationId", ensureLoggedIn, hasAdminRights, async (req, res) => {
+certificationRouter.delete("/:certificationId", ensureLoggedIn, async (req, res) => {
     try {
         const certificationId = req.params.certificationId;
         const certificationController = CertificationController.getInstance();

@@ -5,13 +5,23 @@ import {EventController} from "../controllers/event.controller";
 import {hasAdminRights} from "../middlewares/user.middleware";
 import {canCreateEvent, isEventOrganiser} from "../middlewares/event.middleware";
 import {logger} from "../config/logging.config";
+import {MediaController} from "../controllers/media.controller";
+import {upload} from "./index.route";
+import {arePicturesFiles} from "../middlewares/media.middleware";
+import {Media} from "../models/media.model";
 
 const eventRouter = express.Router();
 
-eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
+eventRouter.post('/', ensureLoggedIn, canCreateEvent, upload.single("event_media"), arePicturesFiles, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
-        const event = await eventController.create(req.user as User, req.body);
+        const mediaController = await MediaController.getInstance();
+        let media: Media;
+        if (req.file) {
+            media = await mediaController.create(req.file);
+        }
+
+        const event = await eventController.create(req.user as User, {...req.body, media});
         res.json(event);
     } catch (err) {
         logger.error(err);
@@ -25,8 +35,8 @@ eventRouter.post('/:eventId/join', ensureLoggedIn, async (req, res) => {
         const eventId = req.params.eventId;
         const userId = (req.user as User).id;
         const eventController = await EventController.getInstance();
-        const event = await eventController.addParticipant(eventId, userId);
-        res.json(event);
+        await eventController.addParticipant(eventId, userId);
+        res.status(204).end();
     } catch (err) {
         logger.error(err);
         res.status(400).json(err);
@@ -78,18 +88,6 @@ eventRouter.get('/:eventId', async (req, res) => {
     }
 });
 
-eventRouter.get('/:eventId/getMembers', async (req, res) => {
-    try {
-        const eventId = req.params.eventId;
-        const eventController = await EventController.getInstance();
-        const event = await eventController.getEventMembers(eventId);
-        res.status(200).json(event);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
-    }
-});
-
 eventRouter.get('/getEventWithUserLocation/:userLocationX/:userLocationY/:range', async (req, res) => {
     try {
         const userLocationX = req.params.userLocationX;
@@ -130,6 +128,19 @@ eventRouter.get('/search/:name', async (req, res) => {
     }
 })
 
+eventRouter.get('/:eventId/participants', async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = await EventController.getInstance();
+        const event = await eventController.getEventMembers(eventId);
+        res.status(200).json(event);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
+    }
+});
+
+// TODO: Authorizer les admins pour deleteEvent
 eventRouter.delete('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, res) => {
     try {
         const eventId = req.params.eventId;
@@ -155,12 +166,59 @@ eventRouter.delete('/:eventId/participant', ensureLoggedIn, async (req, res) => 
     }
 });
 
+
+eventRouter.delete('/:eventId/participant/:userId', ensureLoggedIn, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const eventId = req.params.eventId;
+        const eventController = await EventController.getInstance();
+        await eventController.removeParticipant(eventId, userId);
+        res.status(204).end();
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
+    }
+});
 eventRouter.put('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();
         const event = await eventController.update(eventId, {...req.body});
         res.json(event);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/owner', async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = EventController.getInstance();
+        const owners = await eventController.getOwners(eventId);
+        res.json(owners);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/profil', async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const events = await eventController.getProfil(req.params.eventId);
+        res.json(events);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/category', async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const events = await eventController.getCategory(req.params.eventId);
+        res.json(events);
     } catch (err) {
         logger.error(err);
         res.status(400).json(err);
@@ -199,29 +257,6 @@ eventRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req,
         const eventController = EventController.getInstance();
         const reports = await eventController.getReports(eventId);
         res.json(reports);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
-    }
-});
-
-eventRouter.get('/:eventId/owner', async (req, res) => {
-    try {
-        const eventId = req.params.eventId;
-        const eventController = EventController.getInstance();
-        const owners = await eventController.getOwners(eventId);
-        res.json(owners);
-    } catch (err) {
-        logger.error(err);
-        res.status(404).json(err);
-    }
-});
-
-eventRouter.get('/:eventId/profil', async (req, res) => {
-    try {
-        const eventController = await EventController.getInstance();
-        const events = await eventController.getProfil(req.params.eventId);
-        res.json(events);
     } catch (err) {
         logger.error(err);
         res.status(400).json(err);
