@@ -3,6 +3,7 @@ import {CategoryController} from "../controllers/category.controller";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {hasAdminRights} from "../middlewares/user.middleware";
 import {logger} from "../config/logging.config";
+import {User} from "../models/user.model";
 
 const categoryRouter = express.Router();
 
@@ -10,6 +11,7 @@ categoryRouter.post("/", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const categoryController = CategoryController.getInstance();
         const category = await categoryController.create(req.body);
+        logger.info(`User ${(req.user as User).username} created new category named ${req.body.name}`);
         res.json(category);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -45,6 +47,7 @@ categoryRouter.put("/:categoryId", ensureLoggedIn, hasAdminRights, async (req, r
         const categoryId = req.params.categoryId;
         const categoryController = CategoryController.getInstance();
         const category = await categoryController.update(categoryId, {...req.body});
+        logger.info(`User ${(req.user as User).username} modified category named ${category.name}`);
         res.json(category);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -56,8 +59,9 @@ categoryRouter.delete("/:categoryId", ensureLoggedIn, hasAdminRights, async (req
     try {
         const categoryId = req.params.categoryId;
         const categoryController = CategoryController.getInstance();
-        const category = await categoryController.delete(categoryId);
-        res.json(category);
+        await categoryController.delete(categoryId);
+        logger.info(`User ${(req.user as User).username} deleted category with id ${categoryId}`);
+        res.status(204).end();
     } catch (error) {
         logger.error({route: req.route, error});
         res.status(400).json(error);

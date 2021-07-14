@@ -12,6 +12,7 @@ eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
         const event = await eventController.create(req.user as User, req.body);
+        logger.info(`User ${(req.user as User).username} created event called ${event.name} with the id ${event.id}`);
         res.json(event);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -26,6 +27,7 @@ eventRouter.post('/:eventId/join', ensureLoggedIn, async (req, res) => {
         const userId = (req.user as User).id;
         const eventController = await EventController.getInstance();
         const event = await eventController.addParticipant(eventId, userId);
+        logger.info(`User ${(req.user as User).username} joined event with id ${eventId}`);
         res.json(event);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -135,6 +137,21 @@ eventRouter.delete('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, re
         const eventId = req.params.eventId;
         const eventController = await EventController.getInstance();
         await eventController.delete(eventId);
+        logger.info(`User ${(req.user as User).username} deleted event with id ${eventId}`);
+        res.status(204).end();
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
+    }
+});
+
+eventRouter.delete('/:eventId/participant/:userId', ensureLoggedIn, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const eventId = req.params.eventId;
+        const eventController = await EventController.getInstance();
+        await eventController.removeParticipant(eventId, userId);
+        logger.info(`User ${(req.user as User).username} removed user with id ${userId} from event with id ${eventId}`);
         res.status(204).end();
     } catch (error) {
         logger.error({route: req.route, error});
@@ -148,6 +165,7 @@ eventRouter.delete('/:eventId/participant', ensureLoggedIn, async (req, res) => 
         const eventId = req.params.eventId;
         const eventController = await EventController.getInstance();
         await eventController.removeParticipant(eventId, userId);
+        logger.info(`User ${(req.user as User).username} left event with id ${eventId}`);
         res.status(204).end();
     } catch (error) {
         logger.error({route: req.route, error});
@@ -160,6 +178,7 @@ eventRouter.put('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, res) 
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();
         const event = await eventController.update(eventId, {...req.body});
+        logger.info(`User ${(req.user as User).username} modified event with id ${eventId}`);
         res.json(event);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -186,6 +205,7 @@ eventRouter.put("/:eventId/report", ensureLoggedIn, async (req, res) => {
         const eventController = EventController.getInstance();
         const reportedEvent = await eventController.getById(eventId);
         const report = await eventController.reportEvent(userReporter, reportedEvent, {...req.body});
+        logger.info(`User ${(req.user as User).username} reported event with id ${eventId}`);
         res.json(report);
     } catch (error) {
         logger.error({route: req.route, error});

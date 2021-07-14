@@ -60,6 +60,7 @@ userRouter.delete('/', ensureLoggedIn, async (req, res) => {
         const username = (req.user as User).username;
         const userController = UserController.getInstance();
         await userController.delete(username);
+        logger.info(`User ${(req.user as User).username} has deleted his account`);
         res.status(204).end();
     } catch (error) {
         logger.error({route: req.route, error});
@@ -82,6 +83,7 @@ userRouter.put('/', ensureLoggedIn, upload.fields([{ name: "profilePicture", max
             }
         }
         await userController.update(username, user);
+        logger.info(`User ${(req.user as User).username} has updated his account informations`);
         res.status(204).end();
     } catch (error) {
         logger.error({route: req.route, error});
@@ -131,6 +133,7 @@ userRouter.put("/:userId/block", ensureLoggedIn, isNotAskedUser, async (req, res
         const currentUserId = (req.user as User).id;
         const userController = UserController.getInstance();
         await userController.blockUser(currentUserId, userId);
+        logger.info(`User ${(req.user as User).username} has blocked an user with id ${userId}`);
         res.status(204).end();
     } catch (error) {
         logger.error({route: req.route, error});
@@ -144,6 +147,7 @@ userRouter.delete("/:userId/unblock", ensureLoggedIn, isNotAskedUser, async (req
         const currentUserId = (req.user as User).id;
         const userController = UserController.getInstance();
         await userController.unblockUser(currentUserId, userId);
+        logger.info(`User ${(req.user as User).username} has unblocked an user with id ${userId}`);
         res.status(204).end();
     } catch (error) {
         logger.error({route: req.route, error});
@@ -190,6 +194,7 @@ userRouter.put("/:username/report", ensureLoggedIn, isNotAskedUser, async (req, 
         const userController = UserController.getInstance();
         const reportedUser = await userController.getByUsername(username);
         const report = await userController.reportUser(userReporter, reportedUser, {...req.body});
+        logger.info(`User ${(req.user as User).username} has reported an user called ${username}`);
         res.json(report);
     } catch (error) {
         logger.error({route: req.route, error});

@@ -38,6 +38,7 @@ friendshipRouter.post("/:username", ensureLoggedIn, async (req, res) => {
         const user = await userController.getByUsername(username);
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.sendFriendRequest(req.user as User, user);
+        logger.info(`User ${(req.user as User).username} has sent a friend request to user ${username}`);
         res.json(friendship);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -50,6 +51,7 @@ friendshipRouter.delete("/:username/cancel", ensureLoggedIn, async (req, res) =>
         const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.cancelFriendRequest((req.user as User).username, username);
+        logger.info(`User ${(req.user as User).username} has canceled the friend request sent to user ${username}`);
         res.json(friendship);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -62,6 +64,7 @@ friendshipRouter.delete("/:username/reject", ensureLoggedIn, async (req, res) =>
         const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.cancelFriendRequest(username, (req.user as User).username);
+        logger.info(`User ${(req.user as User).username} has rejected the friend request sent by user ${username}`);
         res.json(friendship);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -76,6 +79,7 @@ friendshipRouter.put("/:username", ensureLoggedIn, async (req, res) => {
         const user = await userController.getByUsername(username)
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.acceptFriendRequest(user, req.user as User);
+        logger.info(`User ${(req.user as User).username} has accepted the friend request sent by user ${username}`);
         res.json(friendship);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -88,6 +92,7 @@ friendshipRouter.delete("/:username/remove", ensureLoggedIn, async (req, res) =>
         const username = req.params.username;
         const friendshipController = FriendshipController.getInstance();
         const friendship = await friendshipController.removeFriendship(username, (req.user as User).username);
+        logger.info(`User ${(req.user as User).username} has removed user ${username} from his friends list`);
         res.json(friendship);
     } catch (error) {
         logger.error({route: req.route, error});

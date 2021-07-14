@@ -22,6 +22,7 @@ postRouter.post('/', ensureLoggedIn, upload.array("post_medias",5), arePicturesF
             }
         }
         const post = await postController.create(req.user as User, {...req.body, medias});
+        logger.info(`User ${(req.user as User).username} has created a post with id ${post.id}`);
         res.json(post);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -57,6 +58,7 @@ postRouter.delete('/:postId', ensureLoggedIn, isPostOwner, async (req, res) => {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
         const post = await postController.delete(postId);
+        logger.info(`User ${(req.user as User).username} has deleted a post with id ${postId}`);
         res.json(post);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -69,6 +71,7 @@ postRouter.put('/:postId', ensureLoggedIn, isPostOwner, async (req, res) => {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
         const post = await postController.update(postId, {...req.body});
+        logger.info(`User ${(req.user as User).username} has modified a post with id ${postId}`);
         res.json(post);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -82,6 +85,7 @@ postRouter.get("/:postId/like", ensureLoggedIn, async (req, res) => {
         const userId = (req.user as User).id;
         const postController = PostController.getInstance();
         const likes = await postController.likePost(postId, userId);
+        logger.info(`User ${(req.user as User).username} has liked a post with id ${postId}`);
         res.json(likes);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -107,6 +111,7 @@ postRouter.delete("/:postId/like", ensureLoggedIn, async (req, res) => {
         const userId = (req.user as User).id;
         const postController = PostController.getInstance();
         const likes = await postController.dislikePost(postId, userId);
+        logger.info(`User ${(req.user as User).username} has removed his like to a post with id ${postId}`);
         res.json(likes);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -159,6 +164,7 @@ postRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
         const postController = PostController.getInstance();
         const reportedPost = await postController.getById(postId);
         const report = await postController.reportPost(userReporter, reportedPost, {...req.body});
+        logger.info(`User ${(req.user as User).username} has reported a post with id ${postId}`);
         res.json(report);
     } catch (error) {
         logger.error({route: req.route, error});
@@ -208,6 +214,7 @@ postRouter.post("/:postId/comment", async (req, res) => {
         const postId = req.params.postId;
         const postController = PostController.getInstance();
         const comment = await postController.addComment(postId, req.user as User, {...req.body});
+        logger.info(`User ${(req.user as User).username} has commented a post with id ${postId}`);
         res.json(comment);
     } catch (error) {
         logger.error({route: req.route, error});
