@@ -3,7 +3,13 @@ import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {User} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
 import {hasAdminRights} from "../middlewares/user.middleware";
-import {canCreateEvent, isEventOrganiser} from "../middlewares/event.middleware";
+import {
+    canCreateEvent,
+    isEventOrganiser,
+    isMember,
+    isNotEventOrganiser,
+    isNotMember
+} from "../middlewares/event.middleware";
 import {logger} from "../config/logging.config";
 
 const eventRouter = express.Router();
@@ -21,7 +27,7 @@ eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
 });
 
 
-eventRouter.post('/:eventId/join', ensureLoggedIn, async (req, res) => {
+eventRouter.post('/:eventId/join', ensureLoggedIn, isNotEventOrganiser, isNotMember, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const userId = (req.user as User).id;
@@ -159,7 +165,7 @@ eventRouter.delete('/:eventId/participant/:userId', ensureLoggedIn, async (req, 
     }
 });
 
-eventRouter.delete('/:eventId/participant', ensureLoggedIn, async (req, res) => {
+eventRouter.delete('/:eventId/participant', ensureLoggedIn, isMember, async (req, res) => {
     try {
         const userId = (req.user as User).id;
         const eventId = req.params.eventId;
