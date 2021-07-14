@@ -57,6 +57,7 @@ export class UserController {
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
             .where("User.username=:username", {username})
+            .orderBy("Post.createdAt","DESC")
             .getMany();
     }
 

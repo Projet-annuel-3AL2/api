@@ -29,7 +29,6 @@ export class SearchController {
     }
 
     public async search(data: string): Promise<SearchResult> {
-        data = '%' + data + '%';
         return {
             events: await this.getEvents(data),
             organisations: await this.getOrganisations(data),
@@ -38,7 +37,7 @@ export class SearchController {
         };
     }
 
-    private async getUsers(data: string): Promise<User[]> {
+    public async getUsers(data: string): Promise<User[]> {
         return await this.userRepository.createQueryBuilder()
             .where("User.username like :data", {data})
             .orWhere("User.firstname like :data", {data})
@@ -47,20 +46,20 @@ export class SearchController {
             .getMany();
     }
 
-    private async getEvents(data: string): Promise<Event[]> {
+    public async getEvents(data: string): Promise<Event[]> {
         return await this.eventRepository.createQueryBuilder()
             .where("Event.name like :data", {data})
             .orWhere("Event.description like :data", {data})
             .getMany();
     }
 
-    private async getOrganisations(data: string): Promise<Organisation[]> {
+    public async getOrganisations(data: string): Promise<Organisation[]> {
         return await this.organisationRepository.createQueryBuilder()
             .where("Organisation.name like :data", {data})
             .getMany();
     }
 
-    private async getPosts(data: string): Promise<Post[]> {
+    public async getPosts(data: string): Promise<Post[]> {
         return await this.postRepository.createQueryBuilder()
             .where("Post.text like :data", {data})
             .getMany();

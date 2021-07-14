@@ -126,7 +126,7 @@ postRouter.get("/:postId/likes", async (req, res) => {
     }
 });
 
-postRouter.get("/timeline/:offset/:limit", async (req, res) => {
+postRouter.get("/timeline/:offset/:limit", ensureLoggedIn, async (req, res) => {
     try {
         const offset = parseInt(req.params.offset);
         const limit = parseInt(req.params.limit);

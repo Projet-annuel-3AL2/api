@@ -2,11 +2,10 @@ import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {UserController} from "../controllers/user.controller";
 import {hasAdminRights, isAskedUser, isNotAskedUser} from "../middlewares/user.middleware";
-import {User} from "../models/user.model";
+import {User, UserProps} from "../models/user.model";
 import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {MediaController} from "../controllers/media.controller";
-import {isPicture} from "../../utils/file.utils";
 
 const userRouter = express.Router();
 
@@ -56,9 +55,9 @@ userRouter.get('/:username/posts', async (req, res) => {
     }
 });
 
-userRouter.delete('/:username', ensureLoggedIn, isAskedUser, async (req, res) => {
+userRouter.delete('/', ensureLoggedIn, async (req, res) => {
     try {
-        const username = req.params.username;
+        const username = (req.user as User).username;
         const userController = UserController.getInstance();
         await userController.delete(username);
         res.status(204).end();
@@ -68,11 +67,21 @@ userRouter.delete('/:username', ensureLoggedIn, isAskedUser, async (req, res) =>
     }
 });
 
-userRouter.put('/:username', ensureLoggedIn, isAskedUser, async (req, res) => {
+userRouter.put('/', ensureLoggedIn, upload.fields([{ name: "profilePicture", maxCount: 1 },{name:"bannerPicture", maxCount:1}]), async (req, res) => {
     try {
-        const username = req.params.username;
+        const username = (req.user as User).username;
         const userController = UserController.getInstance();
-        await userController.update(username, {...req.body});
+        const mediaController = MediaController.getInstance();
+        let user: UserProps={...req.body};
+        if(req.files) {
+            if (req.files["profilePicture"]) {
+                user.profilePicture = await mediaController.create(req.files["profilePicture"][0]);
+            }
+            if (req.files["bannerPicture"]) {
+                user.bannerPicture = await mediaController.create(req.files["bannerPicture"][0]);
+            }
+        }
+        await userController.update(username, user);
         res.status(204).end();
     } catch (err) {
         logger.error(err);
@@ -218,34 +227,6 @@ userRouter.get("/:username/friends", ensureLoggedIn, async (req, res) => {
         const userController = UserController.getInstance();
         const friends = await userController.getFriends(username);
         res.json(friends);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
-    }
-});
-
-userRouter.post("/profilePicture", ensureLoggedIn, upload.single("profilePicture"),isPicture, async (req, res) => {
-    try {
-        const userId = (req.user as User).id;
-        const userController = UserController.getInstance();
-        const mediaController = MediaController.getInstance();
-        const profilePicture = mediaController.create(req.file);
-         await userController.setProfilePicture(userId,profilePicture);
-        res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
-    }
-});
-
-userRouter.delete("/profilePicture", ensureLoggedIn, async (req, res) => {
-    try {
-        const userId = (req.user as User).id;
-        const userController = UserController.getInstance();
-        const mediaController = MediaController.getInstance();
-        const profilePicture = mediaController.create(req.file);
-        await userController.removeProfilePicture(userId);
-        res.json(profilePicture);
     } catch (err) {
         logger.error(err);
         res.status(400).json(err);

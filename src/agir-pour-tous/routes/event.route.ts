@@ -88,6 +88,18 @@ eventRouter.get('/:eventId', async (req, res) => {
     }
 });
 
+eventRouter.get('/:eventId/participants', async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = await EventController.getInstance();
+        const event = await eventController.getEventMembers(eventId);
+        res.status(200).json(event);
+    } catch (err) {
+        logger.error(err);
+        res.status(400).json(err);
+    }
+});
+
 eventRouter.get('/getEventWithUserLocation/:userLocationX/:userLocationY/:range', async (req, res) => {
     try {
         const userLocationX = req.params.userLocationX;
@@ -260,6 +272,28 @@ eventRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req,
     } catch (err) {
         logger.error(err);
         res.status(400).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/category', async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const category = await eventController.getCategory(req.params.eventId);
+        res.json(category);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
+    }
+});
+
+eventRouter.get('/:eventId/organisation', async (req, res) => {
+    try {
+        const eventController = await EventController.getInstance();
+        const organisation = await eventController.getOrganisation(req.params.eventId);
+        res.json(organisation);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
     }
 });
 
