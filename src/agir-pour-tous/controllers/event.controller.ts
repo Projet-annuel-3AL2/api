@@ -9,6 +9,7 @@ import {Category} from "../models/category.model";
 import {Organisation} from "../models/organisation.model";
 
 export class EventController {
+
     private static instance: EventController;
     private eventRepository: Repository<Event>;
     private userRepository: Repository<User>;
@@ -77,27 +78,34 @@ export class EventController {
             .remove(userId);
     }
 
-    public async getEventWithLocation(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
-        return this.eventRepository.createQueryBuilder()
-            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range", {
-                range,
-                userLocationX,
-                userLocationY
-            })
-            .getMany();
-    };
+    async getEventsSearch(userLocationX: string, userLocationY: string, range: string, startDate: any, endDate: string, categoryId: string): Promise<Event[]> {
+        const searchQuery: any = this.eventRepository.createQueryBuilder();
 
-    public async getEventWithLocationNotEnd(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
-        const dateNow = Date.now();
-        return this.eventRepository.createQueryBuilder()
-            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range AND dateEnd >=:dateNow", {
-                range,
-                userLocationX,
-                userLocationY,
-                dateNow
-            })
-            .getMany();
-    };
+        if (userLocationX !== "undefined" && userLocationY !== "undefined" && range !== "undefined") {
+            const longitude =  Number(userLocationY);
+            const latitude = Number(userLocationX);
+            const rangeNumber = Number(range);
+            searchQuery.andWhere("(1852 * 60 * cbrt((Event.longitude - :longitude) * cos(:latitude + Event.latitude) / 2)^2 + ((Event.latitude - :latitude)^ 2)) < :rangeNumber"
+                , {
+                rangeNumber,
+                longitude,
+                latitude
+            });
+        }
+        if (startDate !== "undefined" && endDate !== "undefined") {
+            const start = new Date(startDate);
+            const end = new Date(endDate)
+            searchQuery.andWhere("Event.startDate > :start", {start})
+                .andWhere("Event.endDate < :end", {end})
+        }
+        if (categoryId !== "undefined") {
+            searchQuery.leftJoinAndSelect("Event.category", "Category")
+                .andWhere("Category.id=:categoryId", {categoryId})
+
+        }
+        console.log(await searchQuery.getMany())
+        return await searchQuery.getMany();
+    }
 
     public async searchByName(name: string): Promise<Event[]> {
         return this.eventRepository

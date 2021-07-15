@@ -65,6 +65,18 @@ eventRouter.get('/suggestions/events', async (req, res) => {
     }
 });
 
+eventRouter.get('/:eventId/is-member', async (req, res) => {
+    try {
+        const eventId = req.params.eventId;
+        const eventController = EventController.getInstance();
+        const isMember = await eventController.isMember((req.user as User).id,eventId);
+        res.json(isMember);
+    } catch (err) {
+        logger.error(err);
+        res.status(404).json(err);
+    }
+});
+
 eventRouter.get('/is-finished', async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
@@ -100,28 +112,17 @@ eventRouter.get('/:eventId/participants', async (req, res) => {
     }
 });
 
-eventRouter.get('/getEventWithUserLocation/:userLocationX/:userLocationY/:range', async (req, res) => {
+eventRouter.get('/search/:userLocationX/:userLocationY/:range/:startDate/:endDate/:categoryId', async (req, res) => {
     try {
         const userLocationX = req.params.userLocationX;
         const userLocationY = req.params.userLocationY;
         const range = req.params.range;
+        const startDate = req.params.startDate;
+        const endDate = req.params.endDate;
+        const categoryId = req.params.categoryId;
         const eventController = await EventController.getInstance();
-        let events = await eventController.getEventWithLocation(Number(userLocationX), Number(userLocationY), Number(range));
+        const events = await eventController.getEventsSearch(userLocationX, userLocationY, range, startDate, endDate,categoryId);
         res.json(events);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
-    }
-});
-
-eventRouter.get('/getEventWithUserLocationNotEnd/:userLocationX/:userLocationY/:range', async (req, res) => {
-    try {
-        const userLocationX = req.params.userLocationX;
-        const userLocationY = req.params.userLocationY;
-        const range = req.params.range;
-        const eventController = await EventController.getInstance();
-        let events = await eventController.getEventWithLocationNotEnd(Number(userLocationX), Number(userLocationY), Number(range));
-        res.status(200).json(events);
     } catch (err) {
         logger.error(err);
         res.status(400).json(err);
