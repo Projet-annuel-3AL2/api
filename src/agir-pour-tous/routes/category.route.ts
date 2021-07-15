@@ -14,7 +14,7 @@ categoryRouter.post("/", ensureLoggedIn, hasAdminRights, async (req, res) => {
         logger.info(`User ${(req.user as User).username} created new category named ${req.body.name}`);
         res.json(category);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -25,7 +25,7 @@ categoryRouter.get("/", async (req, res) => {
         const category = await categoryController.getAll();
         res.json(category);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -37,7 +37,7 @@ categoryRouter.get("/:categoryId", async (req, res) => {
         const category = await categoryController.getById(categoryId);
         res.json(category);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -50,7 +50,7 @@ categoryRouter.put("/:categoryId", ensureLoggedIn, hasAdminRights, async (req, r
         logger.info(`User ${(req.user as User).username} modified category named ${category.name}`);
         res.json(category);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -63,7 +63,7 @@ categoryRouter.delete("/:categoryId", ensureLoggedIn, hasAdminRights, async (req
         logger.info(`User ${(req.user as User).username} deleted category with id ${categoryId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -75,7 +75,7 @@ categoryRouter.get("/:categoryId/events", async (req, res) => {
         const events = categoryController.getEvents(categoryId);
         res.json(events);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });

@@ -10,7 +10,7 @@ export const logger = winston.createLogger({
             format: winston.format.combine(winston.format.colorize(),
                     winston.format.align(),
                     winston.format.timestamp({format: 'DD/MM/YYYY-HH:mm:ss'}),
-                    winston.format.printf((info) => `[${info.level.toUpperCase()}] - ${info.timestamp} - APT : ${JSON.stringify(info.message)}`))
+                    winston.format.printf((info) => `[${info.level.toUpperCase()}] - ${info.timestamp} - APT : ${info.message}`))
         })
     ]
 });

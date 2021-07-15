@@ -21,7 +21,7 @@ eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
         logger.info(`User ${(req.user as User).username} created event called ${event.name} with the id ${event.id}`);
         res.json(event);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -36,7 +36,7 @@ eventRouter.post('/:eventId/join', ensureLoggedIn, isNotEventOrganiser, isNotMem
         logger.info(`User ${(req.user as User).username} joined event with id ${eventId}`);
         res.json(event);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -47,7 +47,7 @@ eventRouter.get('/', async (req, res) => {
         const event = await eventController.getAll();
         res.json(event);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -58,7 +58,7 @@ eventRouter.get('/suggestions/events', async (req, res) => {
         const events = await eventController.getSuggestion();
         res.json(events);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -69,7 +69,7 @@ eventRouter.get('/is-finished', async (req, res) => {
         const events = await eventController.getAllNotEnd();
         res.json(events);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -81,7 +81,7 @@ eventRouter.get('/:eventId', async (req, res) => {
         const event = await eventController.getById(eventId);
         res.status(200).json(event);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -93,7 +93,7 @@ eventRouter.get('/:eventId/participants', async (req, res) => {
         const event = await eventController.getEventMembers(eventId);
         res.status(200).json(event);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -107,7 +107,7 @@ eventRouter.get('/getEventWithUserLocation/:userLocationX/:userLocationY/:range'
         let events = await eventController.getEventWithLocation(Number(userLocationX), Number(userLocationY), Number(range));
         res.json(events);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -121,7 +121,7 @@ eventRouter.get('/getEventWithUserLocationNotEnd/:userLocationX/:userLocationY/:
         let events = await eventController.getEventWithLocationNotEnd(Number(userLocationX), Number(userLocationY), Number(range));
         res.status(200).json(events);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -133,7 +133,7 @@ eventRouter.get('/search/:name', async (req, res) => {
         const events = await eventController.searchByName(name);
         res.json(events)
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 })
@@ -146,7 +146,7 @@ eventRouter.delete('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, re
         logger.info(`User ${(req.user as User).username} deleted event with id ${eventId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -160,7 +160,7 @@ eventRouter.delete('/:eventId/participant/:userId', ensureLoggedIn, async (req, 
         logger.info(`User ${(req.user as User).username} removed user with id ${userId} from event with id ${eventId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -174,7 +174,7 @@ eventRouter.delete('/:eventId/participant', ensureLoggedIn, isMember, async (req
         logger.info(`User ${(req.user as User).username} left event with id ${eventId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -187,7 +187,7 @@ eventRouter.put('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, res) 
         logger.info(`User ${(req.user as User).username} modified event with id ${eventId}`);
         res.json(event);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -199,7 +199,7 @@ eventRouter.get('/:eventId/posts', async (req, res) => {
         const posts = await eventController.getPosts(eventId);
         res.json(posts);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -214,7 +214,7 @@ eventRouter.put("/:eventId/report", ensureLoggedIn, async (req, res) => {
         logger.info(`User ${(req.user as User).username} reported event with id ${eventId}`);
         res.json(report);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -226,7 +226,7 @@ eventRouter.get("/:eventId/reports", ensureLoggedIn, hasAdminRights, async (req,
         const reports = await eventController.getReports(eventId);
         res.json(reports);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -238,7 +238,7 @@ eventRouter.get('/:eventId/owner', async (req, res) => {
         const owners = await eventController.getOwner(eventId);
         res.json(owners);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -250,7 +250,7 @@ eventRouter.get('/:eventId/is-owner', async (req, res) => {
         const isMember = await eventController.isOwner((req.user as User).id, eventId);
         res.json(isMember);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -262,7 +262,7 @@ eventRouter.get('/:eventId/is-member', async (req, res) => {
         const isMember = await eventController.isMember((req.user as User).id, eventId);
         res.json(isMember);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -273,7 +273,7 @@ eventRouter.get('/:eventId/profil', async (req, res) => {
         const events = await eventController.getProfil(req.params.eventId);
         res.json(events);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -284,7 +284,7 @@ eventRouter.get('/:eventId/category', async (req, res) => {
         const category = await eventController.getCategory(req.params.eventId);
         res.json(category);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -295,7 +295,7 @@ eventRouter.get('/:eventId/organisation', async (req, res) => {
         const organisation = await eventController.getOrganisation(req.params.eventId);
         res.json(organisation);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });

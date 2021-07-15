@@ -14,7 +14,7 @@ friendshipRouter.get("/sent-friendship-request", ensureLoggedIn, async (req, res
         const friendship = await friendshipController.sentFriendshipRequest(username);
         res.json(friendship);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -26,7 +26,7 @@ friendshipRouter.get("/received-friendship-request", ensureLoggedIn, async (req,
         const friendship = await friendshipController.receivedFriendshipRequest(username);
         res.json(friendship);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -41,7 +41,7 @@ friendshipRouter.post("/:username", ensureLoggedIn, async (req, res) => {
         logger.info(`User ${(req.user as User).username} has sent a friend request to user ${username}`);
         res.json(friendship);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -54,7 +54,7 @@ friendshipRouter.delete("/:username/cancel", ensureLoggedIn, async (req, res) =>
         logger.info(`User ${(req.user as User).username} has canceled the friend request sent to user ${username}`);
         res.json(friendship);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -67,7 +67,7 @@ friendshipRouter.delete("/:username/reject", ensureLoggedIn, async (req, res) =>
         logger.info(`User ${(req.user as User).username} has rejected the friend request sent by user ${username}`);
         res.json(friendship);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -82,7 +82,7 @@ friendshipRouter.put("/:username", ensureLoggedIn, async (req, res) => {
         logger.info(`User ${(req.user as User).username} has accepted the friend request sent by user ${username}`);
         res.json(friendship);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -95,7 +95,7 @@ friendshipRouter.delete("/:username/remove", ensureLoggedIn, async (req, res) =>
         logger.info(`User ${(req.user as User).username} has removed user ${username} from his friends list`);
         res.json(friendship);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -107,7 +107,7 @@ friendshipRouter.get("/:username/friendship-status", ensureLoggedIn, async (req,
         const isFriendshipRequested = await friendshipController.isFriendshipRequested((req.user as User).username, username);
         res.json(isFriendshipRequested);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });

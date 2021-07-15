@@ -14,7 +14,7 @@ certificationRouter.get("/:certificateId", ensureLoggedIn, hasAdminRights, async
         const certificationRequest = await certificationController.getById(certificateId);
         res.json(certificationRequest);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -25,7 +25,7 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
         const certificationRequests = await certificationController.getAll();
         res.json(certificationRequests);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -37,7 +37,7 @@ certificationRouter.get("/request/:requestId", ensureLoggedIn, hasAdminRights, a
         const certificationRequest = await certificationController.getRequestById(requestId);
         res.json(certificationRequest);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -48,7 +48,7 @@ certificationRouter.get("/requests", ensureLoggedIn, hasAdminRights, async (req,
         const certificationRequests = await certificationController.getAllRequests();
         res.json(certificationRequests);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -61,7 +61,7 @@ certificationRouter.put("/request/:requestId/approve", ensureLoggedIn, hasAdminR
         logger.info(`User ${(req.user as User).username} approved certification request with id ${requestId}`);
         res.json(certification);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -74,7 +74,7 @@ certificationRouter.delete("/request/:requestId", ensureLoggedIn, hasAdminRights
         logger.info(`User ${(req.user as User).username} rejected certification request with id ${requestId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -86,7 +86,7 @@ certificationRouter.post("/request", ensureLoggedIn, async (req, res) => {
         logger.info(`User ${(req.user as User).username} requested a certification`);
         res.json(certificationRequest);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -94,12 +94,13 @@ certificationRouter.post("/request", ensureLoggedIn, async (req, res) => {
 certificationRouter.delete("/:certificationId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
         const certificationId = req.params.certificationId;
+        console.log(certificationId)
         const certificationController = CertificationController.getInstance();
         await certificationController.revokeCertificate(certificationId);
         logger.info(`User ${(req.user as User).username} revoked certification request with id ${certificationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });

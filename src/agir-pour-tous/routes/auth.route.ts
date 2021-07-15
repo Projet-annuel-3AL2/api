@@ -18,7 +18,7 @@ authRouter.post('/register', ensureLoggedOut, async (req, res,next) => {
         logger.info(`Registering user with username: ${req.body.username}`);
         next();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 },
@@ -34,7 +34,7 @@ authRouter.get("/forgot-password/:username", ensureLoggedOut, async (req, res) =
         logger.info(`User ${req.body.username} asked password recovery`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -47,7 +47,7 @@ authRouter.get("/is-valid-token/:username/:resetToken", ensureLoggedOut, async (
         const isValid = await authController.isValidToken(resetToken, username);
         res.json(isValid);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -62,7 +62,7 @@ authRouter.post("/reset-password/:username/:resetToken", ensureLoggedOut, isVali
         logger.info(`User ${req.body.username} reset his password`);
         res.end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
