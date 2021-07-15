@@ -132,7 +132,7 @@ export class EventController {
             .getMany();
     }
 
-    public async isOwner(eventId:string, userId:string):Promise<boolean>{
+    public async isOwner(userId:string, eventId:string):Promise<boolean>{
         return (await this.getOwners(eventId)).some(user => user.id === userId);
     }
 
