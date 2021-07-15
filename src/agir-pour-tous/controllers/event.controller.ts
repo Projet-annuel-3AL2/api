@@ -123,7 +123,9 @@ export class EventController {
 
     public async getPosts(eventId: string): Promise<Post[]> {
         return await getRepository(Post).createQueryBuilder()
-            .leftJoin("Post.sharedEvent", "Event")
+            .leftJoinAndSelect("Post.creator", "User")
+            .leftJoinAndSelect("User.certification", "Cert")
+            .leftJoinAndSelect("Post.sharedEvent", "Event")
             .where("Event.id=:eventId", {eventId})
             .getMany();
     }
@@ -140,6 +142,9 @@ export class EventController {
             .getMany();
     }
 
+    public async isOwner(userId:string, eventId:string):Promise<boolean>{
+        return (await this.getOwners(eventId)).some(user => user.id === userId);
+    }
 
     public async getOwners(eventId: string): Promise<User[]> {
         return (await this.getOrganisationOwners(eventId))
@@ -168,7 +173,7 @@ export class EventController {
             .leftJoin("Event.participants", "User")
             .where("Event.id=:eventId", {eventId})
             .andWhere("User.id=:userId", {userId})
-            .getOne() !== undefined || (await this.getOwners(eventId)).some(user => user.id === userId));
+            .getOne() !== undefined);
     }
 
     public async getSuggestion(): Promise<Event[]> {

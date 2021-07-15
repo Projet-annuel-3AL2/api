@@ -4,6 +4,7 @@ import express, {Express} from "express";
 import {buildOrgAppRoutes} from "./organization-app/routes/index.route";
 import {buildAPTRoutes} from "./agir-pour-tous/routes/index.route";
 import {createConnection} from "typeorm";
+import {logger} from "./agir-pour-tous/config/logging.config";
 
 config();
 createConnection().then(() => {
@@ -16,6 +17,6 @@ createConnection().then(() => {
     app.use("/org-app", buildOrgAppRoutes());
     const port = process.env.PORT || 4500;
     app.listen(port, function () {
-        console.log(`Listening on ${port}...`);
+        logger.info(`Listening on port ${port}...`);
     });
-}).catch((err) => console.log(err));
+}).catch((err) => logger.error(err));
