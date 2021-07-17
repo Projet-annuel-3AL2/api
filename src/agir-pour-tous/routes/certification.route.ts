@@ -7,6 +7,17 @@ import {logger} from "../config/logging.config";
 
 const certificationRouter = express.Router();
 
+certificationRouter.get("/requests", ensureLoggedIn, async (req, res) => {
+    try {
+        const certificationController = CertificationController.getInstance();
+        const certificationRequests = await certificationController.getAllRequests();
+        res.json(certificationRequests);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(404).json(error);
+    }
+});
+
 // TODO : hasAdminRights ne fonctionne pas
 certificationRouter.get("/:certificateId", ensureLoggedIn, hasAdminRights, async (req, res) => {
     try {
@@ -37,17 +48,6 @@ certificationRouter.get("/request/:requestId", ensureLoggedIn, hasAdminRights, a
         const certificationController = CertificationController.getInstance();
         const certificationRequest = await certificationController.getRequestById(requestId);
         res.json(certificationRequest);
-    } catch (error) {
-        logger.error(`${req.route.path} \n ${error}`);
-        res.status(404).json(error);
-    }
-});
-
-certificationRouter.get("/requests", ensureLoggedIn, async (req, res) => {
-    try {
-        const certificationController = CertificationController.getInstance();
-        const certificationRequests = await certificationController.getAllRequests();
-        res.json(certificationRequests);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
