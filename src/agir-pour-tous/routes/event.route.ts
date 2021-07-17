@@ -301,7 +301,7 @@ eventRouter.get("/reports/all-event", ensureLoggedIn, isSuperAdmin, async (req, 
     }
 });
 
-eventRouter.get("/count-report/:eventId", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+eventRouter.get("/:eventId/count-report", ensureLoggedIn, isSuperAdmin, async (req, res) => {
     try {
         const eventId = req.params.eventId
         const eventController = EventController.getInstance();

@@ -217,4 +217,11 @@ export class UserController {
             .where("ReportedUser.id =:userId", {userId})
             .getCount();
     }
+
+    async deleteReport(reportId: any) {
+        return await getRepository(Report).createQueryBuilder()
+            .where("Report.id=:reportId", {reportId})
+            .softDelete()
+            .execute();
+    }
 }

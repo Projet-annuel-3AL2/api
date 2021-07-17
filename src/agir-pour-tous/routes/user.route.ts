@@ -262,6 +262,19 @@ userRouter.get("/count-report/:userId", ensureLoggedIn, isSuperAdmin, async (req
     }
 });
 
+userRouter.delete("/report/:reportId", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const reportId = req.params.reportId;
+        const userController = UserController.getInstance();
+        await userController.deleteReport(reportId);
+        res.status(204).end();
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+
 export {
     userRouter
 }

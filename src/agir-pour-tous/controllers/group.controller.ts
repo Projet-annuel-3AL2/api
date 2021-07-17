@@ -78,4 +78,18 @@ export class GroupController {
             .where("ReportedGroup.id=:groupId", {groupId})
             .getMany();
     }
+
+    async getAllReport(): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedGroup", "ReportedGroup")
+            .where("Report.reportedGroup !== null")
+            .getMany();
+    }
+
+    async countReport(groupId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedGroup", "ReportedGroup")
+            .where("ReportedGroup.id =:groupId", {groupId})
+            .getCount();
+    }
 }
