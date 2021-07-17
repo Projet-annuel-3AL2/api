@@ -52,7 +52,7 @@ organisationRouter.get('/', async (req, res) => {
         const organisations = await organisationController.getAll();
         res.json(organisations);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -64,7 +64,7 @@ organisationRouter.get('/:organisationId', async (req, res) => {
         const organisation = await organisationController.getById(organisationId);
         res.json(organisation);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -76,7 +76,7 @@ organisationRouter.get('/:organisationId/posts', async (req, res) => {
         const posts = await organisationController.getPosts(organisationId);
         res.json(posts);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -90,7 +90,7 @@ organisationRouter.put('/:organisationId/post',/* isMember,*/ async (req, res) =
         logger.info(`User ${(req.user as User).username} added a post to an organisation with id ${organisationId}`);
         res.json(posts);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -103,7 +103,7 @@ organisationRouter.delete('/:organisationId', ensureLoggedIn, isOrganisationOwne
         logger.info(`User ${(req.user as User).username} deleted an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -116,7 +116,7 @@ organisationRouter.put('/:organisationId', ensureLoggedIn, isOrganisationAdmin, 
         logger.info(`User ${(req.user as User).username} modified an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -128,7 +128,7 @@ organisationRouter.get('/:organisationId/followers', async (req, res) => {
         const followers = await organisationController.getFollowers(organisationId);
         res.json(followers);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -141,7 +141,7 @@ organisationRouter.put('/:organisationId/follow', ensureLoggedIn, async (req, re
         logger.info(`User ${(req.user as User).username} started following an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -154,7 +154,7 @@ organisationRouter.delete('/:organisationId/unfollow', ensureLoggedIn, async (re
         logger.info(`User ${(req.user as User).username} unfollowed an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -169,7 +169,7 @@ organisationRouter.put("/:organisationId/report", ensureLoggedIn, async (req, re
         logger.info(`User ${(req.user as User).username} reported an organisation with id ${organisationId}`);
         res.json(report);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -181,7 +181,7 @@ organisationRouter.get("/:organisationId/reports", ensureLoggedIn, hasAdminRight
         const reports = await organisationController.getReports(organisationId);
         res.json(reports);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -193,7 +193,7 @@ organisationRouter.get("/:organisationId/members", ensureLoggedIn, async (req, r
         const members = await organisationController.getMembers(organisationId);
         res.json(members);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -205,7 +205,7 @@ organisationRouter.get("/:organisationId/membership", ensureLoggedIn, async (req
         const members = await organisationController.getMembership(organisationId);
         res.json(members);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -219,7 +219,7 @@ organisationRouter.delete("/:organisationId/member/:userId", ensureLoggedIn, isO
         logger.info(`User ${(req.user as User).username} removed a member from an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -233,7 +233,7 @@ organisationRouter.delete("/:organisationId/leave", ensureLoggedIn, async (req, 
         logger.info(`User ${(req.user as User).username} has left an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -247,7 +247,7 @@ organisationRouter.get('/:organisationId/is-admin', ensureLoggedIn, async (req, 
         const isAdmin = await organisationController.isAdmin(organisationId, userId);
         res.json(isAdmin);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -260,7 +260,7 @@ organisationRouter.get('/:organisationId/is-owner', ensureLoggedIn, async (req, 
         const isOwner = await organisationController.isOwner(organisationId, userId);
         res.json(isOwner);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -275,7 +275,7 @@ organisationRouter.get('/:organisationId/is-user-owner/:username', ensureLoggedI
         const isOwner = await organisationController.isOwner(organisationId, user.id);
         res.json(isOwner);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -289,7 +289,7 @@ organisationRouter.put('/:organisationId/add-admin/:userId', ensureLoggedIn, isN
         logger.info(`User ${(req.user as User).username} has added the user with id ${userId} as an administrator of an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -303,7 +303,7 @@ organisationRouter.put('/:organisationId/remove-admin/:userId', ensureLoggedIn, 
         logger.info(`User ${(req.user as User).username} has removed the user with id ${userId} as an administrator of an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -317,7 +317,7 @@ organisationRouter.post('/:organisationId/invite/:userId', ensureLoggedIn, async
         logger.info(`User ${(req.user as User).username} has invited the user with id ${userId} as member of an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -331,7 +331,7 @@ organisationRouter.delete('/:organisationId/cancel/:userId', ensureLoggedIn, asy
         logger.info(`User ${(req.user as User).username} has canceled an invitation to the user with id ${userId} as member of an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -347,7 +347,7 @@ organisationRouter.put('/:organisationId/invite/accept', ensureLoggedIn, async (
 
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -361,7 +361,7 @@ organisationRouter.delete('/:organisationId/invite/reject', ensureLoggedIn, asyn
         logger.info(`User ${(req.user as User).username} has rejected an invitation to an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -374,7 +374,7 @@ organisationRouter.get('/:organisationId/is-user-admin/:username', ensureLoggedI
         const isAdmin = await organisationController.isAdmin(organisationId, username);
         res.json(isAdmin);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -386,7 +386,7 @@ organisationRouter.post('/request-creation', ensureLoggedIn, async (req, res) =>
         logger.info(`User ${(req.user as User).username} has requested the creation of an organisation with name ${req.body.name}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -421,7 +421,7 @@ organisationRouter.put('/:requestId/accept', ensureLoggedIn, hasAdminRights, asy
         logger.info(`User ${(req.user as User).username} has accepted the creation request of an organisation with name ${req.body.name}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -434,7 +434,7 @@ organisationRouter.delete('/:requestId/reject', ensureLoggedIn, hasAdminRights, 
         logger.info(`User ${(req.user as User).username} has rejected the creation of an organisation with name ${req.body.name}`);
         res.status(204).end();
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -478,7 +478,7 @@ organisationRouter.get("/suggestion/:id", async (req, res) => {
         const organisations = await organisationController.getSuggestionOrganisation();
         res.json(organisations);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });

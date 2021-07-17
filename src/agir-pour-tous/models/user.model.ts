@@ -99,7 +99,7 @@ export class User implements UserProps {
     @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true})
     @JoinColumn()
     bannerPicture: Media;
-    @OneToOne(() => Certification, certification => certification.user, {cascade: true, eager:true})
+    @OneToOne(() => Certification, certification => certification.user, {cascade: true, eager:true, onDelete:"SET NULL"})
     @JoinColumn()
     certification: Certification;
     @OneToOne(() => CertificationRequest, certification => certification.user, {cascade: true})

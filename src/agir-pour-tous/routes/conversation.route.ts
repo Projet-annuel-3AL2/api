@@ -12,7 +12,7 @@ conversationRouter.get("/:conversationId", async (req, res) => {
         const conversation = await conversationController.getById(conversationId);
         res.json(conversation);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -24,7 +24,7 @@ conversationRouter.get("/:conversationId/messages", async (req, res) => {
         const messages = await conversationController.getMessages(conversationId);
         res.json(messages);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -36,7 +36,7 @@ conversationRouter.get("/:conversationId/last-message", async (req, res) => {
         const message = await conversationController.getLastMessage(conversationId);
         res.json(message);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -49,7 +49,7 @@ conversationRouter.post("/:conversationId/message", async (req, res) => {
         const message = await conversationController.sendMessage(req.user as User, conversation, req.body);
         res.json(message);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -61,7 +61,7 @@ conversationRouter.get("/:conversationId/members", async (req, res) => {
         const members = await conversationController.getMembers(conversationId);
         res.json(members);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
