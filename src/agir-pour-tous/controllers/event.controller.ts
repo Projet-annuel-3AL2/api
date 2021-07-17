@@ -103,7 +103,6 @@ export class EventController {
                 .andWhere("Category.id=:categoryId", {categoryId})
 
         }
-        console.log(await searchQuery.getMany())
         return await searchQuery.getMany();
     }
 

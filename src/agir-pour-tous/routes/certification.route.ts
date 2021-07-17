@@ -95,7 +95,6 @@ certificationRouter.post("/request", ensureLoggedIn, async (req, res) => {
 certificationRouter.delete("/:certificationId", ensureLoggedIn, async (req, res) => {
     try {
         const certificationId = req.params.certificationId;
-        console.log(certificationId)
         const certificationController = CertificationController.getInstance();
         await certificationController.revokeCertificate(certificationId);
         logger.info(`User ${(req.user as User).username} revoked certification request with id ${certificationId}`);
