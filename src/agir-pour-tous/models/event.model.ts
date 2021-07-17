@@ -73,9 +73,9 @@ export class Event {
     @OneToMany(() => Post, post => post.sharedEvent)
     posts: Post[];
     @IsNotEmpty()
-    @ManyToOne(() => Category, category => category.events, {nullable: false})
+    @ManyToOne(() => Category, category => category.events, {nullable: false, eager: true})
     category: Category;
-    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true})
+    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true, eager: true})
     @JoinColumn()
     picture: Media;
     @OneToMany(() => Report, report => report.reportedEvent)
