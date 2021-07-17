@@ -1,6 +1,6 @@
 import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
-import {hasAdminRights, isNotAskedUser} from "../middlewares/user.middleware";
+import {hasAdminRights, isNotAskedUser, isSuperAdmin} from "../middlewares/user.middleware";
 import {User} from "../models/user.model";
 import {OrganisationController} from "../controllers/organisation.controller";
 import {
@@ -14,6 +14,9 @@ import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {isPicture} from "../../utils/file.utils";
 import {MediaController} from "../controllers/media.controller";
+import {PostController} from "../controllers/post.controller";
+import {EventController} from "../controllers/event.controller";
+import {eventRouter} from "./event.route";
 
 const organisationRouter = express.Router();
 
@@ -463,6 +466,29 @@ organisationRouter.delete("/:organisationId/banner-picture", ensureLoggedIn, asy
         const profilePicture = mediaController.create(req.file);
         await organisationController.removeBannerPicture(organisationId);
         res.json(profilePicture);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+organisationRouter.get("/reports/all-organisation", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const organisationController = OrganisationController.getInstance();
+        const reports = await organisationController.getAllReport();
+        res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+organisationRouter.get("/count-report/:organisationId", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = OrganisationController.getInstance();
+        const reports = await organisationController.countReport(organisationId);
+        res.json(reports);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);

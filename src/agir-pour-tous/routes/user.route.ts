@@ -1,11 +1,12 @@
 import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {UserController} from "../controllers/user.controller";
-import {hasAdminRights, isNotAskedUser} from "../middlewares/user.middleware";
+import {hasAdminRights, isNotAskedUser, isSuperAdmin} from "../middlewares/user.middleware";
 import {User, UserProps} from "../models/user.model";
 import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {MediaController} from "../controllers/media.controller";
+import {PostController} from "../controllers/post.controller";
 
 const userRouter = express.Router();
 
@@ -232,6 +233,29 @@ userRouter.get("/:username/friends", ensureLoggedIn, async (req, res) => {
         const userController = UserController.getInstance();
         const friends = await userController.getFriends(username);
         res.json(friends);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+userRouter.get("/reports/all-users", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const userController = UserController.getInstance();
+        const reports = await userController.getAllReport();
+        res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+userRouter.get("/count-report/:userId", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const userController = UserController.getInstance();
+        const reports = await userController.countReport(userId);
+        res.json(reports);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
