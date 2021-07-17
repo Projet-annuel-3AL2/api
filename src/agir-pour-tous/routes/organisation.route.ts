@@ -449,9 +449,9 @@ organisationRouter.delete("/:organisationId/profile-picture", ensureLoggedIn, as
         const profilePicture = mediaController.create(req.file);
         await organisationController.removeProfilePicture(organisationId);
         res.json(profilePicture);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
     }
 });
 
@@ -463,26 +463,11 @@ organisationRouter.delete("/:organisationId/banner-picture", ensureLoggedIn, asy
         const profilePicture = mediaController.create(req.file);
         await organisationController.removeBannerPicture(organisationId);
         res.json(profilePicture);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
-    }
-});
-
-
-/*
-organisationRouter.get("/suggestion/:id", async (req, res) => {
-    try {
-        const id = req.params.id;
-        const organisationController = await OrganisationController.getInstance();
-        const organisations = await organisationController.getSuggestionOrganisation();
-        res.json(organisations);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
-*/
 
 export {
     organisationRouter
