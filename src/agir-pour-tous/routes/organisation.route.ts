@@ -396,9 +396,9 @@ organisationRouter.get('/create-requests', ensureLoggedIn, hasAdminRights, async
         const organisationController = await OrganisationController.getInstance();
         const organisationRequest = await organisationController.getCreationRequests();
         res.json(organisationRequest);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
     }
 });
 
@@ -407,9 +407,9 @@ organisationRouter.get('/:organisationId/events', ensureLoggedIn, async (req, re
         const organisationController = await OrganisationController.getInstance();
         const events = await organisationController.getRelatedEvent(req.params.organisationId);
         res.json(events);
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
     }
 });
 

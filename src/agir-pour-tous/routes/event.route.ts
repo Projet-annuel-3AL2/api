@@ -47,11 +47,6 @@ eventRouter.post('/:eventId/join', ensureLoggedIn, isNotEventOrganiser, isNotMem
     } catch (error) {
         logger.error({route: req.route, error});
         res.status(400).json(error);
-        await eventController.addParticipant(eventId, userId);
-        res.status(204).end();
-    } catch (err) {
-        logger.error(err);
-        res.status(400).json(err);
     }
 });
 
