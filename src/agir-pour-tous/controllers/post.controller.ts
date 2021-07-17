@@ -185,4 +185,18 @@ export class PostController {
             .where("User.id=:userId", {userId})
             .getMany();
     }
+
+    async getAllReport() {
+        await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedPost", "reportedPost")
+            .where("Report.reportedPost !== null")
+            .getMany()
+    }
+
+    async countReport(postId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedPost", "ReportedPost")
+            .where("ReportedPost.id =:postId", {postId})
+            .getCount();
+    }
 }

@@ -207,4 +207,18 @@ export class EventController {
             .where("Event.id=:eventId",{eventId})
             .getOne();
     }
+
+    async getAllReport(): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedEvent", "ReportedEvent")
+            .where("Report.reportedEvent !== null")
+            .getMany();
+    }
+
+    async countReport(eventId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedEvent", "ReportedEvent")
+            .where("ReportedEvent.id =:eventId", {eventId})
+            .getCount();
+    }
 }

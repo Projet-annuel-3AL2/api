@@ -203,4 +203,18 @@ export class UserController {
             .of(userId)
             .set(null);
     }
+
+    async getAllReport() {
+        await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedUser", "reportedUser")
+            .where("Report.reportedUser !== null")
+            .getMany()
+    }
+
+    async countReport(userId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedUser", "ReportedUser")
+            .where("ReportedUser.id =:userId", {userId})
+            .getCount();
+    }
 }

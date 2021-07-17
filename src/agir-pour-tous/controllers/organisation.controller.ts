@@ -291,4 +291,19 @@ export class OrganisationController {
             .of(organisationId)
             .set(null);
     }
+
+    async getAllReport() {
+        await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedEvent", "reportedEvent")
+            .where("Report.reportedEvent !== null")
+            .getMany()
+    }
+
+    async countReport(organisationId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedOrganisation", "ReportedOrganisation")
+            .where("ReportedOrganisation.id =:organisationId", {organisationId})
+            .getCount();
+    }
+
 }
