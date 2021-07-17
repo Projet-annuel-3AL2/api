@@ -98,34 +98,6 @@ eventRouter.get('/:eventId/participants', async (req, res) => {
     }
 });
 
-eventRouter.get('/getEventWithUserLocation/:userLocationX/:userLocationY/:range', async (req, res) => {
-    try {
-        const userLocationX = req.params.userLocationX;
-        const userLocationY = req.params.userLocationY;
-        const range = req.params.range;
-        const eventController = await EventController.getInstance();
-        let events = await eventController.getEventWithLocation(Number(userLocationX), Number(userLocationY), Number(range));
-        res.json(events);
-    } catch (error) {
-        logger.error(`${req.route.path} \n ${error}`);
-        res.status(400).json(error);
-    }
-});
-
-eventRouter.get('/getEventWithUserLocationNotEnd/:userLocationX/:userLocationY/:range', async (req, res) => {
-    try {
-        const userLocationX = req.params.userLocationX;
-        const userLocationY = req.params.userLocationY;
-        const range = req.params.range;
-        const eventController = await EventController.getInstance();
-        let events = await eventController.getEventWithLocationNotEnd(Number(userLocationX), Number(userLocationY), Number(range));
-        res.status(200).json(events);
-    } catch (error) {
-        logger.error(`${req.route.path} \n ${error}`);
-        res.status(400).json(error);
-    }
-});
-
 eventRouter.get('/search/:name', async (req, res) => {
     try {
         const name = req.params.name;
@@ -297,6 +269,23 @@ eventRouter.get('/:eventId/organisation', async (req, res) => {
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
+    }
+});
+
+eventRouter.get('/search/:userLocationX/:userLocationY/:range/:startDate/:endDate/:categoryId', async (req, res) => {
+    try {
+        const userLocationX = req.params.userLocationX;
+        const userLocationY = req.params.userLocationY;
+        const range = req.params.range;
+        const startDate = req.params.startDate;
+        const endDate = req.params.endDate;
+        const categoryId = req.params.categoryId;
+        const eventController = await EventController.getInstance();
+        const events = await eventController.getEventsSearch(userLocationX, userLocationY, range, startDate, endDate,categoryId);
+        res.json(events);
+    } catch (error) {
+        logger.error({route: req.route, error});
+        res.status(400).json(error);
     }
 });
 

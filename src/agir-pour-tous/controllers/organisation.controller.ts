@@ -9,6 +9,8 @@ import {
     OrganisationCreationRequest,
     OrganisationCreationRequestProps
 } from "../models/organisation_creation_request.model";
+import {Event} from "../models/event.model";
+import {Media} from "../models/media.model";
 
 export class OrganisationController {
 
@@ -203,12 +205,18 @@ export class OrganisationController {
         return getRepository(OrganisationCreationRequest).save(request);
     }
 
-    public async getCreationRequests(): Promise<OrganisationCreationRequest> {
-        return undefined;
+    public async getCreationRequests(): Promise<OrganisationCreationRequest[]> {
+        return getRepository(OrganisationCreationRequest).find({
+            relations: ['user']
+        });
     }
 
     public async getCreationRequestById(organisationCreationRequestId: string): Promise<OrganisationCreationRequest> {
-        return await getRepository(OrganisationCreationRequest).findOneOrFail(organisationCreationRequestId);
+        return await getRepository(OrganisationCreationRequest).findOne({
+            where: {
+                id:organisationCreationRequestId
+            }
+        });
     }
 
     public async acceptCreationDemand(organisationCreationRequestId: string): Promise<Organisation> {
@@ -244,5 +252,43 @@ export class OrganisationController {
             .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
             .where("Organisation.id=:organisationId", {organisationId})
             .getMany();
+    }
+
+    async getRelatedEvent(organisationId: string): Promise<Event[]> {
+        return getRepository(Event)
+            .createQueryBuilder()
+            .leftJoinAndSelect("Event.organisation", "Organisation")
+            .leftJoinAndSelect("Event.user", "User")
+            .leftJoinAndSelect("Event.category", "Category")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .getMany();
+    }
+
+    async setProfilePicture(organisationId: string, profilePicture: Promise<Media>) {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("profilePicture")
+            .of(organisationId)
+            .set(profilePicture);
+    }
+
+    async setBannerPicture(organisationId: string, profilePicture: Promise<Media>) {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("bannerPicture")
+            .of(organisationId)
+            .set(profilePicture);
+    }
+
+    async removeProfilePicture(organisationId: any) {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("bannerPicture")
+            .of(organisationId)
+            .set(null);
+    }
+
+    async removeBannerPicture(organisationId: any) {
+        await this.organisationRepository.createQueryBuilder()
+            .relation("bannerPicture")
+            .of(organisationId)
+            .set(null);
     }
 }

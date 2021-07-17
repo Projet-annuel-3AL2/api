@@ -31,7 +31,9 @@ export class CertificationController {
     }
 
     public async getAll(): Promise<Certification[]> {
-        return this.certificationRepository.find();
+        return this.certificationRepository.find({
+            relations: ['user', 'issuer']
+        });
     }
 
     public async getRequestById(certificationRequestId: string): Promise<CertificationRequest> {
@@ -39,7 +41,9 @@ export class CertificationController {
     }
 
     public async getAllRequests(): Promise<CertificationRequest[]> {
-        return this.certificationRequestRepository.find();
+        return this.certificationRequestRepository.find({
+            relations: ['user']
+        });
     }
 
     public async requestCertification(user: User, props: CertificationRequestProps): Promise<CertificationRequest> {
@@ -55,6 +59,11 @@ export class CertificationController {
             .where("CertificationRequest.id=:certificationRequestId", {certificationRequestId})
             .getOne();
         const certificate = this.certificationRepository.create({user, issuer, request});
+        await this.certificationRequestRepository.createQueryBuilder()
+            .where("id=:certificationRequestId", {certificationRequestId})
+            .update()
+            .set({certificationRequestStatus: 1})
+            .execute();
         return await this.certificationRepository.save(certificate);
     }
 
@@ -63,9 +72,19 @@ export class CertificationController {
             .update()
             .set({certificationRequestStatus: CertificationRequestStatus.REJECTED})
             .where("id=:certificationRequestId", {certificationRequestId});
+        await this.certificationRequestRepository.createQueryBuilder()
+            .where("id=:certificationRequestId", {certificationRequestId})
+            .update()
+            .set({certificationRequestStatus: 1})
+            .execute();
     }
 
     public async revokeCertificate(certificateId: string): Promise<void> {
+        await getRepository(User).createQueryBuilder()
+            .where("certificationId=:certificateId", {certificateId})
+            .update()
+            .set({certification: null})
+            .execute();
         await this.certificationRepository.delete(certificateId);
     }
 }
