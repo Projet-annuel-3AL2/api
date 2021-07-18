@@ -462,10 +462,9 @@ organisationRouter.delete("/:organisationId/banner-picture", ensureLoggedIn, asy
     try {
         const organisationId = req.params.organisationId;
         const organisationController = OrganisationController.getInstance();
-        const mediaController = MediaController.getInstance();
-        const profilePicture = mediaController.create(req.file);
         await organisationController.removeBannerPicture(organisationId);
-        res.json(profilePicture);
+        logger.info(`User ${(req.user as User).username} has deleted BannerPicture of organisation "${organisationId}"`);
+        res.status(204).end();
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
@@ -489,6 +488,17 @@ organisationRouter.get("/:organisationId/count-report", ensureLoggedIn, isSuperA
         const organisationController = OrganisationController.getInstance();
         const reports = await organisationController.countReport(organisationId);
         res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+organisationRouter.get("/membership/where-admin", ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationController = OrganisationController.getInstance();
+        const organisationMembership = await organisationController.getOrganisationWhereAdmin((req.user as User).id);
+        res.json(organisationMembership);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);

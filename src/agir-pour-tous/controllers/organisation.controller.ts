@@ -128,6 +128,7 @@ export class OrganisationController {
             .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
+            .andWhere("OrganisationMembership.isAdmin=true")
             .getOne();
         return membership !== undefined;
     }
@@ -138,6 +139,7 @@ export class OrganisationController {
             .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
+            .andWhere("OrganisationMembership.isOwner=true")
             .getOne();
         return membership !== undefined;
     }
@@ -216,7 +218,7 @@ export class OrganisationController {
     public async getCreationRequestById(organisationCreationRequestId: string): Promise<OrganisationCreationRequest> {
         return await getRepository(OrganisationCreationRequest).findOne({
             where: {
-                id:organisationCreationRequestId
+                id: organisationCreationRequestId
             }
         });
     }
@@ -309,4 +311,12 @@ export class OrganisationController {
             .getCount();
     }
 
+    async getOrganisationWhereAdmin(userId: string): Promise<OrganisationMembership[]> {
+        return  await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
+            .where("User.id=:userId", {userId})
+            .andWhere("OrganisationMembership.isAdmin=true OR OrganisationMembership.isOwner=true")
+            .getMany();
+    }
 }
