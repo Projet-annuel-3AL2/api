@@ -250,7 +250,7 @@ userRouter.get("/reports/all-users", ensureLoggedIn, isSuperAdmin, async (req, r
     }
 });
 
-userRouter.get("/count-report/:userId", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+userRouter.get("/:userId/count-report", ensureLoggedIn, isSuperAdmin, async (req, res) => {
     try {
         const userId = req.params.userId;
         const userController = UserController.getInstance();

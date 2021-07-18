@@ -204,16 +204,18 @@ export class UserController {
             .set(null);
     }
 
-    async getAllReport() {
-        await getRepository(Report).createQueryBuilder()
+    async getAllReport(): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.userReporter", "UserReporter")
             .leftJoinAndSelect("Report.reportedUser", "reportedUser")
-            .where("Report.reportedUser !== null")
+            .where("Report.reportedUser is not null")
             .getMany()
     }
 
     async countReport(userId: string) {
         return await getRepository(Report).createQueryBuilder()
             .leftJoinAndSelect("Report.reportedUser", "ReportedUser")
+            .leftJoinAndSelect("Report.userReporter", "UserReporter")
             .where("ReportedUser.id =:userId", {userId})
             .getCount();
     }

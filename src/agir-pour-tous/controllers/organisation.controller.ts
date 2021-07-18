@@ -123,21 +123,23 @@ export class OrganisationController {
     }
 
     public async isAdmin(organisationId: string, userId: string): Promise<boolean> {
-        return (await getRepository(OrganisationMembership).createQueryBuilder()
+        const membership = await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
             .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .getOne()).isAdmin;
+            .getOne();
+        return membership !== undefined;
     }
 
     public async isOwner(organisationId: string, userId: string): Promise<boolean> {
-        return (await getRepository(OrganisationMembership).createQueryBuilder()
+        const membership = await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
             .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .getOne()).isOwner;
+            .getOne();
+        return membership !== undefined;
     }
 
     public async getMember(organisationId: string, userId: string): Promise<OrganisationMembership> {
@@ -292,10 +294,11 @@ export class OrganisationController {
             .set(null);
     }
 
-    async getAllReport() {
-        await getRepository(Report).createQueryBuilder()
-            .leftJoinAndSelect("Report.reportedEvent", "reportedEvent")
-            .where("Report.reportedEvent !== null")
+    async getAllReport(): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedOrganisation", "ReportedOrganisation")
+            .leftJoinAndSelect("Report.userReporter", "UserReporter")
+            .where("Report.reportedOrganisation is not null")
             .getMany()
     }
 

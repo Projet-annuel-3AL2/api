@@ -75,6 +75,8 @@ export class GroupController {
     public async getReports(groupId: string): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
             .leftJoin("Report.reportedGroup", "ReportedGroup")
+            .leftJoinAndSelect("Report.userReporter", "UserReporter")
+
             .where("ReportedGroup.id=:groupId", {groupId})
             .getMany();
     }
@@ -82,7 +84,7 @@ export class GroupController {
     async getAllReport(): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
             .leftJoinAndSelect("Report.reportedGroup", "ReportedGroup")
-            .where("Report.reportedGroup !== null")
+            .where("Report.reportedGroup is not null")
             .getMany();
     }
 

@@ -483,7 +483,7 @@ organisationRouter.get("/reports/all-organisation", ensureLoggedIn, isSuperAdmin
     }
 });
 
-organisationRouter.get("/count-report/:organisationId", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+organisationRouter.get("/:organisationId/count-report", ensureLoggedIn, isSuperAdmin, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = OrganisationController.getInstance();

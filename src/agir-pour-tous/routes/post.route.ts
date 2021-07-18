@@ -237,7 +237,7 @@ postRouter.get("/reports/all-posts", ensureLoggedIn, isSuperAdmin, async (req, r
     }
 });
 
-postRouter.get("/count-report/:postId", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+postRouter.get("/:postId/count-report", ensureLoggedIn, isSuperAdmin, async (req, res) => {
     try {
         const postId = req.params.postId;
         const postController = PostController.getInstance();

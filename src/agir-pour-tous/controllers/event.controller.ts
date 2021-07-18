@@ -211,7 +211,8 @@ export class EventController {
     async getAllReport(): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
             .leftJoinAndSelect("Report.reportedEvent", "ReportedEvent")
-            .where("Report.reportedEvent !== null")
+            .leftJoinAndSelect("Report.userReporter", "UserReporter")
+            .where("Report.reportedEvent is not null")
             .getMany();
     }
 
