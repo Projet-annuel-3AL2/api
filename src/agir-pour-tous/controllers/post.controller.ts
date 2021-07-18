@@ -188,7 +188,8 @@ export class PostController {
 
     async getAllReport(): Promise<Report[]> {
         return await getRepository(Report).createQueryBuilder()
-            .leftJoinAndSelect("Report.reportedPost", "reportedPost")
+            .leftJoinAndSelect("Report.reportedPost", "ReportedPost")
+            .leftJoinAndSelect("ReportedPost.creator", "Creator")
             .leftJoinAndSelect("Report.userReporter", "UserReporter")
             .where("Report.reportedPost is not null")
             .getMany()
