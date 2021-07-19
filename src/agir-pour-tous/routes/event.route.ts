@@ -273,14 +273,15 @@ eventRouter.get('/:eventId/organisation', async (req, res) => {
     }
 });
 
-eventRouter.get('/search/:userLocationX/:userLocationY/:range/:startDate/:endDate/:categoryId', async (req, res) => {
+eventRouter.post('/search-event', async (req, res) => {
     try {
-        const userLocationX = req.params.userLocationX;
-        const userLocationY = req.params.userLocationY;
-        const range = req.params.range;
-        const startDate = req.params.startDate;
-        const endDate = req.params.endDate;
-        const categoryId = req.params.categoryId;
+        console.log(req.body)
+        const userLocationX = req.body.longitude;
+        const userLocationY = req.body.latitude;
+        const range = req.body.range;
+        const startDate = req.body.startDate;
+        const endDate = req.body.endDate;
+        const categoryId = req.body.categoryId;
         const eventController = await EventController.getInstance();
         const events = await eventController.getEventsSearch(userLocationX, userLocationY, range, startDate, endDate,categoryId);
         res.json(events);

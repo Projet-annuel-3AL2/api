@@ -81,7 +81,7 @@ export class EventController {
     async getEventsSearch(userLocationX: string, userLocationY: string, range: string, startDate: any, endDate: string, categoryId: string): Promise<Event[]> {
         const searchQuery: any = this.eventRepository.createQueryBuilder();
 
-        if (userLocationX !== "undefined" && userLocationY !== "undefined" && range !== "undefined") {
+        if (userLocationX !== undefined && userLocationY !== undefined && range !== undefined) {
             const longitude =  Number(userLocationY);
             const latitude = Number(userLocationX);
             const rangeNumber = Number(range);
@@ -92,13 +92,15 @@ export class EventController {
                 latitude
             });
         }
-        if (startDate !== "undefined" && endDate !== "undefined") {
+
+        if (startDate !== null && endDate !== null && startDate !== undefined && endDate !== undefined) {
             const start = new Date(startDate);
             const end = new Date(endDate)
             searchQuery.andWhere("Event.startDate > :start", {start})
                 .andWhere("Event.endDate < :end", {end})
         }
-        if (categoryId !== "undefined") {
+
+        if (categoryId !== undefined) {
             searchQuery.leftJoinAndSelect("Event.category", "Category")
                 .andWhere("Category.id=:categoryId", {categoryId})
 
