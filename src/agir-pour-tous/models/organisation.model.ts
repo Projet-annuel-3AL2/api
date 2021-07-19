@@ -36,7 +36,7 @@ export class Organisation {
     name: string;
     @OneToMany(() => OrganisationMembership, user => user.organisation)
     members: OrganisationMembership[];
-    @ManyToMany(() => User, user => user.organisationInvitations, {cascade: true})
+    @ManyToMany(() => User, user => user.organisationInvitations)
     @JoinTable()
     invitedUsers: User[];
     @ManyToMany(() => User, user => user.followedOrganisations, {cascade: true})

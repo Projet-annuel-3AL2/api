@@ -11,6 +11,7 @@ import {
 } from "../models/organisation_creation_request.model";
 import {Event} from "../models/event.model";
 import {Media} from "../models/media.model";
+import {organisationRouter} from "../routes/organisation.route";
 
 export class OrganisationController {
 
@@ -311,12 +312,28 @@ export class OrganisationController {
             .getCount();
     }
 
-    async getOrganisationWhereAdmin(userId: string): Promise<OrganisationMembership[]> {
-        return  await getRepository(OrganisationMembership).createQueryBuilder()
+    async getOrganisationWhereAdmin(userId: string, username: string): Promise<Organisation[]> {
+        const organisations: Organisation[] = [];
+        const organisationMemberships = await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
             .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("User.id=:userId", {userId})
             .andWhere("OrganisationMembership.isAdmin=true OR OrganisationMembership.isOwner=true")
             .getMany();
+        for (const organisationMembership of organisationMemberships) {
+            const organisationId = organisationMembership.organisation.id
+            if (await getRepository(OrganisationMembership).createQueryBuilder()
+                .leftJoinAndSelect("OrganisationMembership.user", "User")
+                .where("User.username=:username", {username})
+                .getOne() === undefined
+                && await getRepository(Organisation).createQueryBuilder()
+                    .leftJoinAndSelect("Organisation.invitedUsers", "InvitedUser")
+                    .where("InvitedUser.username=:username", {username})
+                    .andWhere("Organisation.id=:organisationId", {organisationId})
+                    .getOne() === undefined ){
+                organisations.push(organisationMembership.organisation)
+            }
+        }
+        return organisations;
     }
 }

@@ -494,10 +494,11 @@ organisationRouter.get("/:organisationId/count-report", ensureLoggedIn, isSuperA
     }
 });
 
-organisationRouter.get("/membership/where-admin", ensureLoggedIn, async (req, res) => {
+organisationRouter.get("/membership/where-admin/:username", ensureLoggedIn, async (req, res) => {
     try {
+        const username = req.params.username;
         const organisationController = OrganisationController.getInstance();
-        const organisationMembership = await organisationController.getOrganisationWhereAdmin((req.user as User).id);
+        const organisationMembership = await organisationController.getOrganisationWhereAdmin((req.user as User).id, username);
         res.json(organisationMembership);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
