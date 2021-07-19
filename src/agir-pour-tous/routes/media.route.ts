@@ -11,7 +11,7 @@ const mediaRouter = express.Router();
         const media = await mediaController.getUserProfilePicture(username);
         res.json(media);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -23,7 +23,7 @@ mediaRouter.get("/user/bannerPicture/:username",async (req, res) => {
         const media = await mediaController.getUserbannerPicture(username);
         res.json(media);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });*/
@@ -35,7 +35,7 @@ mediaRouter.get("/post/:postId",async (req, res) => {
         const media = await mediaController.getPostMedias(postId);
         res.json(media);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });

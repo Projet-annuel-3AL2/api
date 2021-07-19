@@ -9,6 +9,7 @@ import {Category} from "../models/category.model";
 import {Organisation} from "../models/organisation.model";
 
 export class EventController {
+
     private static instance: EventController;
     private eventRepository: Repository<Event>;
     private userRepository: Repository<User>;
@@ -40,12 +41,12 @@ export class EventController {
             where: {
                 endDate: MoreThan(dateNow)
             },
-            relations: ['organisation', 'category', 'user']
+            relations: ['organisation', 'category', 'user', 'picture']
         })
     }
 
     public async create(user: User, props: EventProps) {
-        let event = this.eventRepository.create({...props, user: user, startDate:new Date(props.startDate), endDate: new Date(props.endDate)});
+        let event = await this.eventRepository.create({...props, user: user, startDate:new Date(props.startDate), endDate: new Date(props.endDate)});
         const err = await validate(event, {validationError: {target: false}});
         if (err.length > 0) {
             throw err;
@@ -77,27 +78,33 @@ export class EventController {
             .remove(userId);
     }
 
-    public async getEventWithLocation(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
-        return this.eventRepository.createQueryBuilder()
-            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range", {
-                range,
-                userLocationX,
-                userLocationY
-            })
-            .getMany();
-    };
+    async getEventsSearch(userLocationX: string, userLocationY: string, range: string, startDate: any, endDate: string, categoryId: string): Promise<Event[]> {
+        const searchQuery: any = this.eventRepository.createQueryBuilder();
 
-    public async getEventWithLocationNotEnd(userLocationX: number, userLocationY: number, range: number): Promise<Event[]> {
-        const dateNow = Date.now();
-        return this.eventRepository.createQueryBuilder()
-            .where("1852 * 60 * cbrt(pow((longitude - :userLocationX) * cos(:userLocationY + latitude) / 2) ,2) + pow(latitude - :userLocationY, 2) > :range AND dateEnd >=:dateNow", {
-                range,
-                userLocationX,
-                userLocationY,
-                dateNow
-            })
-            .getMany();
-    };
+        if (userLocationX !== "undefined" && userLocationY !== "undefined" && range !== "undefined") {
+            const longitude =  Number(userLocationY);
+            const latitude = Number(userLocationX);
+            const rangeNumber = Number(range);
+            searchQuery.andWhere("(1852 * 60 * cbrt((Event.longitude - :longitude) * cos(:latitude + Event.latitude) / 2)^2 + ((Event.latitude - :latitude)^ 2)) < :rangeNumber"
+                , {
+                rangeNumber,
+                longitude,
+                latitude
+            });
+        }
+        if (startDate !== "undefined" && endDate !== "undefined") {
+            const start = new Date(startDate);
+            const end = new Date(endDate)
+            searchQuery.andWhere("Event.startDate > :start", {start})
+                .andWhere("Event.endDate < :end", {end})
+        }
+        if (categoryId !== "undefined") {
+            searchQuery.leftJoinAndSelect("Event.category", "Category")
+                .andWhere("Category.id=:categoryId", {categoryId})
+
+        }
+        return await searchQuery.getMany();
+    }
 
     public async searchByName(name: string): Promise<Event[]> {
         return this.eventRepository
@@ -183,7 +190,7 @@ export class EventController {
             where: {
                 id: eventId
             },
-            relations: ['user', 'organisation', 'category']
+            relations: ['user', 'organisation', 'category', 'picture']
         })
     }
 

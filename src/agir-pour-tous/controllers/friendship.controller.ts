@@ -90,6 +90,7 @@ export class FriendshipController {
     public async sentFriendshipRequest(id: string): Promise<FriendRequest[]> {
         return this.friendRequestRepository.createQueryBuilder()
             .leftJoin("FriendRequest.sender", "Sender")
+            .leftJoinAndSelect("FriendRequest.user", "User")
             .where("Sender.id=:id", {id})
             .getMany();
     }
@@ -97,6 +98,7 @@ export class FriendshipController {
     public async receivedFriendshipRequest(id: string): Promise<FriendRequest[]> {
         return this.friendRequestRepository.createQueryBuilder()
             .leftJoin("FriendRequest.user", "User")
+            .leftJoinAndSelect("FriendRequest.sender", "Sender")
             .where("User.id=:id", {id})
             .getMany();
     }

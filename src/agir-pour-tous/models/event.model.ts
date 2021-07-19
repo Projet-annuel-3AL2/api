@@ -5,7 +5,7 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    Entity,
+    Entity, JoinColumn,
     ManyToMany,
     ManyToOne,
     OneToMany,
@@ -73,10 +73,10 @@ export class Event {
     @OneToMany(() => Post, post => post.sharedEvent)
     posts: Post[];
     @IsNotEmpty()
-    @IsUUID()
     @ManyToOne(() => Category, category => category.events, {nullable: false})
     category: Category;
     @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true})
+    @JoinColumn()
     picture: Media;
     @OneToMany(() => Report, report => report.reportedEvent)
     reported: Report[];

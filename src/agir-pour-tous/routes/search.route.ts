@@ -13,7 +13,7 @@ searchRouter.get("/:data", async (req, res) => {
         logger.info(`User ${(req.user as User).username} has searched ${data}`);
         res.json(result);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -26,7 +26,7 @@ searchRouter.get("/:data/event", async (req, res) => {
         logger.info(`User ${(req.user as User).username} has searched an event containing ${data}`);
         res.json(result);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });

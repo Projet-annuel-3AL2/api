@@ -25,7 +25,7 @@ postRouter.post('/', ensureLoggedIn, upload.array("post_medias",5), arePicturesF
         logger.info(`User ${(req.user as User).username} has created a post with id ${post.id}`);
         res.json(post);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -36,7 +36,7 @@ postRouter.get('/', async (req, res) => {
         const post = await postController.getAll();
         res.json(post);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -48,7 +48,7 @@ postRouter.get('/:postId', async (req, res) => {
         const post = await postController.getById(postId);
         res.json(post);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -61,7 +61,7 @@ postRouter.delete('/:postId', ensureLoggedIn, isPostOwner, async (req, res) => {
         logger.info(`User ${(req.user as User).username} has deleted a post with id ${postId}`);
         res.json(post);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -74,7 +74,7 @@ postRouter.put('/:postId', ensureLoggedIn, isPostOwner, async (req, res) => {
         logger.info(`User ${(req.user as User).username} has modified a post with id ${postId}`);
         res.json(post);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -88,7 +88,7 @@ postRouter.get("/:postId/like", ensureLoggedIn, async (req, res) => {
         logger.info(`User ${(req.user as User).username} has liked a post with id ${postId}`);
         res.json(likes);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -100,7 +100,7 @@ postRouter.get("/:postId/comments", ensureLoggedIn, async (req, res) => {
         const comments = await postController.getComments(postId);
         res.json(comments);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -114,7 +114,7 @@ postRouter.delete("/:postId/like", ensureLoggedIn, async (req, res) => {
         logger.info(`User ${(req.user as User).username} has removed his like to a post with id ${postId}`);
         res.json(likes);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -126,7 +126,7 @@ postRouter.get("/:postId/likes", async (req, res) => {
         const likes = await postController.getLikes(postId);
         res.json(likes);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -139,7 +139,7 @@ postRouter.get("/timeline/:offset/:limit", ensureLoggedIn, async (req, res) => {
         const posts = await postController.getTimeline((req.user as User).id, offset, limit);
         res.json(posts);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -152,7 +152,7 @@ postRouter.get("/:postId/is-liked", ensureLoggedIn, async (req, res) => {
         const likes = await postController.isLiked(postId, userId);
         res.json(likes);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -167,7 +167,7 @@ postRouter.put("/:postId/report", ensureLoggedIn, async (req, res) => {
         logger.info(`User ${(req.user as User).username} has reported a post with id ${postId}`);
         res.json(report);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -179,7 +179,7 @@ postRouter.get("/:postId/reports", ensureLoggedIn, hasAdminRights, async (req, r
         const reports = await postController.getReports(postId);
         res.json(reports);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -192,7 +192,7 @@ postRouter.get("/:postId/is-owner", async (req, res) => {
         const isOwner = await postController.isPostOwner(postId, userId);
         res.json({isOwner});
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
@@ -204,7 +204,7 @@ postRouter.get("/:postId/shares", async (req, res) => {
         const sharedPost = await postController.getSharedPost(postId);
         res.json(sharedPost);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(404).json(error);
     }
 });
@@ -217,7 +217,7 @@ postRouter.post("/:postId/comment", async (req, res) => {
         logger.info(`User ${(req.user as User).username} has commented a post with id ${postId}`);
         res.json(comment);
     } catch (error) {
-        logger.error({route: req.route, error});
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });
