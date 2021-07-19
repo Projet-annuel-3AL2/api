@@ -113,6 +113,7 @@ export class PostController {
             .leftJoinAndSelect("Comment.creator", "User")
             .leftJoin("Comment.post", "Post")
             .where("Post.id=:postId", {postId})
+            .orderBy("Comment.createdAt","DESC")
             .getMany();
     }
 
