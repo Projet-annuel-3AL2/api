@@ -121,6 +121,7 @@ export class PostController {
         return this.postRepository
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator","Creator")
+            .leftJoinAndSelect("Creator.certification","Certification")
             .leftJoin("Post.sharedPosts", "Shares")
             .where("Shares.id=:postId", {postId})
             .getOne();
