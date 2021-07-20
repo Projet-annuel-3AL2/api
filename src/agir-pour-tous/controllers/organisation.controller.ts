@@ -31,7 +31,7 @@ export class OrganisationController {
     }
 
     public async getById(id: string): Promise<Organisation> {
-        return await this.organisationRepository.findOneOrFail(id);
+        return await this.organisationRepository.findOne(id);
     }
 
     public async getAll(): Promise<Organisation[]> {
@@ -51,8 +51,13 @@ export class OrganisationController {
         await this.organisationRepository.softDelete(id);
     }
 
-    public async update(id: string, props: OrganisationProps): Promise<Organisation> {
-        await this.organisationRepository.update(id, props);
+    public async update(id: string, organisation: Organisation): Promise<Organisation> {
+
+        await this.organisationRepository.createQueryBuilder()
+            .update()
+            .set(organisation)
+            .where("Organisation.id=:id", {id})
+            .execute();
         return this.getById(id);
     }
 

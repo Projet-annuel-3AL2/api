@@ -17,6 +17,8 @@ import {MediaController} from "../controllers/media.controller";
 import {PostController} from "../controllers/post.controller";
 import {EventController} from "../controllers/event.controller";
 import {eventRouter} from "./event.route";
+import {Organisation} from "../models/organisation.model";
+import {arePicturesFiles} from "../middlewares/media.middleware";
 
 const organisationRouter = express.Router();
 
@@ -111,11 +113,21 @@ organisationRouter.delete('/:organisationId', ensureLoggedIn, isOrganisationOwne
     }
 });
 
-organisationRouter.put('/:organisationId', ensureLoggedIn, isOrganisationAdmin, async (req, res) => {
+organisationRouter.put('/:organisationId', ensureLoggedIn, isOrganisationAdmin,upload.fields([{ name: "profilePicture", maxCount: 1 },{name:"bannerPicture", maxCount:1}]), arePicturesFiles, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
-        await organisationController.update(organisationId, {...req.body});
+        const mediaController = MediaController.getInstance();
+        let organisation: Organisation = {...req.body};
+        if(req.files) {
+            if (req.files["profilePicture"]) {
+                organisation.profilePicture = await mediaController.create(req.files["profilePicture"][0]);
+            }
+            if (req.files["bannerPicture"]) {
+                organisation.bannerPicture = await mediaController.create(req.files["bannerPicture"][0]);
+            }
+        }
+        await organisationController.update(organisationId, organisation);
         logger.info(`User ${(req.user as User).username} modified an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
