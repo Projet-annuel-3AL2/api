@@ -274,6 +274,16 @@ userRouter.delete("/report/:reportId", ensureLoggedIn, isSuperAdmin, async (req,
     }
 });
 
+userRouter.get("/organisation/invitations", ensureLoggedIn, async (req, res) => {
+    try {
+        const userController = UserController.getInstance();
+        const user = await userController.getOrganisationInvitations((req.user as User).id);
+        res.json(user);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
 
 export {
     userRouter
