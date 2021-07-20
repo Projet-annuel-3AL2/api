@@ -226,4 +226,11 @@ export class UserController {
             .softDelete()
             .execute();
     }
+
+    async getOrganisationInvitations(id: string) {
+        return await this.userRepository.createQueryBuilder()
+            .leftJoinAndSelect("User.organisationInvitations", "OrganisationInvitations")
+            .where("User.id=:id", {id})
+            .getOne();
+    }
 }

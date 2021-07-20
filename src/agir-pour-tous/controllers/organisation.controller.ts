@@ -336,4 +336,11 @@ export class OrganisationController {
         }
         return organisations;
     }
+
+    async getInvitedUser(organisationId: any): Promise<Organisation> {
+        return await this.organisationRepository.createQueryBuilder()
+            .leftJoinAndSelect("Organisation.invitedUsers", "InvitedUsers")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .getOne();
+    }
 }
