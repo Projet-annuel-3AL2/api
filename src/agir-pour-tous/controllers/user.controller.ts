@@ -249,7 +249,7 @@ export class UserController {
 
     async getOrganisationInvitations(id: string): Promise<Organisation[]> {
         return await getRepository(Organisation).createQueryBuilder()
-            .leftJoinAndSelect("OrganisationInvitations.invitedUsers", "User")
+            .leftJoinAndSelect("Organisation.invitedUsers", "User")
             .where("User.id=:id", {id})
             .getMany();
     }
