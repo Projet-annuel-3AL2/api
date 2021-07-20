@@ -137,6 +137,7 @@ export class PostController {
             .leftJoinAndSelect("Post.creator", "User")
             .leftJoinAndSelect("Post.sharedEvent", "Event")
             .leftJoinAndSelect("User.certification", "Cert")
+            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
             .where("User.id=:userId", {userId})
             .getMany();
     }
@@ -147,6 +148,7 @@ export class PostController {
             .leftJoinAndSelect("Post.creator", "User")
             .leftJoinAndSelect("Post.sharedEvent", "Event")
             .leftJoinAndSelect("User.certification", "Cert")
+            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
             .leftJoin("User.friendsOne", "FriendOne")
             .leftJoin("FriendOne.friendTwo", "FriendTwo")
             .where("FriendTwo.id=:userId", {userId})
@@ -159,6 +161,7 @@ export class PostController {
             .leftJoinAndSelect("Post.creator", "User")
             .leftJoinAndSelect("Post.sharedEvent", "Event")
             .leftJoinAndSelect("User.certification", "Cert")
+            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
             .leftJoin("User.friendsTwo", "FriendTwo")
             .leftJoin("FriendTwo.friendOne", "FriendOne")
             .where("FriendOne.id=:userId", {userId})
@@ -170,6 +173,7 @@ export class PostController {
             .createQueryBuilder()
             .leftJoinAndSelect("Post.organisation", "Organisation")
             .leftJoinAndSelect("Post.sharedEvent", "Event")
+            .leftJoinAndSelect("Organisation.profilePicture", "ProfilePicture")
             .leftJoin("Organisation.followers", "Follower")
             .where("Follower.id=:userId", {userId})
             .getMany();
@@ -182,6 +186,8 @@ export class PostController {
             .leftJoinAndSelect("Post.sharedEvent", "Event")
             .leftJoin("Organisation.members", "OrganisationMembership")
             .leftJoin("OrganisationMembership.user", "User")
+            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
+            .leftJoinAndSelect("User.certification", "cert")
             .where("User.id=:userId", {userId})
             .getMany();
     }

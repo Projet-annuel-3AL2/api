@@ -56,6 +56,8 @@ export class UserController {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
+            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
+            .leftJoinAndSelect("User.certification", "Certification")
             .where("User.username=:username", {username})
             .orderBy("Post.createdAt","DESC")
             .getMany();
