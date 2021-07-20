@@ -11,7 +11,6 @@ import {
     isNotMember
 } from "../middlewares/event.middleware";
 import {logger} from "../config/logging.config";
-import {PostController} from "../controllers/post.controller";
 
 const eventRouter = express.Router();
 
