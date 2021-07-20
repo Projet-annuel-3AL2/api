@@ -9,9 +9,9 @@ const friendshipRouter = express.Router();
 
 friendshipRouter.get("/sent-friendship-request", ensureLoggedIn, async (req, res) => {
     try {
-        const username = (req.user as User).id;
+        const userId = (req.user as User).id;
         const friendshipController = FriendshipController.getInstance();
-        const friendship = await friendshipController.sentFriendshipRequest(username);
+        const friendship = await friendshipController.sentFriendshipRequest(userId);
         res.json(friendship);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
@@ -21,9 +21,9 @@ friendshipRouter.get("/sent-friendship-request", ensureLoggedIn, async (req, res
 
 friendshipRouter.get("/received-friendship-request", ensureLoggedIn, async (req, res) => {
     try {
-        const username = (req.user as User).id;
+        const userId = (req.user as User).id;
         const friendshipController = FriendshipController.getInstance();
-        const friendship = await friendshipController.receivedFriendshipRequest(username);
+        const friendship = await friendshipController.receivedFriendshipRequest(userId);
         res.json(friendship);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);

@@ -29,6 +29,7 @@ export class ConversationController {
     public async getMessages(id: string): Promise<Message[]> {
         return this.messageRepository.createQueryBuilder()
             .leftJoinAndSelect("Message.user", "User")
+            .leftJoinAndSelect("User.profilePicture", "ProfPic")
             .leftJoin("Message.conversation", "Conversation")
             .where("Conversation.id=:id", {id})
             .orderBy("Message.createdAt", "ASC")

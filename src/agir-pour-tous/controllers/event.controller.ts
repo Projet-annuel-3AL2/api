@@ -125,8 +125,11 @@ export class EventController {
     public async getPosts(eventId: string): Promise<Post[]> {
         return await getRepository(Post).createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
-            .leftJoinAndSelect("User.certification", "Cert")
+            .leftJoinAndSelect("Post.organisation", "Organisation")
+            .leftJoinAndSelect("Post.sharesPost", "SharedPost")
             .leftJoinAndSelect("Post.sharedEvent", "Event")
+            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
+            .leftJoinAndSelect("User.certification", "Certification")
             .where("Event.id=:eventId", {eventId})
             .getMany();
     }

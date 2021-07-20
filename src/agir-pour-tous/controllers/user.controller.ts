@@ -56,6 +56,8 @@ export class UserController {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
+            .leftJoinAndSelect("Post.sharesPost", "SharedPost")
+            .leftJoinAndSelect("Post.sharedEvent", "SharedEvent")
             .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
             .leftJoinAndSelect("User.certification", "Certification")
             .where("User.username=:username", {username})
@@ -67,7 +69,11 @@ export class UserController {
         return [].concat(await this.getOrganisationConversations(username))
             .concat(await this.getGroupConversations(username))
             .concat(await this.getFriendshipConversations(username))
-            .sort((a: Conversation, b: Conversation) => a.messages[a.messages?.length - 1]?.createdAt.getTime() - b.messages[b.messages?.length - 1]?.createdAt.getTime());
+            .sort((a: Conversation, b: Conversation) => {
+                if(!a.messages) return -1;
+                if(!b.messages) return 1;
+                return a.messages[a.messages?.length - 1]?.createdAt.getTime() - b.messages[b.messages?.length - 1]?.createdAt.getTime()
+            });
     }
 
     public async getGroups(username: string): Promise<GroupMembership[]> {
@@ -96,24 +102,33 @@ export class UserController {
             .getMany();
     }
 
-    public async blockUser(currentUserId, id: string): Promise<void> {
+    public async blockUser(currentUserId: string, userId: string): Promise<void> {
         await this.userRepository.createQueryBuilder()
             .relation("blockedUsers")
             .of(currentUserId)
-            .add(id);
+            .add(userId);
     }
 
-    public async unblockUser(currentUserId, id: string): Promise<void> {
+    public async unblockUser(currentUserId: string, userId: string): Promise<void> {
         await this.userRepository.createQueryBuilder()
             .relation("blockedUsers")
             .of(currentUserId)
-            .remove(id);
+            .remove(userId);
     }
 
-    public async isBlocked(currentUserId: string, userId: string): Promise<boolean> {
+    public async isBlocked(blocker: string, blocked: string): Promise<boolean> {
         return (await this.userRepository.createQueryBuilder()
-            .where("User.blockedUsers=:userId", {userId})
-            .andWhere("User.blockers=:currentUserId", {currentUserId})
+            .leftJoin("User.blockedUsers","Blocked")
+            .where("Blocked.username=:blocked", {blocked})
+            .andWhere("User.username=:blocker", {blocker})
+            .getOne() !== undefined);
+    }
+
+    public async hasBlocked(blocker: string, blocked: string): Promise<boolean>{
+        return (await this.userRepository.createQueryBuilder()
+            .leftJoin("User.blockers","Blocker")
+            .where("Blocker.username=:blocker", {blocker})
+            .andWhere("User.username=:blocked", {blocked})
             .getOne() !== undefined);
     }
 
@@ -144,6 +159,7 @@ export class UserController {
             .leftJoinAndSelect("Conversation.organisation", "Organisation")
             .leftJoinAndSelect("Organisation.members", "OrganisationMembership")
             .leftJoinAndSelect("OrganisationMembership.user", "OrganisationMember")
+            .leftJoinAndSelect("Organisation.profilePicture", "ProfPic")
             .where("OrganisationMember.username=:username", {username})
             .getMany();
     }
@@ -154,6 +170,8 @@ export class UserController {
             .leftJoinAndSelect("Conversation.friendship", "Friendship")
             .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
             .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
+            .leftJoinAndSelect("FriendOne.profilePicture", "ProfPic1")
+            .leftJoinAndSelect("FriendTwo.profilePicture", "ProfPic2")
             .where("FriendOne.username=:username", {username})
             .orWhere("FriendTwo.username=:username", {username})
             .leftJoin("Conversation.messages", "Message")
@@ -229,10 +247,10 @@ export class UserController {
             .execute();
     }
 
-    async getOrganisationInvitations(id: string) {
-        return await this.userRepository.createQueryBuilder()
-            .leftJoinAndSelect("User.organisationInvitations", "OrganisationInvitations")
+    async getOrganisationInvitations(id: string): Promise<Organisation[]> {
+        return await getRepository(Organisation).createQueryBuilder()
+            .leftJoinAndSelect("Organisation.invitedUsers", "User")
             .where("User.id=:id", {id})
-            .getOne();
+            .getMany();
     }
 }
