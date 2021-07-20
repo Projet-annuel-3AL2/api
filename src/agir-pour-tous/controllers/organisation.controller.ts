@@ -11,6 +11,7 @@ import {
 } from "../models/organisation_creation_request.model";
 import {Event} from "../models/event.model";
 import {Media} from "../models/media.model";
+import {organisationRouter} from "../routes/organisation.route";
 
 export class OrganisationController {
 
@@ -30,7 +31,7 @@ export class OrganisationController {
     }
 
     public async getById(id: string): Promise<Organisation> {
-        return await this.organisationRepository.findOneOrFail(id);
+        return await this.organisationRepository.findOne(id);
     }
 
     public async getAll(): Promise<Organisation[]> {
@@ -50,8 +51,13 @@ export class OrganisationController {
         await this.organisationRepository.softDelete(id);
     }
 
-    public async update(id: string, props: OrganisationProps): Promise<Organisation> {
-        await this.organisationRepository.update(id, props);
+    public async update(id: string, organisation: Organisation): Promise<Organisation> {
+
+        await this.organisationRepository.createQueryBuilder()
+            .update()
+            .set(organisation)
+            .where("Organisation.id=:id", {id})
+            .execute();
         return this.getById(id);
     }
 
@@ -123,21 +129,25 @@ export class OrganisationController {
     }
 
     public async isAdmin(organisationId: string, userId: string): Promise<boolean> {
-        return (await getRepository(OrganisationMembership).createQueryBuilder()
+        const membership = await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
             .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .getOne()).isAdmin;
+            .andWhere("OrganisationMembership.isAdmin=true")
+            .getOne();
+        return membership !== undefined;
     }
 
     public async isOwner(organisationId: string, userId: string): Promise<boolean> {
-        return (await getRepository(OrganisationMembership).createQueryBuilder()
+        const membership = await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
             .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("Organisation.id=:organisationId", {organisationId})
             .andWhere("User.id=:userId", {userId})
-            .getOne()).isOwner;
+            .andWhere("OrganisationMembership.isOwner=true")
+            .getOne();
+        return membership !== undefined;
     }
 
     public async getMember(organisationId: string, userId: string): Promise<OrganisationMembership> {
@@ -214,7 +224,7 @@ export class OrganisationController {
     public async getCreationRequestById(organisationCreationRequestId: string): Promise<OrganisationCreationRequest> {
         return await getRepository(OrganisationCreationRequest).findOne({
             where: {
-                id:organisationCreationRequestId
+                id: organisationCreationRequestId
             }
         });
     }
@@ -290,5 +300,52 @@ export class OrganisationController {
             .relation("bannerPicture")
             .of(organisationId)
             .set(null);
+    }
+
+    async getAllReport(): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedOrganisation", "ReportedOrganisation")
+            .leftJoinAndSelect("Report.userReporter", "UserReporter")
+            .where("Report.reportedOrganisation is not null")
+            .getMany()
+    }
+
+    async countReport(organisationId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedOrganisation", "ReportedOrganisation")
+            .where("ReportedOrganisation.id =:organisationId", {organisationId})
+            .getCount();
+    }
+
+    async getOrganisationWhereAdmin(userId: string, username: string): Promise<Organisation[]> {
+        const organisations: Organisation[] = [];
+        const organisationMemberships = await getRepository(OrganisationMembership).createQueryBuilder()
+            .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
+            .leftJoinAndSelect("OrganisationMembership.user", "User")
+            .where("User.id=:userId", {userId})
+            .andWhere("OrganisationMembership.isAdmin=true OR OrganisationMembership.isOwner=true")
+            .getMany();
+        for (const organisationMembership of organisationMemberships) {
+            const organisationId = organisationMembership.organisation.id
+            if (await getRepository(OrganisationMembership).createQueryBuilder()
+                .leftJoinAndSelect("OrganisationMembership.user", "User")
+                .where("User.username=:username", {username})
+                .getOne() === undefined
+                && await getRepository(Organisation).createQueryBuilder()
+                    .leftJoinAndSelect("Organisation.invitedUsers", "InvitedUser")
+                    .where("InvitedUser.username=:username", {username})
+                    .andWhere("Organisation.id=:organisationId", {organisationId})
+                    .getOne() === undefined ){
+                organisations.push(organisationMembership.organisation)
+            }
+        }
+        return organisations;
+    }
+
+    async getInvitedUser(organisationId: any): Promise<Organisation> {
+        return await this.organisationRepository.createQueryBuilder()
+            .leftJoinAndSelect("Organisation.invitedUsers", "InvitedUsers")
+            .where("Organisation.id=:organisationId", {organisationId})
+            .getOne();
     }
 }
