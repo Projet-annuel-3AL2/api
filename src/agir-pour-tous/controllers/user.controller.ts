@@ -56,6 +56,8 @@ export class UserController {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
+            .leftJoinAndSelect("Post.sharesPost", "SharedPost")
+            .leftJoinAndSelect("Post.sharedEvent", "SharedEvent")
             .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
             .leftJoinAndSelect("User.certification", "Certification")
             .where("User.username=:username", {username})
@@ -100,24 +102,33 @@ export class UserController {
             .getMany();
     }
 
-    public async blockUser(currentUserId, id: string): Promise<void> {
+    public async blockUser(currentUserId: string, userId: string): Promise<void> {
         await this.userRepository.createQueryBuilder()
             .relation("blockedUsers")
             .of(currentUserId)
-            .add(id);
+            .add(userId);
     }
 
-    public async unblockUser(currentUserId, id: string): Promise<void> {
+    public async unblockUser(currentUserId: string, userId: string): Promise<void> {
         await this.userRepository.createQueryBuilder()
             .relation("blockedUsers")
             .of(currentUserId)
-            .remove(id);
+            .remove(userId);
     }
 
-    public async isBlocked(currentUserId: string, userId: string): Promise<boolean> {
+    public async isBlocked(blocker: string, blocked: string): Promise<boolean> {
         return (await this.userRepository.createQueryBuilder()
-            .where("User.blockedUsers=:userId", {userId})
-            .andWhere("User.blockers=:currentUserId", {currentUserId})
+            .leftJoin("User.blockedUsers","Blocked")
+            .where("Blocked.username=:blocked", {blocked})
+            .andWhere("User.username=:blocker", {blocker})
+            .getOne() !== undefined);
+    }
+
+    public async hasBlocked(blocker: string, blocked: string): Promise<boolean>{
+        return (await this.userRepository.createQueryBuilder()
+            .leftJoin("User.blockers","Blocker")
+            .where("Blocker.username=:blocker", {blocker})
+            .andWhere("User.username=:blocked", {blocked})
             .getOne() !== undefined);
     }
 

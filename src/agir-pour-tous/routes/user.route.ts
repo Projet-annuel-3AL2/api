@@ -1,12 +1,12 @@
 import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {UserController} from "../controllers/user.controller";
-import {hasAdminRights, isNotAskedUser, isSuperAdmin} from "../middlewares/user.middleware";
+import {hasAdminRights, isNotAskedUser, isNotBlocked, isSuperAdmin} from "../middlewares/user.middleware";
 import {User, UserProps} from "../models/user.model";
 import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {MediaController} from "../controllers/media.controller";
-import {PostController} from "../controllers/post.controller";
+import {FriendshipController} from "../controllers/friendship.controller";
 
 const userRouter = express.Router();
 
@@ -32,7 +32,7 @@ userRouter.get("/conversations", ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.get('/:username', async (req, res) => {
+userRouter.get('/:username', isNotBlocked, async (req, res) => {
     try {
         const username = req.params.username;
         const userController = await UserController.getInstance();
@@ -128,13 +128,15 @@ userRouter.get("/:username/organisations", async (req, res) => {
     }
 });
 
-userRouter.put("/:userId/block", ensureLoggedIn, isNotAskedUser, async (req, res) => {
+userRouter.put("/:username/block", ensureLoggedIn, isNotAskedUser, async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const username = req.params.username;
         const currentUserId = (req.user as User).id;
         const userController = UserController.getInstance();
-        await userController.blockUser(currentUserId, userId);
-        logger.info(`User ${(req.user as User).username} has blocked an user with id ${userId}`);
+        await userController.blockUser(currentUserId, (await userController.getByUsername(username)).id);
+        const friendshipController = FriendshipController.getInstance();
+        friendshipController.removeFriendship(username, (req.user as User).username).then()
+        logger.info(`User ${(req.user as User).username} has blocked an user called ${username}`);
         res.status(204).end();
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
@@ -142,13 +144,13 @@ userRouter.put("/:userId/block", ensureLoggedIn, isNotAskedUser, async (req, res
     }
 });
 
-userRouter.delete("/:userId/unblock", ensureLoggedIn, isNotAskedUser, async (req, res) => {
+userRouter.delete("/:username/unblock", ensureLoggedIn, isNotAskedUser, async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const username = req.params.username;
         const currentUserId = (req.user as User).id;
         const userController = UserController.getInstance();
-        await userController.unblockUser(currentUserId, userId);
-        logger.info(`User ${(req.user as User).username} has unblocked an user with id ${userId}`);
+        await userController.unblockUser(currentUserId, (await userController.getByUsername(username)).id);
+        logger.info(`User ${(req.user as User).username} has unblocked an user called ${username}`);
         res.status(204).end();
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
@@ -159,12 +161,12 @@ userRouter.delete("/:userId/unblock", ensureLoggedIn, isNotAskedUser, async (req
 /**
  *  Is the given user blocked by the connected user
  */
-userRouter.get("/:userId/is-blocked", ensureLoggedIn, isNotAskedUser, async (req, res) => {
+userRouter.get("/:username/has-blocked", ensureLoggedIn, async (req, res) => {
     try {
-        const userId = req.params.userId;
-        const currentUserId = (req.user as User).id;
+        const username = req.params.username;
+        const currentUsername = (req.user as User).username;
         const userController = UserController.getInstance();
-        const isBlocked = await userController.isBlocked(currentUserId, userId);
+        const isBlocked = await userController.hasBlocked(currentUsername, username);
         res.json(isBlocked);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
@@ -175,12 +177,12 @@ userRouter.get("/:userId/is-blocked", ensureLoggedIn, isNotAskedUser, async (req
 /**
  *  Is the current user blocked by the given user
  */
-userRouter.get("/:userId/blocked", ensureLoggedIn, isNotAskedUser, async (req, res) => {
+userRouter.get("/:username/is-blocked", ensureLoggedIn, async (req, res) => {
     try {
-        const userId = req.params.userId;
-        const currentUserId = (req.user as User).id;
+        const username = req.params.username;
+        const currentUsername = (req.user as User).username;
         const userController = UserController.getInstance();
-        const isBlocked = await userController.isBlocked(userId, currentUserId);
+        const isBlocked = await userController.isBlocked(username, currentUsername);
         res.json(isBlocked);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
