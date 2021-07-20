@@ -506,6 +506,18 @@ organisationRouter.get("/membership/where-admin/:username", ensureLoggedIn, asyn
     }
 });
 
+organisationRouter.get("/:organisationId/invited/user", ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = OrganisationController.getInstance();
+        const organisation = await organisationController.getInvitedUser(organisationId);
+        res.json(organisation);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
 export {
     organisationRouter
 }
