@@ -67,7 +67,11 @@ export class UserController {
         return [].concat(await this.getOrganisationConversations(username))
             .concat(await this.getGroupConversations(username))
             .concat(await this.getFriendshipConversations(username))
-            .sort((a: Conversation, b: Conversation) => a.messages[a.messages?.length - 1]?.createdAt.getTime() - b.messages[b.messages?.length - 1]?.createdAt.getTime());
+            .sort((a: Conversation, b: Conversation) => {
+                if(!a.messages) return -1;
+                if(!b.messages) return 1;
+                return a.messages[a.messages?.length - 1]?.createdAt.getTime() - b.messages[b.messages?.length - 1]?.createdAt.getTime()
+            });
     }
 
     public async getGroups(username: string): Promise<GroupMembership[]> {
@@ -144,6 +148,7 @@ export class UserController {
             .leftJoinAndSelect("Conversation.organisation", "Organisation")
             .leftJoinAndSelect("Organisation.members", "OrganisationMembership")
             .leftJoinAndSelect("OrganisationMembership.user", "OrganisationMember")
+            .leftJoinAndSelect("Organisation.profilePicture", "ProfPic")
             .where("OrganisationMember.username=:username", {username})
             .getMany();
     }
@@ -154,6 +159,8 @@ export class UserController {
             .leftJoinAndSelect("Conversation.friendship", "Friendship")
             .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
             .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
+            .leftJoinAndSelect("FriendOne.profilePicture", "ProfPic1")
+            .leftJoinAndSelect("FriendTwo.profilePicture", "ProfPic2")
             .where("FriendOne.username=:username", {username})
             .orWhere("FriendTwo.username=:username", {username})
             .leftJoin("Conversation.messages", "Message")
