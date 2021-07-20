@@ -1,9 +1,11 @@
 import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
-import {hasAdminRights, isAskedUser} from "../middlewares/user.middleware";
+import {hasAdminRights, isAskedUser, isSuperAdmin} from "../middlewares/user.middleware";
 import {GroupController} from "../controllers/group.controller";
 import {User} from "../models/user.model";
 import {logger} from "../config/logging.config";
+import {UserController} from "../controllers/user.controller";
+import {userRouter} from "./user.route";
 
 const groupRouter = express.Router();
 
@@ -120,6 +122,30 @@ groupRouter.get("/:groupId/reports", ensureLoggedIn, hasAdminRights, async (req,
         res.status(400).json(error);
     }
 });
+
+groupRouter.get("/reports/all-group", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const groupController = GroupController.getInstance();
+        const reports = await groupController.getAllReport();
+        res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+groupRouter.get("/count-report/:groupId", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const groupId = req.params.groupId;
+        const groupController = GroupController.getInstance();
+        const reports = await groupController.countReport(groupId);
+        res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
 export {
     groupRouter
 }

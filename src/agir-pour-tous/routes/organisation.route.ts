@@ -1,6 +1,6 @@
 import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
-import {hasAdminRights, isNotAskedUser} from "../middlewares/user.middleware";
+import {hasAdminRights, isNotAskedUser, isSuperAdmin} from "../middlewares/user.middleware";
 import {User} from "../models/user.model";
 import {OrganisationController} from "../controllers/organisation.controller";
 import {
@@ -14,6 +14,11 @@ import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {isPicture} from "../../utils/file.utils";
 import {MediaController} from "../controllers/media.controller";
+import {PostController} from "../controllers/post.controller";
+import {EventController} from "../controllers/event.controller";
+import {eventRouter} from "./event.route";
+import {Organisation} from "../models/organisation.model";
+import {arePicturesFiles} from "../middlewares/media.middleware";
 
 const organisationRouter = express.Router();
 
@@ -108,11 +113,21 @@ organisationRouter.delete('/:organisationId', ensureLoggedIn, isOrganisationOwne
     }
 });
 
-organisationRouter.put('/:organisationId', ensureLoggedIn, isOrganisationAdmin, async (req, res) => {
+organisationRouter.put('/:organisationId', ensureLoggedIn, isOrganisationAdmin,upload.fields([{ name: "profilePicture", maxCount: 1 },{name:"bannerPicture", maxCount:1}]), arePicturesFiles, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
-        await organisationController.update(organisationId, {...req.body});
+        const mediaController = MediaController.getInstance();
+        let organisation: Organisation = {...req.body};
+        if(req.files) {
+            if (req.files["profilePicture"]) {
+                organisation.profilePicture = await mediaController.create(req.files["profilePicture"][0]);
+            }
+            if (req.files["bannerPicture"]) {
+                organisation.bannerPicture = await mediaController.create(req.files["bannerPicture"][0]);
+            }
+        }
+        await organisationController.update(organisationId, organisation);
         logger.info(`User ${(req.user as User).username} modified an organisation with id ${organisationId}`);
         res.status(204).end();
     } catch (error) {
@@ -459,10 +474,56 @@ organisationRouter.delete("/:organisationId/banner-picture", ensureLoggedIn, asy
     try {
         const organisationId = req.params.organisationId;
         const organisationController = OrganisationController.getInstance();
-        const mediaController = MediaController.getInstance();
-        const profilePicture = mediaController.create(req.file);
         await organisationController.removeBannerPicture(organisationId);
-        res.json(profilePicture);
+        logger.info(`User ${(req.user as User).username} has deleted BannerPicture of organisation "${organisationId}"`);
+        res.status(204).end();
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+organisationRouter.get("/reports/all-organisation", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const organisationController = OrganisationController.getInstance();
+        const reports = await organisationController.getAllReport();
+        res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+organisationRouter.get("/:organisationId/count-report", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = OrganisationController.getInstance();
+        const reports = await organisationController.countReport(organisationId);
+        res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+organisationRouter.get("/membership/where-admin/:username", ensureLoggedIn, async (req, res) => {
+    try {
+        const username = req.params.username;
+        const organisationController = OrganisationController.getInstance();
+        const organisationMembership = await organisationController.getOrganisationWhereAdmin((req.user as User).id, username);
+        res.json(organisationMembership);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+organisationRouter.get("/:organisationId/invited/user", ensureLoggedIn, async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = OrganisationController.getInstance();
+        const organisation = await organisationController.getInvitedUser(organisationId);
+        res.json(organisation);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);

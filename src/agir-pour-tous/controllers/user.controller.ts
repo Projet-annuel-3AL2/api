@@ -56,6 +56,8 @@ export class UserController {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
+            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
+            .leftJoinAndSelect("User.certification", "Certification")
             .where("User.username=:username", {username})
             .orderBy("Post.createdAt","DESC")
             .getMany();
@@ -202,5 +204,35 @@ export class UserController {
             .relation("profilePicture")
             .of(userId)
             .set(null);
+    }
+
+    async getAllReport(): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.userReporter", "UserReporter")
+            .leftJoinAndSelect("Report.reportedUser", "reportedUser")
+            .where("Report.reportedUser is not null")
+            .getMany()
+    }
+
+    async countReport(userId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedUser", "ReportedUser")
+            .leftJoinAndSelect("Report.userReporter", "UserReporter")
+            .where("ReportedUser.id =:userId", {userId})
+            .getCount();
+    }
+
+    async deleteReport(reportId: any) {
+        return await getRepository(Report).createQueryBuilder()
+            .where("Report.id=:reportId", {reportId})
+            .softDelete()
+            .execute();
+    }
+
+    async getOrganisationInvitations(id: string) {
+        return await this.userRepository.createQueryBuilder()
+            .leftJoinAndSelect("User.organisationInvitations", "OrganisationInvitations")
+            .where("User.id=:id", {id})
+            .getOne();
     }
 }

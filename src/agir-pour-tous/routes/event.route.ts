@@ -2,7 +2,7 @@ import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {User} from "../models/user.model";
 import {EventController} from "../controllers/event.controller";
-import {hasAdminRights} from "../middlewares/user.middleware";
+import {hasAdminRights, isSuperAdmin} from "../middlewares/user.middleware";
 import {
     canCreateEvent,
     isEventOrganiser,
@@ -272,19 +272,43 @@ eventRouter.get('/:eventId/organisation', async (req, res) => {
     }
 });
 
-eventRouter.get('/search/:userLocationX/:userLocationY/:range/:startDate/:endDate/:categoryId', async (req, res) => {
+eventRouter.post('/search-event', async (req, res) => {
     try {
-        const userLocationX = req.params.userLocationX;
-        const userLocationY = req.params.userLocationY;
-        const range = req.params.range;
-        const startDate = req.params.startDate;
-        const endDate = req.params.endDate;
-        const categoryId = req.params.categoryId;
+        console.log(req.body)
+        const userLocationX = req.body.longitude;
+        const userLocationY = req.body.latitude;
+        const range = req.body.range;
+        const startDate = req.body.startDate;
+        const endDate = req.body.endDate;
+        const categoryId = req.body.categoryId;
         const eventController = await EventController.getInstance();
         const events = await eventController.getEventsSearch(userLocationX, userLocationY, range, startDate, endDate,categoryId);
         res.json(events);
     } catch (error) {
         logger.error({route: req.route, error});
+        res.status(400).json(error);
+    }
+});
+
+eventRouter.get("/reports/all-event", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const eventController = EventController.getInstance();
+        const reports = await eventController.getAllReport();
+        res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+eventRouter.get("/:eventId/count-report", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const eventId = req.params.eventId
+        const eventController = EventController.getInstance();
+        const reports = await eventController.countReport(eventId);
+        res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
 });

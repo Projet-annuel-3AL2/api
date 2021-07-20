@@ -2,13 +2,17 @@ import express from "express";
 import {ensureLoggedIn} from "../middlewares/auth.middleware";
 import {PostController} from "../controllers/post.controller";
 import {User} from "../models/user.model";
-import {hasAdminRights} from "../middlewares/user.middleware";
+import {hasAdminRights, isSuperAdmin} from "../middlewares/user.middleware";
 import {isPostOwner} from "../middlewares/post.middleware";
 import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {MediaController} from "../controllers/media.controller";
 import {Media} from "../models/media.model";
 import {arePicturesFiles} from "../middlewares/media.middleware";
+import {UserController} from "../controllers/user.controller";
+import {userRouter} from "./user.route";
+import {OrganisationController} from "../controllers/organisation.controller";
+import {organisationRouter} from "./organisation.route";
 
 const postRouter = express.Router();
 postRouter.post('/', ensureLoggedIn, upload.array("post_medias",5), arePicturesFiles, async (req, res) => {
@@ -216,6 +220,29 @@ postRouter.post("/:postId/comment", async (req, res) => {
         const comment = await postController.addComment(postId, req.user as User, {...req.body});
         logger.info(`User ${(req.user as User).username} has commented a post with id ${postId}`);
         res.json(comment);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+postRouter.get("/reports/all-posts", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const postController = PostController.getInstance();
+        const reports = await postController.getAllReport();
+        res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+postRouter.get("/:postId/count-report", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+    try {
+        const postId = req.params.postId;
+        const postController = PostController.getInstance();
+        const reports = await postController.countReport(postId);
+        res.json(reports);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
