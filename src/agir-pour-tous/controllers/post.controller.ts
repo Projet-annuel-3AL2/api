@@ -111,6 +111,7 @@ export class PostController {
         return getRepository(Comment)
             .createQueryBuilder()
             .leftJoinAndSelect("Comment.creator", "User")
+            .leftJoinAndSelect("User.profilePicture","ProfPic")
             .leftJoin("Comment.post", "Post")
             .where("Post.id=:postId", {postId})
             .orderBy("Comment.createdAt","DESC")
