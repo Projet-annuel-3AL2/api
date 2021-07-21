@@ -32,6 +32,7 @@ import {certificationRouter} from "./certification.route";
 import {extname} from "../../utils/file.utils";
 import * as fs from "fs";
 import {mediaRouter} from "./media.route";
+import {commentRouter} from "./comment.route";
 
 export function buildAPTRoutes() {
     const router = Router();
@@ -68,5 +69,6 @@ export function buildAPTRoutes() {
     router.use("/search", searchRouter);
     router.use("/certification", certificationRouter);
     router.use("/media", mediaRouter);
+    router.use("/comment", commentRouter);
     return router;
 }

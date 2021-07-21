@@ -13,6 +13,7 @@ import {Group} from "./group.model";
 import {Post} from "./post.model";
 import {Event} from "./event.model";
 import {Length} from "class-validator";
+import {Comment} from "./comment.model";
 
 export interface ReportProps {
     text: string;
@@ -22,6 +23,7 @@ export interface ReportProps {
     reportedPost?: Post;
     reportedOrganisation?: Organisation;
     reportedEvent?: Event;
+    reportedComment?: Comment;
 }
 
 @Entity()
@@ -43,6 +45,8 @@ export class Report {
     reportedPost: Post;
     @ManyToOne(() => Event, event => event.reported)
     reportedEvent: Event;
+    @ManyToOne(() => Comment, comment=> comment.reported, {onDelete:"CASCADE"})
+    reportedComment: Comment;
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()

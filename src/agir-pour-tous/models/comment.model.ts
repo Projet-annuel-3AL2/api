@@ -12,6 +12,7 @@ import {
 } from "typeorm";
 import {Media} from "./media.model";
 import {Length} from "class-validator";
+import {Report} from "./report.model";
 
 export interface CommentProps {
     text: string;
@@ -31,6 +32,8 @@ export class Comment {
     text: string;
     @OneToMany(() => Media, media => media.comments, {cascade: true, eager: true})
     medias: Media[];
+    @OneToMany(() => Report, report => report.reportedComment, {cascade: true})
+    reported: Report[];
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()
