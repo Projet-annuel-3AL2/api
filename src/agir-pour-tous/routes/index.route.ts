@@ -57,7 +57,7 @@ export function buildAPTRoutes() {
     }));
     router.use(passport.initialize());
     router.use(passport.session());
-    router.use(express.static(process.env.FILE_UPLOADS_PATH))
+    router.use(express.static(process.env.FILE_UPLOADS_PATH,{cacheControl:true,maxAge:259200000}));
     router.use("/auth", authRouter);
     router.use("/user", userRouter);
     router.use("/category", categoryRouter);
