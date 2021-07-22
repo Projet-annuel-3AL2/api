@@ -4,13 +4,15 @@ import {hasAdminRights, isAskedUser, isSuperAdmin} from "../middlewares/user.mid
 import {GroupController} from "../controllers/group.controller";
 import {User} from "../models/user.model";
 import {logger} from "../config/logging.config";
+import {upload} from "./index.route";
 
 const groupRouter = express.Router();
 
-groupRouter.post('/', ensureLoggedIn, async (req, res) => {
+groupRouter.post('/', ensureLoggedIn,upload.none(), async (req, res) => {
     try {
         const groupController = GroupController.getInstance();
-        const group = await groupController.create(req.user as User, req.body);
+        console.log(JSON.parse(req.body.users))
+        const group = await groupController.create(req.user as User, {...req.body, users:JSON.parse(req.body.users)});
         logger.info(`User ${(req.user as User).username} created a group called ${group.name}`);
         res.json(group);
     } catch (error) {
@@ -138,6 +140,19 @@ groupRouter.get("/count-report/:groupId", ensureLoggedIn, isSuperAdmin, async (r
         const groupController = GroupController.getInstance();
         const reports = await groupController.countReport(groupId);
         res.json(reports);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+groupRouter.delete("/:groupId/leave", ensureLoggedIn, async (req, res) => {
+    try {
+        const groupId = req.params.groupId;
+        const groupController = GroupController.getInstance();
+        await groupController.removeUser(groupId, (req.user as User).id)
+        logger.info(`User ${(req.user as User).username} left group with id ${groupId}`);
+        res.status(204).end();
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
