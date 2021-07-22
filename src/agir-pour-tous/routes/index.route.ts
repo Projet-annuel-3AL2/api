@@ -1,4 +1,15 @@
 import multer from "multer";
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, process.env.FILE_UPLOADS_PATH)
+    },
+    filename: function (req, file, cb) {
+        fs.mkdirSync(process.env.FILE_UPLOADS_PATH + '/' + file.fieldname, {recursive: true});
+        cb(null, file.fieldname + '/' + Math.round(Math.random() * 1E10) + extname(file.originalname))
+    }
+})
+
+export const upload = multer({limits: {fileSize: 10 * 1024 * 1024, files: 5}, storage})
 import express, {Router} from "express";
 import passport from "passport";
 import {TypeormStore} from "connect-typeorm";
@@ -23,17 +34,6 @@ import {extname} from "../../utils/file.utils";
 import * as fs from "fs";
 import {mediaRouter} from "./media.route";
 import {commentRouter} from "./comment.route";
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, process.env.FILE_UPLOADS_PATH)
-    },
-    filename: function (req, file, cb) {
-        fs.mkdirSync(process.env.FILE_UPLOADS_PATH + '/' + file.fieldname, {recursive: true});
-        cb(null, file.fieldname + '/' + Math.round(Math.random() * 1E10) + extname(file.originalname))
-    }
-})
-export const upload = multer({limits: {fileSize: 10 * 1024 * 1024, files: 5}, storage})
 
 export function buildAPTRoutes() {
     const router = Router();
