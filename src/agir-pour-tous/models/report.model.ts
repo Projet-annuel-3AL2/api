@@ -45,7 +45,7 @@ export class Report {
     reportedPost: Post;
     @ManyToOne(() => Event, event => event.reported)
     reportedEvent: Event;
-    @ManyToOne(() => Comment, comment=> comment.reported, {onDelete:"CASCADE"})
+    @ManyToOne(() => Comment, comment => comment.reported, {onDelete: "CASCADE"})
     reportedComment: Comment;
     @CreateDateColumn()
     createdAt: Date;

@@ -69,13 +69,16 @@ userRouter.delete('/', ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.put('/', ensureLoggedIn, upload.fields([{ name: "profilePicture", maxCount: 1 },{name:"bannerPicture", maxCount:1}]), async (req, res) => {
+userRouter.put('/', ensureLoggedIn, upload.fields([{name: "profilePicture", maxCount: 1}, {
+    name: "bannerPicture",
+    maxCount: 1
+}]), async (req, res) => {
     try {
         const username = (req.user as User).username;
         const userController = UserController.getInstance();
         const mediaController = MediaController.getInstance();
-        let user: UserProps={...req.body};
-        if(req.files) {
+        let user: UserProps = {...req.body};
+        if (req.files) {
             if (req.files["profilePicture"]) {
                 user.profilePicture = await mediaController.create(req.files["profilePicture"][0]);
             }

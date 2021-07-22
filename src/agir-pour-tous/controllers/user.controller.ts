@@ -61,7 +61,7 @@ export class UserController {
             .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
             .leftJoinAndSelect("User.certification", "Certification")
             .where("User.username=:username", {username})
-            .orderBy("Post.createdAt","DESC")
+            .orderBy("Post.createdAt", "DESC")
             .getMany();
     }
 
@@ -70,8 +70,8 @@ export class UserController {
             .concat(await this.getGroupConversations(username))
             .concat(await this.getFriendshipConversations(username))
             .sort((a: Conversation, b: Conversation) => {
-                if(!a.messages) return -1;
-                if(!b.messages) return 1;
+                if (!a.messages) return -1;
+                if (!b.messages) return 1;
                 return a.messages[a.messages?.length - 1]?.createdAt.getTime() - b.messages[b.messages?.length - 1]?.createdAt.getTime()
             });
     }
@@ -118,15 +118,15 @@ export class UserController {
 
     public async isBlocked(blocker: string, blocked: string): Promise<boolean> {
         return (await this.userRepository.createQueryBuilder()
-            .leftJoin("User.blockedUsers","Blocked")
+            .leftJoin("User.blockedUsers", "Blocked")
             .where("Blocked.username=:blocked", {blocked})
             .andWhere("User.username=:blocker", {blocker})
             .getOne() !== undefined);
     }
 
-    public async hasBlocked(blocker: string, blocked: string): Promise<boolean>{
+    public async hasBlocked(blocker: string, blocked: string): Promise<boolean> {
         return (await this.userRepository.createQueryBuilder()
-            .leftJoin("User.blockers","Blocker")
+            .leftJoin("User.blockers", "Blocker")
             .where("Blocker.username=:blocker", {blocker})
             .andWhere("User.username=:blocked", {blocked})
             .getOne() !== undefined);
@@ -153,61 +153,9 @@ export class UserController {
             .getOne() != undefined;
     }
 
-    private async getOrganisationConversations(username: string): Promise<Conversation[]> {
-        return await this.conversationRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Conversation.organisation", "Organisation")
-            .leftJoinAndSelect("Organisation.members", "OrganisationMembership")
-            .leftJoinAndSelect("OrganisationMembership.user", "OrganisationMember")
-            .leftJoinAndSelect("Organisation.profilePicture", "ProfPic")
-            .where("OrganisationMember.username=:username", {username})
-            .getMany();
-    }
-
-    private async getFriendshipConversations(username: string): Promise<Conversation[]> {
-        return await this.conversationRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Conversation.friendship", "Friendship")
-            .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
-            .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
-            .leftJoinAndSelect("FriendOne.profilePicture", "ProfPic1")
-            .leftJoinAndSelect("FriendTwo.profilePicture", "ProfPic2")
-            .where("FriendOne.username=:username", {username})
-            .orWhere("FriendTwo.username=:username", {username})
-            .leftJoin("Conversation.messages", "Message")
-            .getMany()
-    }
-
-    private async getGroupConversations(username: string): Promise<Conversation[]> {
-        return await this.conversationRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Conversation.group", "Group")
-            .leftJoinAndSelect("Group.members", "GroupMembership")
-            .leftJoinAndSelect("GroupMembership.user", "GroupMember")
-            .where("GroupMember.username=:username", {username})
-            .leftJoin("Conversation.messages", "Message")
-            .getMany();
-    }
-
-    public async getFriends(username: string): Promise<User[]>{
+    public async getFriends(username: string): Promise<User[]> {
         return (await this.getFriendsOne(username))
             .concat(await this.getFriendsTwo(username));
-    }
-
-    private async getFriendsOne(username: string): Promise<User[]>{
-        return this.userRepository.createQueryBuilder()
-            .leftJoin("User.friendsTwo","FriendshipTwo")
-            .leftJoin("FriendshipTwo.friendOne","FriendOne")
-            .where("FriendOne.username=:username",{username})
-            .getMany();
-    }
-
-    private async getFriendsTwo(username: string): Promise<User[]>{
-        return this.userRepository.createQueryBuilder()
-            .leftJoin("User.friendsOne","FriendshipOne")
-            .leftJoin("FriendshipOne.friendTwo","FriendTwo")
-            .where("FriendTwo.username=:username",{username})
-            .getMany();
     }
 
     public async setProfilePicture(userId: string, profilePicture: Promise<Media>) {
@@ -251,6 +199,58 @@ export class UserController {
         return await getRepository(Organisation).createQueryBuilder()
             .leftJoinAndSelect("Organisation.invitedUsers", "User")
             .where("User.id=:id", {id})
+            .getMany();
+    }
+
+    private async getOrganisationConversations(username: string): Promise<Conversation[]> {
+        return await this.conversationRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Conversation.organisation", "Organisation")
+            .leftJoinAndSelect("Organisation.members", "OrganisationMembership")
+            .leftJoinAndSelect("OrganisationMembership.user", "OrganisationMember")
+            .leftJoinAndSelect("Organisation.profilePicture", "ProfPic")
+            .where("OrganisationMember.username=:username", {username})
+            .getMany();
+    }
+
+    private async getFriendshipConversations(username: string): Promise<Conversation[]> {
+        return await this.conversationRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Conversation.friendship", "Friendship")
+            .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
+            .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
+            .leftJoinAndSelect("FriendOne.profilePicture", "ProfPic1")
+            .leftJoinAndSelect("FriendTwo.profilePicture", "ProfPic2")
+            .where("FriendOne.username=:username", {username})
+            .orWhere("FriendTwo.username=:username", {username})
+            .leftJoin("Conversation.messages", "Message")
+            .getMany()
+    }
+
+    private async getGroupConversations(username: string): Promise<Conversation[]> {
+        return await this.conversationRepository
+            .createQueryBuilder()
+            .leftJoinAndSelect("Conversation.group", "Group")
+            .leftJoinAndSelect("Group.members", "GroupMembership")
+            .leftJoinAndSelect("GroupMembership.user", "GroupMember")
+            .where("GroupMember.username=:username", {username})
+            .leftJoin("Conversation.messages", "Message")
+            .getMany();
+    }
+
+    private async getFriendsOne(username: string): Promise<User[]> {
+        return this.userRepository.createQueryBuilder()
+            .leftJoin("User.friendsTwo", "FriendshipTwo")
+            .leftJoin("FriendshipTwo.friendOne", "FriendOne")
+            .where("FriendOne.username=:username", {username})
+            .getMany();
+    }
+
+    private async getFriendsTwo(username: string): Promise<User[]> {
+        return this.userRepository.createQueryBuilder()
+            .leftJoin("User.friendsOne", "FriendshipOne")
+            .leftJoin("FriendshipOne.friendTwo", "FriendTwo")
+            .where("FriendTwo.username=:username", {username})
             .getMany();
     }
 }

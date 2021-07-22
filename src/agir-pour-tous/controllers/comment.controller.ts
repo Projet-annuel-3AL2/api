@@ -23,14 +23,14 @@ export class CommentController {
         return await this.commentRepository.findOneOrFail(commentId);
     }
 
-    public async delete(commentId: string): Promise<void>{
+    public async delete(commentId: string): Promise<void> {
         await this.commentRepository.delete(commentId);
     }
 
     public async getOwner(commentId: string): Promise<User> {
         return await getRepository(User).createQueryBuilder()
-            .leftJoin("User.comments","Comment")
-            .where("Comment.id=:commentId",{commentId})
+            .leftJoin("User.comments", "Comment")
+            .where("Comment.id=:commentId", {commentId})
             .getOne();
     }
 

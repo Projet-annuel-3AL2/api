@@ -111,19 +111,19 @@ export class PostController {
         return getRepository(Comment)
             .createQueryBuilder()
             .leftJoinAndSelect("Comment.creator", "User")
-            .leftJoinAndSelect("User.profilePicture","ProfPic")
+            .leftJoinAndSelect("User.profilePicture", "ProfPic")
             .leftJoin("Comment.post", "Post")
             .where("Post.id=:postId", {postId})
-            .orderBy("Comment.createdAt","DESC")
+            .orderBy("Comment.createdAt", "DESC")
             .getMany();
     }
 
     public async getSharedPost(postId: string): Promise<Post> {
         return this.postRepository
             .createQueryBuilder()
-            .leftJoinAndSelect("Post.creator","Creator")
-            .leftJoinAndSelect("Creator.certification","Certification")
-            .leftJoinAndSelect("Creator.profilePicture","ProfPic")
+            .leftJoinAndSelect("Post.creator", "Creator")
+            .leftJoinAndSelect("Creator.certification", "Certification")
+            .leftJoinAndSelect("Creator.profilePicture", "ProfPic")
             .leftJoin("Post.sharedPosts", "Shares")
             .where("Shares.id=:postId", {postId})
             .getOne();
@@ -133,6 +133,22 @@ export class PostController {
         const post = await this.getById(postId);
         let comment = getRepository(Comment).create({...commentProps, creator, post});
         return await getRepository(Comment).save(comment);
+    }
+
+    async getAllReport(): Promise<Report[]> {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedPost", "ReportedPost")
+            .leftJoinAndSelect("ReportedPost.creator", "Creator")
+            .leftJoinAndSelect("Report.userReporter", "UserReporter")
+            .where("Report.reportedPost is not null")
+            .getMany()
+    }
+
+    async countReport(postId: string) {
+        return await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedPost", "ReportedPost")
+            .where("ReportedPost.id =:postId", {postId})
+            .getCount();
     }
 
     private getOwnPosts(userId: string): Promise<Post[]> {
@@ -194,21 +210,5 @@ export class PostController {
             .leftJoinAndSelect("User.certification", "cert")
             .where("User.id=:userId", {userId})
             .getMany();
-    }
-
-    async getAllReport(): Promise<Report[]> {
-        return await getRepository(Report).createQueryBuilder()
-            .leftJoinAndSelect("Report.reportedPost", "ReportedPost")
-            .leftJoinAndSelect("ReportedPost.creator", "Creator")
-            .leftJoinAndSelect("Report.userReporter", "UserReporter")
-            .where("Report.reportedPost is not null")
-            .getMany()
-    }
-
-    async countReport(postId: string) {
-        return await getRepository(Report).createQueryBuilder()
-            .leftJoinAndSelect("Report.reportedPost", "ReportedPost")
-            .where("ReportedPost.id =:postId", {postId})
-            .getCount();
     }
 }

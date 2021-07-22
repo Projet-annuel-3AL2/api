@@ -4,8 +4,6 @@ import {hasAdminRights, isAskedUser, isSuperAdmin} from "../middlewares/user.mid
 import {GroupController} from "../controllers/group.controller";
 import {User} from "../models/user.model";
 import {logger} from "../config/logging.config";
-import {UserController} from "../controllers/user.controller";
-import {userRouter} from "./user.route";
 
 const groupRouter = express.Router();
 

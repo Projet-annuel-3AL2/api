@@ -50,15 +50,15 @@ export class AuthController {
         }).catch(logger.error);
     }
 
-    public async isValidToken(resetToken: string, username: string): Promise<boolean>{
+    public async isValidToken(resetToken: string, username: string): Promise<boolean> {
         return (await this.userRepository.createQueryBuilder()
-            .where("User.username=:username",{username})
-            .andWhere("User.resetToken=:resetToken",{resetToken})
+            .where("User.username=:username", {username})
+            .andWhere("User.resetToken=:resetToken", {resetToken})
             .andWhere("User.resetTokenExpiration > NOW()")
             .getOne() !== undefined);
     }
 
-    public async resetPassword(resetToken: string, username: string, password: string):Promise<void> {
+    public async resetPassword(resetToken: string, username: string, password: string): Promise<void> {
         const encryptedPass = await hash(password, 8);
         await this.userRepository.createQueryBuilder()
             .update()

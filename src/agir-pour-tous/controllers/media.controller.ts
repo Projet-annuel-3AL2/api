@@ -18,14 +18,14 @@ export class MediaController {
     }
 
     public async create(file: Express.Multer.File): Promise<Media> {
-        const media = this.mediaRepository.create({link:file.filename});
+        const media = this.mediaRepository.create({link: file.filename});
         return await this.mediaRepository.save(media);
     }
 
     public async getPostMedias(postId: string): Promise<Media[]> {
         return this.mediaRepository.createQueryBuilder()
-            .leftJoin("Media.post","Post")
-            .where("Post.id=:postId",{postId})
+            .leftJoin("Media.post", "Post")
+            .where("Post.id=:postId", {postId})
             .getMany();
     }
 }

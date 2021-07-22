@@ -7,7 +7,7 @@ import {isCommentOwner} from "../middlewares/comment.middleware";
 
 const commentRouter = express.Router();
 
-commentRouter.delete("/:commentId",ensureLoggedIn, isCommentOwner, async (req, res) => {
+commentRouter.delete("/:commentId", ensureLoggedIn, isCommentOwner, async (req, res) => {
     try {
         const commentId = req.params.commentId;
         const commentController = CommentController.getInstance();

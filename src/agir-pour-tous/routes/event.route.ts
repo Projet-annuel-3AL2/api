@@ -282,7 +282,7 @@ eventRouter.post('/search-event', async (req, res) => {
         const endDate = req.body.endDate;
         const categoryId = req.body.categoryId;
         const eventController = await EventController.getInstance();
-        const events = await eventController.getEventsSearch(userLocationX, userLocationY, range, startDate, endDate,categoryId);
+        const events = await eventController.getEventsSearch(userLocationX, userLocationY, range, startDate, endDate, categoryId);
         res.json(events);
     } catch (error) {
         logger.error({route: req.route, error});

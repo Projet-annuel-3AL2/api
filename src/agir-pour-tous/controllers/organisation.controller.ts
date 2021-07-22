@@ -2,7 +2,7 @@ import {getRepository, Repository} from "typeorm";
 import {Post, PostProps} from "../models/post.model";
 import {User} from "../models/user.model";
 import {validate} from "class-validator";
-import {Organisation, OrganisationProps} from "../models/organisation.model";
+import {Organisation} from "../models/organisation.model";
 import {OrganisationMembership} from "../models/organisation_membership.model";
 import {Report, ReportProps} from "../models/report.model";
 import {
@@ -11,7 +11,6 @@ import {
 } from "../models/organisation_creation_request.model";
 import {Event} from "../models/event.model";
 import {Media} from "../models/media.model";
-import {organisationRouter} from "../routes/organisation.route";
 import {Conversation} from "../models/conversation.model";
 
 export class OrganisationController {
@@ -240,21 +239,6 @@ export class OrganisationController {
         await getRepository(OrganisationCreationRequest).delete(organisationCreationRequestId);
     }
 
-    private async create(user: User, name: string): Promise<Organisation> {
-        console.log(user)
-        const creatorMembership = getRepository(OrganisationMembership).create({
-            user,
-            isOwner: true,
-            isAdmin: true
-        });
-        const organisation = this.organisationRepository.create({name,conversation:new Conversation(), members: [creatorMembership]});
-        const err = await validate(organisation);
-        if (err.length > 0) {
-            throw err;
-        }
-        return this.organisationRepository.save(organisation);
-    }
-
     async getMembership(organisationId: string): Promise<OrganisationMembership[]> {
         return getRepository(OrganisationMembership)
             .createQueryBuilder()
@@ -328,14 +312,14 @@ export class OrganisationController {
         for (const organisationMembership of organisationMemberships) {
             const organisationId = organisationMembership.organisation.id
             if (await getRepository(OrganisationMembership).createQueryBuilder()
-                .leftJoinAndSelect("OrganisationMembership.user", "User")
-                .where("User.username=:username", {username})
-                .getOne() === undefined
+                    .leftJoinAndSelect("OrganisationMembership.user", "User")
+                    .where("User.username=:username", {username})
+                    .getOne() === undefined
                 && await getRepository(Organisation).createQueryBuilder()
                     .leftJoinAndSelect("Organisation.invitedUsers", "InvitedUser")
                     .where("InvitedUser.username=:username", {username})
                     .andWhere("Organisation.id=:organisationId", {organisationId})
-                    .getOne() === undefined ){
+                    .getOne() === undefined) {
                 organisations.push(organisationMembership.organisation)
             }
         }
@@ -347,5 +331,24 @@ export class OrganisationController {
             .leftJoin("User.organisationInvitations", "Organisation")
             .where("Organisation.id=:organisationId", {organisationId})
             .getMany();
+    }
+
+    private async create(user: User, name: string): Promise<Organisation> {
+        console.log(user)
+        const creatorMembership = getRepository(OrganisationMembership).create({
+            user,
+            isOwner: true,
+            isAdmin: true
+        });
+        const organisation = this.organisationRepository.create({
+            name,
+            conversation: new Conversation(),
+            members: [creatorMembership]
+        });
+        const err = await validate(organisation);
+        if (err.length > 0) {
+            throw err;
+        }
+        return this.organisationRepository.save(organisation);
     }
 }

@@ -5,7 +5,8 @@ import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
-    Entity, JoinColumn,
+    Entity,
+    JoinColumn,
     ManyToMany,
     ManyToOne,
     OneToMany,
@@ -15,16 +16,7 @@ import {
 } from "typeorm";
 import {Category} from "./category.model";
 import {Report} from "./report.model";
-import {
-    IsDate,
-    IsDefined,
-    IsLatitude,
-    IsLongitude,
-    IsNotEmpty, IsOptional,
-    IsUUID,
-    Length,
-    MaxLength
-} from "class-validator";
+import {IsDate, IsDefined, IsLatitude, IsLongitude, IsNotEmpty, IsOptional, Length, MaxLength} from "class-validator";
 import {Media} from "./media.model";
 
 export interface EventProps {
@@ -62,7 +54,7 @@ export class Event {
     @IsLongitude()
     @Column({type: "float", nullable: false})
     longitude: number;
-    @Column({nullable: false, default:-1})
+    @Column({nullable: false, default: -1})
     participantsLimit: number;
     @ManyToOne(() => Organisation, organisation => organisation.events)
     organisation: Organisation;

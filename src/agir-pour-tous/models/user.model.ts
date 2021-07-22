@@ -94,13 +94,17 @@ export class User implements UserProps {
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
     comments: Comment[];
-    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true, eager:true})
+    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true, eager: true})
     @JoinColumn()
     profilePicture: Media;
     @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true, eager: true})
     @JoinColumn()
     bannerPicture: Media;
-    @OneToOne(() => Certification, certification => certification.user, {cascade: true, eager:true, onDelete:"SET NULL"})
+    @OneToOne(() => Certification, certification => certification.user, {
+        cascade: true,
+        eager: true,
+        onDelete: "SET NULL"
+    })
     @JoinColumn()
     certification: Certification;
     @OneToOne(() => CertificationRequest, certification => certification.user, {cascade: true})
@@ -135,6 +139,7 @@ export class User implements UserProps {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
     @BeforeInsert()
     async setPassword(password: string) {
         this.password = await hash(password || this.password, 10)
