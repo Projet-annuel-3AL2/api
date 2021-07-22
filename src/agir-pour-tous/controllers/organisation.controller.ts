@@ -12,6 +12,7 @@ import {
 import {Event} from "../models/event.model";
 import {Media} from "../models/media.model";
 import {organisationRouter} from "../routes/organisation.route";
+import {Conversation} from "../models/conversation.model";
 
 export class OrganisationController {
 
@@ -236,18 +237,17 @@ export class OrganisationController {
     }
 
     public async rejectCreationDemand(organisationCreationRequestId: string): Promise<void> {
-        await getRepository(OrganisationCreationRequest).softDelete(organisationCreationRequestId);
+        await getRepository(OrganisationCreationRequest).delete(organisationCreationRequestId);
     }
 
     private async create(user: User, name: string): Promise<Organisation> {
-        const organisation = this.organisationRepository.create({name});
+        console.log(user)
         const creatorMembership = getRepository(OrganisationMembership).create({
-            organisation,
             user,
             isOwner: true,
             isAdmin: true
         });
-        organisation.members = [creatorMembership];
+        const organisation = this.organisationRepository.create({name,conversation:new Conversation(), members: [creatorMembership]});
         const err = await validate(organisation);
         if (err.length > 0) {
             throw err;
@@ -342,10 +342,10 @@ export class OrganisationController {
         return organisations;
     }
 
-    async getInvitedUser(organisationId: any): Promise<Organisation> {
-        return await this.organisationRepository.createQueryBuilder()
-            .leftJoinAndSelect("Organisation.invitedUsers", "InvitedUsers")
+    async getInvitedUser(organisationId: any): Promise<User[]> {
+        return await getRepository(User).createQueryBuilder()
+            .leftJoin("User.organisationInvitations", "Organisation")
             .where("Organisation.id=:organisationId", {organisationId})
-            .getOne();
+            .getMany();
     }
 }

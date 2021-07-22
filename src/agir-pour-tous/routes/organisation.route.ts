@@ -62,18 +62,6 @@ organisationRouter.get('/', async (req, res) => {
     }
 });
 
-organisationRouter.get('/:organisationId', async (req, res) => {
-    try {
-        const organisationId = req.params.organisationId;
-        const organisationController = await OrganisationController.getInstance();
-        const organisation = await organisationController.getById(organisationId);
-        res.json(organisation);
-    } catch (error) {
-        logger.error(`${req.route.path} \n ${error}`);
-        res.status(404).json(error);
-    }
-});
-
 organisationRouter.get('/:organisationId/posts', async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
@@ -432,9 +420,9 @@ organisationRouter.put('/:requestId/accept', ensureLoggedIn, hasAdminRights, asy
     try {
         const requestId = req.params.requestId;
         const organisationController = await OrganisationController.getInstance();
-        await organisationController.acceptCreationDemand(requestId);
+        const organisation = await organisationController.acceptCreationDemand(requestId);
         logger.info(`User ${(req.user as User).username} has accepted the creation request of an organisation with name ${req.body.name}`);
-        res.status(204).end();
+        res.json(organisation);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
@@ -527,6 +515,18 @@ organisationRouter.get("/:organisationId/invited/user", ensureLoggedIn, async (r
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
+    }
+});
+
+organisationRouter.get('/:organisationId', async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = await OrganisationController.getInstance();
+        const organisation = await organisationController.getById(organisationId);
+        res.json(organisation);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(404).json(error);
     }
 });
 

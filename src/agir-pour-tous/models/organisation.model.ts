@@ -34,7 +34,7 @@ export class Organisation {
     @Length(5, 30)
     @Column({nullable: false, unique: true})
     name: string;
-    @OneToMany(() => OrganisationMembership, user => user.organisation)
+    @OneToMany(() => OrganisationMembership, user => user.organisation, {cascade: true})
     members: OrganisationMembership[];
     @ManyToMany(() => User, user => user.organisationInvitations)
     @JoinTable()
@@ -63,9 +63,4 @@ export class Organisation {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
-
-    @BeforeInsert()
-    async setConversation() {
-        this.conversation = new Conversation();
-    }
 }
