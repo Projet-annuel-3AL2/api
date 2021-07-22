@@ -6,7 +6,8 @@ import {OrganisationController} from "../controllers/organisation.controller";
 export async function isEventOrganiser(req, res, next) {
     const eventId = req.params.eventId;
     const eventController = EventController.getInstance();
-    if (!req.user && !(await eventController.isOwner(eventId, (req.user as User).id))) {
+    if (!req.user && (!(await eventController.isOwner(eventId, (req.user as User).id)) ||
+        (req.user as User).userType === UserType.ADMIN || (req.user as User).userType === UserType.SUPER_ADMIN)) {
         return res.status(403).end();
     }
     next();

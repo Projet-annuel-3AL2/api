@@ -1,10 +1,11 @@
 import {OrganisationController} from "../controllers/organisation.controller";
-import {User} from "../models/user.model";
+import {User, UserType} from "../models/user.model";
 
 export function isOrganisationAdmin(req, res, next) {
     const organisationId = req.params.organisationId;
     const organisationController = OrganisationController.getInstance();
-    if (!req.user && !organisationController.isAdmin(organisationId, (req.user as User).id)) {
+    if (!req.user && (!organisationController.isAdmin(organisationId, (req.user as User).id) ||
+        (req.user as User).userType === UserType.ADMIN || (req.user as User).userType === UserType.SUPER_ADMIN)) {
         return res.status(403).end();
     }
     next();
@@ -13,7 +14,8 @@ export function isOrganisationAdmin(req, res, next) {
 export function isOrganisationOwner(req, res, next) {
     const organisationId = req.params.organisationId;
     const organisationController = OrganisationController.getInstance();
-    if (!req.user && !organisationController.isOwner(organisationId, (req.user as User).id)) {
+    if (!req.user && (!organisationController.isOwner(organisationId, (req.user as User).id) ||
+        (req.user as User).userType === UserType.ADMIN || (req.user as User).userType === UserType.SUPER_ADMIN)) {
         return res.status(403).end();
     }
     next();
