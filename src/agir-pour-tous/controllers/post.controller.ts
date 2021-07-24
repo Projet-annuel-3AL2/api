@@ -165,7 +165,7 @@ export class PostController {
             .orWhere("Member.id=:userId", {userId})
             .limit(limit)
             .offset(offset)
-            .orderBy("Posts.createdAt","ASC")
+            .orderBy("Post.createdAt","DESC")
             .getMany();
     }
 }
