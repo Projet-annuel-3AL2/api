@@ -164,11 +164,16 @@ eventRouter.delete('/:eventId/participant', ensureLoggedIn, isMember, async (req
     }
 });
 
-eventRouter.put('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, res) => {
+eventRouter.put('/:eventId', ensureLoggedIn, isEventOrganiser, upload.single("event_media"), isPictureFile, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();
-        const event = await eventController.update(eventId, {...req.body});
+        const eventProps: EventProps={...req.body};
+        const mediaController = MediaController.getInstance();
+        if (req.file) {
+            eventProps.picture = await mediaController.create(req.file);
+        }
+        const event = await eventController.update(eventId, eventProps);
         logger.info(`User ${(req.user as User).username} modified event with id ${eventId}`);
         res.json(event);
     } catch (error) {

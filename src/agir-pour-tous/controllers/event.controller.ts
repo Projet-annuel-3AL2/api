@@ -65,7 +65,14 @@ export class EventController {
     }
 
     public async update(eventId: string, props: EventProps): Promise<Event> {
-        await this.eventRepository.update(eventId, props);
+        props.id = eventId;
+        props.startDate = new Date(props.startDate);
+        props.endDate = new Date(props.endDate);
+        await this.eventRepository.createQueryBuilder()
+            .update()
+            .set(props)
+            .where("Event.id =:eventId", {eventId})
+            .execute();
         return await this.getById(eventId);
     }
 

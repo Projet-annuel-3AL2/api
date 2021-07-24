@@ -20,6 +20,7 @@ import {IsDate, IsDefined, IsLatitude, IsLongitude, IsNotEmpty, IsOptional, Leng
 import {Media} from "./media.model";
 
 export interface EventProps {
+    id?: string;
     name: string;
     startDate: Date;
     endDate: Date;
