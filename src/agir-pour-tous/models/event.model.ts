@@ -27,6 +27,7 @@ export interface EventProps {
     longitude: number;
     organisation?: Organisation;
     user: User;
+    picture?: Media;
 }
 
 @Entity()
