@@ -11,13 +11,25 @@ import {
     isNotMember
 } from "../middlewares/event.middleware";
 import {logger} from "../config/logging.config";
+import {Event, EventProps} from "../models/event.model";
+import {upload} from "./index.route";
+import {isPicture} from "../../utils/file.utils";
+import {MediaController} from "../controllers/media.controller";
+import {isPictureFile} from "../middlewares/media.middleware";
 
 const eventRouter = express.Router();
 
-eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
+eventRouter.post('/', ensureLoggedIn, canCreateEvent, upload.single("event_media"), isPictureFile, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
-        const event = await eventController.create(req.user as User, req.body);
+        console.log(req.body)
+        const eventProps: EventProps={...req.body};
+        const mediaController = MediaController.getInstance();
+        if (req.file) {
+            eventProps.picture = await mediaController.create(req.file);
+        }
+
+        const event = await eventController.create(req.user as User, eventProps);
         logger.info(`User ${(req.user as User).username} created event called ${event.name} with the id ${event.id}`);
         res.json(event);
     } catch (error) {
@@ -84,7 +96,8 @@ eventRouter.get('/:eventId', async (req, res) => {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
-});
+});;
+
 
 eventRouter.get('/:eventId/participants', async (req, res) => {
     try {
