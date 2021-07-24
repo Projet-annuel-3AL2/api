@@ -78,7 +78,9 @@ export class UserController {
         return await getRepository(Event)
             .createQueryBuilder()
             .leftJoin("Event.participants", "User")
+            .leftJoin("Event.user", "Owner")
             .where("User.username=:username", {username})
+            .orWhere("Owner.username=:username", {username})
             .getMany();
     }
 
