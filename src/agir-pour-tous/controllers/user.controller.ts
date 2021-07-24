@@ -89,6 +89,7 @@ export class UserController {
             .createQueryBuilder()
             .leftJoin("Organisation.members", "OrganisationMembership")
             .leftJoin("OrganisationMembership.user", "User")
+            .leftJoinAndSelect("Organisation.profilePicture", "ProfilePicture")
             .where("User.username=:username", {username})
             .getMany();
     }
@@ -189,6 +190,7 @@ export class UserController {
     async getOrganisationInvitations(id: string): Promise<Organisation[]> {
         return await getRepository(Organisation).createQueryBuilder()
             .leftJoinAndSelect("Organisation.invitedUsers", "User")
+            .leftJoinAndSelect("Organisation.profilePicture", "ProfilePicture")
             .where("User.id=:id", {id})
             .getMany();
     }

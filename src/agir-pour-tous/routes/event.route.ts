@@ -11,9 +11,8 @@ import {
     isNotMember
 } from "../middlewares/event.middleware";
 import {logger} from "../config/logging.config";
-import {Event, EventProps} from "../models/event.model";
+import {EventProps} from "../models/event.model";
 import {upload} from "./index.route";
-import {isPicture} from "../../utils/file.utils";
 import {MediaController} from "../controllers/media.controller";
 import {isPictureFile} from "../middlewares/media.middleware";
 
@@ -22,7 +21,6 @@ const eventRouter = express.Router();
 eventRouter.post('/', ensureLoggedIn, canCreateEvent, upload.single("event_media"), isPictureFile, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
-        console.log(req.body)
         const eventProps: EventProps={...req.body};
         const mediaController = MediaController.getInstance();
         if (req.file) {
@@ -96,7 +94,7 @@ eventRouter.get('/:eventId', async (req, res) => {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
-});;
+});
 
 
 eventRouter.get('/:eventId/participants', async (req, res) => {
@@ -287,7 +285,6 @@ eventRouter.get('/:eventId/organisation', async (req, res) => {
 
 eventRouter.post('/search-event', async (req, res) => {
     try {
-        console.log(req.body)
         const userLocationX = req.body.longitude;
         const userLocationY = req.body.latitude;
         const range = req.body.range;

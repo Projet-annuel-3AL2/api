@@ -334,7 +334,6 @@ export class OrganisationController {
     }
 
     private async create(user: User, name: string): Promise<Organisation> {
-        console.log(user)
         const creatorMembership = getRepository(OrganisationMembership).create({
             user,
             isOwner: true,

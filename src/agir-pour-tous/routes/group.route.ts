@@ -11,7 +11,6 @@ const groupRouter = express.Router();
 groupRouter.post('/', ensureLoggedIn,upload.none(), async (req, res) => {
     try {
         const groupController = GroupController.getInstance();
-        console.log(JSON.parse(req.body.users))
         const group = await groupController.create(req.user as User, {...req.body, users:JSON.parse(req.body.users)});
         logger.info(`User ${(req.user as User).username} created a group called ${group.name}`);
         res.json(group);
