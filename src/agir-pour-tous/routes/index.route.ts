@@ -47,7 +47,7 @@ export function buildAPTRoutes() {
         cookie: {
             maxAge: 259200000,
             secure: false,
-            sameSite: "strict"
+            sameSite: "lax"
         },
         store: new TypeormStore({
             cleanupLimit: 2,

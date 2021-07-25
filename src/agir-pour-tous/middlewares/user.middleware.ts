@@ -33,10 +33,12 @@ export async function isSuperAdmin(req, res, next) {
 export async function isNotBlocked(req, res, next) {
     try {
         const username = req.params.username;
-        const userController = UserController.getInstance();
-        const blocksCurrentUser = await userController.isBlocked(username, (req.user as User).username);
-        if (req.user && blocksCurrentUser && (req.user as User).userType === UserType.USER) {
-            return res.status(200).json({blocksCurrentUser});
+        if(req.user) {
+            const userController = UserController.getInstance();
+            const blocksCurrentUser = await userController.isBlocked(username, (req.user as User).username);
+            if (blocksCurrentUser && (req.user as User).userType === UserType.USER) {
+                return res.status(200).json({blocksCurrentUser});
+            }
         }
         next();
     } catch (e) {
