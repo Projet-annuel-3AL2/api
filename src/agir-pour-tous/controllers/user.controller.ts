@@ -39,7 +39,7 @@ export class UserController {
     public async delete(username: string): Promise<void> {
         await this.userRepository.createQueryBuilder()
             .where("username=:username", {username})
-            .softDelete()
+            .delete()
             .execute();
     }
 
@@ -185,7 +185,7 @@ export class UserController {
     async deleteReport(reportId: any) {
         return await getRepository(Report).createQueryBuilder()
             .where("Report.id=:reportId", {reportId})
-            .softDelete()
+            .delete()
             .execute();
     }
 

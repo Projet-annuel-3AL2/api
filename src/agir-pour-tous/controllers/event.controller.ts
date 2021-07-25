@@ -62,7 +62,7 @@ export class EventController {
 
     public async delete(id: string) {
         await this.deleteReports(id);
-        await this.eventRepository.softDelete(id);
+        await this.eventRepository.delete(id);
     }
 
     public async update(eventId: string, props: EventProps): Promise<Event> {

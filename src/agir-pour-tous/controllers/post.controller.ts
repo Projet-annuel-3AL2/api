@@ -40,7 +40,7 @@ export class PostController {
     }
 
     public async delete(postId: string): Promise<void> {
-        await this.postRepository.softDelete(postId);
+        await this.postRepository.delete(postId);
     }
 
     public async update(postId: string, props: PostProps): Promise<Post> {
