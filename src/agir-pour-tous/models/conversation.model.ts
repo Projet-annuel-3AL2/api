@@ -16,7 +16,7 @@ import {Group} from "./group.model";
 export class Conversation {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @OneToMany(() => Message, message => message.conversation, {cascade: true})
+    @OneToMany(() => Message, message => message.conversation)
     messages: Message[];
     @OneToOne(() => Organisation, organisation => organisation.conversation)
     organisation: Organisation;

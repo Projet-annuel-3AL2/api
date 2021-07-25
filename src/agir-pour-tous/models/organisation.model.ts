@@ -43,10 +43,10 @@ export class Organisation {
     followers: User[];
     @OneToMany(() => Event, user => user.organisation, {cascade: true})
     events: Event[];
-    @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, cascade: true, eager: true,onDelete:'SET NULL'})
+    @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, eager: true,onDelete:'SET NULL'})
     @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true, cascade: true, eager: true,onDelete:'SET NULL'})
+    @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true, eager: true,onDelete:'SET NULL'})
     @JoinColumn()
     bannerPicture: Media;
     @OneToOne(() => Conversation, conversation => conversation.organisation, {nullable: false, cascade: true})

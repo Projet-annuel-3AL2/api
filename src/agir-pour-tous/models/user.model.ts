@@ -74,13 +74,13 @@ export class User implements UserProps {
     resetTokenExpiration: Date;
     @Column({type: "enum", enum: UserType, default: UserType.USER, nullable: false})
     userType: UserType;
-    @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true, onDelete:"SET NULL"})
+    @OneToMany(() => Friendship, friendship => friendship.friendOne, {onDelete:"SET NULL"})
     friendsOne: Friendship[];
-    @OneToMany(() => Friendship, friendship => friendship.friendTwo, {cascade: true, onDelete:"SET NULL"})
+    @OneToMany(() => Friendship, friendship => friendship.friendTwo, {onDelete:"SET NULL"})
     friendsTwo: Friendship[];
-    @OneToMany(() => FriendRequest, friendRequest => friendRequest.user, {cascade: true, onDelete: "SET NULL"})
+    @OneToMany(() => FriendRequest, friendRequest => friendRequest.user, {onDelete: "SET NULL"})
     friendRequests: FriendRequest[];
-    @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender, {cascade: true, onDelete: "SET NULL"})
+    @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender, {onDelete: "SET NULL"})
     requestedFriends: FriendRequest[];
     @ManyToMany(() => User, user => user.blockedUsers)
     blockers: User[];
@@ -94,10 +94,10 @@ export class User implements UserProps {
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
     comments: Comment[];
-    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true, eager: true, onDelete:'SET NULL'})
+    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, eager: true, onDelete:'SET NULL'})
     @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true, eager: true, onDelete:'SET NULL'})
+    @OneToOne(() => Media, media => media.userBanner, {nullable: true, eager: true, onDelete:'SET NULL'})
     @JoinColumn()
     bannerPicture: Media;
     @OneToOne(() => Certification, certification => certification.user, {
