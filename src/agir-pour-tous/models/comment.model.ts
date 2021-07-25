@@ -23,9 +23,9 @@ export interface CommentProps {
 export class Comment {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @ManyToOne(() => User, user => user.comments, {nullable: false, eager: true})
+    @ManyToOne(() => User, user => user.comments, {nullable: false, eager: true, onDelete:"CASCADE"})
     creator: User;
-    @ManyToOne(() => Post, post => post.comments)
+    @ManyToOne(() => Post, post => post.comments, {onDelete:"CASCADE"})
     post: Post;
     @Length(0, 512)
     @Column()

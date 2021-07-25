@@ -92,7 +92,7 @@ export class User implements UserProps {
     likedPosts: Post[];
     @OneToMany(() => Post, post => post.creator, {cascade: true})
     createdPosts: Post[];
-    @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
+    @OneToMany(() => Comment, comment => comment.creator, {cascade: true, onDelete:"SET NULL"})
     comments: Comment[];
     @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, eager: true,cascade: true,   onDelete:'SET NULL'})
     @JoinColumn()
