@@ -1,5 +1,6 @@
 import {getRepository, Repository} from "typeorm";
 import {Media} from "../models/media.model";
+import * as fs from "fs";
 
 export class MediaController {
     private static instance: MediaController;
@@ -23,9 +24,15 @@ export class MediaController {
     }
 
     public async getPostMedias(postId: string): Promise<Media[]> {
-        return this.mediaRepository.createQueryBuilder()
+        return await this.mediaRepository.createQueryBuilder()
             .leftJoin("Media.post", "Post")
             .where("Post.id=:postId", {postId})
             .getMany();
+    }
+
+    public async deleteMedia(mediaId: string): Promise<void> {
+        const media = await this.mediaRepository.findOneOrFail(mediaId);
+        fs.unlinkSync(media.link);
+        await this.mediaRepository.remove(media);
     }
 }
