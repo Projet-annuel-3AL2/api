@@ -31,8 +31,6 @@ export class MediaController {
     }
 
     public async deleteMedia(mediaId: string): Promise<void> {
-        const media = await this.mediaRepository.findOneOrFail(mediaId);
-        fs.unlinkSync(media.link);
-        await this.mediaRepository.remove(media);
+        await this.mediaRepository.delete(mediaId);
     }
 }

@@ -2,6 +2,7 @@ import {Organisation} from "./organisation.model";
 import {Post} from "./post.model";
 import {User} from "./user.model";
 import {
+    BeforeRemove,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
@@ -13,6 +14,7 @@ import {
 } from "typeorm";
 import {Comment} from "./comment.model";
 import {Event} from "./event.model";
+import fs from "fs";
 
 @Entity()
 export class Media {
@@ -40,4 +42,9 @@ export class Media {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
+
+    @BeforeRemove()
+    deleteFile(){
+        fs.unlinkSync(process.env.FILE_UPLOADS_PATH + '/' +this.link);
+    }
 }
