@@ -107,7 +107,7 @@ export class User implements UserProps {
     })
     @JoinColumn()
     certification: Certification;
-    @OneToOne(() => CertificationRequest, certification => certification.user, {cascade: true})
+    @OneToOne(() => CertificationRequest, certification => certification.user, {cascade: true, onDelete:"SET NULL"})
     certificationRequest: CertificationRequest;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];

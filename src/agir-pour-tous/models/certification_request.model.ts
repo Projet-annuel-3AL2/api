@@ -35,10 +35,10 @@ export class CertificationRequest {
         nullable: false
     })
     certificationRequestStatus: CertificationRequestStatus;
-    @OneToOne(() => User, user => user.certificationRequest, {nullable: false})
+    @OneToOne(() => User, user => user.certificationRequest, {nullable: false, onDelete:"CASCADE"})
     @JoinColumn()
     user: User;
-    @OneToOne(() => Certification, certification => certification.request, {nullable: true})
+    @OneToOne(() => Certification, certification => certification.request, {nullable: true, onDelete:"CASCADE"})
     @JoinColumn()
     certification: Certification;
     @CreateDateColumn()
