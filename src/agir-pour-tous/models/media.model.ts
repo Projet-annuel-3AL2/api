@@ -22,20 +22,20 @@ export class Media {
     id: string;
     @Column({nullable: false})
     link: string;
-    @OneToOne(() => User, user => user.profilePicture)
+    @OneToOne(() => User, user => user.profilePicture,{onDelete:'CASCADE'})
     userProfilePicture: User;
-    @OneToOne(() => User, user => user.bannerPicture)
+    @OneToOne(() => User, user => user.bannerPicture,{onDelete:'CASCADE'})
     userBanner: User;
-    @ManyToOne(() => Post, post => post.medias)
+    @ManyToOne(() => Post, post => post.medias,{onDelete:'CASCADE'})
     post: Post[];
-    @OneToOne(() => Organisation, organisation => organisation.profilePicture)
+    @OneToOne(() => Organisation, organisation => organisation.profilePicture,{onDelete:'CASCADE'})
     organisationProfilePicture: Organisation;
-    @OneToOne(() => Organisation, organisation => organisation.bannerPicture)
+    @OneToOne(() => Organisation, organisation => organisation.bannerPicture,{onDelete:'CASCADE'})
     organisationBannerPicture: Organisation;
-    @ManyToOne(() => Comment, comment => comment.medias)
+    @ManyToOne(() => Comment, comment => comment.medias,{onDelete:'CASCADE'})
     comments: Comment[];
-    @OneToOne(() => Event, event => event.picture)
-    eventPicture: Media;
+    @OneToOne(() => Event, event => event.picture,{onDelete:'CASCADE'})
+    eventPicture: Event;
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()

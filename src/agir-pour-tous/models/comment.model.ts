@@ -30,7 +30,7 @@ export class Comment {
     @Length(0, 512)
     @Column()
     text: string;
-    @OneToMany(() => Media, media => media.comments, {cascade: true, eager: true})
+    @OneToMany(() => Media, media => media.comments, {cascade: true, eager: true, onDelete:'SET NULL'})
     medias: Media[];
     @OneToMany(() => Report, report => report.reportedComment, {cascade: true})
     reported: Report[];

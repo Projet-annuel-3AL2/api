@@ -69,7 +69,7 @@ export class Event {
     @IsNotEmpty()
     @ManyToOne(() => Category, category => category.events, {nullable: false, eager: true})
     category: Category;
-    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true, eager: true,onDelete:'SET NULL'})
     @JoinColumn()
     picture: Media;
     @OneToMany(() => Report, report => report.reportedEvent, {cascade: true})

@@ -94,10 +94,10 @@ export class User implements UserProps {
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
     comments: Comment[];
-    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true, eager: true, onDelete:'SET NULL'})
     @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true, eager: true, onDelete:'SET NULL'})
     @JoinColumn()
     bannerPicture: Media;
     @OneToOne(() => Certification, certification => certification.user, {

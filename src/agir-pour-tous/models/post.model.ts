@@ -52,7 +52,7 @@ export class Post {
     @Length(0, 512)
     @Column({nullable: true, length: 512})
     text: string;
-    @OneToMany(() => Media, media => media.post, {cascade: true})
+    @OneToMany(() => Media, media => media.post, {cascade: true,onDelete:'SET NULL'})
     medias: Media[];
     @CreateDateColumn()
     createdAt: Date;
