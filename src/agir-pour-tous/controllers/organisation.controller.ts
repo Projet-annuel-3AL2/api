@@ -274,7 +274,7 @@ export class OrganisationController {
 
     async removeProfilePicture(organisationId: any) {
         await this.organisationRepository.createQueryBuilder()
-            .relation("bannerPicture")
+            .relation("profilePicture")
             .of(organisationId)
             .set(null);
     }
