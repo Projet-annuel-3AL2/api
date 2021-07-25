@@ -52,7 +52,7 @@ export class Organisation {
     @OneToOne(() => Conversation, conversation => conversation.organisation, {nullable: false, cascade: true})
     @JoinColumn()
     conversation: Conversation;
-    @OneToMany(() => Post, post => post.organisation, {cascade: true})
+    @OneToMany(() => Post, post => post.organisation, {cascade: true, onDelete:"SET NULL"})
     posts: Post[];
     @OneToMany(() => Report, report => report.reportedOrganisation, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];

@@ -90,7 +90,7 @@ export class User implements UserProps {
     @ManyToMany(() => Post, post => post.likes, {cascade: true})
     @JoinTable()
     likedPosts: Post[];
-    @OneToMany(() => Post, post => post.creator, {cascade: true})
+    @OneToMany(() => Post, post => post.creator, {cascade: true, onDelete:"SET NULL"})
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator, {cascade: true, onDelete:"SET NULL"})
     comments: Comment[];

@@ -31,9 +31,9 @@ export interface PostProps {
 export class Post {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @ManyToOne(() => User, user => user.createdPosts, {eager: true})
+    @ManyToOne(() => User, user => user.createdPosts, {eager: true, onDelete:"CASCADE"})
     creator: User;
-    @ManyToOne(() => Organisation, organisation => organisation.posts, {eager: true})
+    @ManyToOne(() => Organisation, organisation => organisation.posts, {eager: true, onDelete:"CASCADE"})
     organisation: Organisation;
     @ManyToOne(() => Group, group => group.posts, {eager: true})
     group: Group;
