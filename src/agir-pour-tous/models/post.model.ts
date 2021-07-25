@@ -37,13 +37,13 @@ export class Post {
     organisation: Organisation;
     @ManyToOne(() => Group, group => group.posts, {eager: true})
     group: Group;
-    @ManyToOne(() => Event, event => event.posts, {eager: true})
+    @ManyToOne(() => Event, event => event.posts, {eager: true, onDelete:'SET NULL'})
     sharedEvent: Event;
-    @OneToMany(() => Post, post => post.sharesPost)
+    @OneToMany(() => Post, post => post.sharesPost, {onDelete: "SET NULL"})
     sharedPosts: Post[];
-    @ManyToOne(() => Post, post => post.sharedPosts)
+    @ManyToOne(() => Post, post => post.sharedPosts, {onDelete:'SET NULL'})
     sharesPost: Post;
-    @ManyToMany(() => User, user => user.likedPosts)
+    @ManyToMany(() => User, user => user.likedPosts, {onDelete: "CASCADE"})
     likes: User[];
     @OneToMany(() => Comment, comment => comment.post, {cascade: true})
     comments: Comment[];

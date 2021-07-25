@@ -35,13 +35,13 @@ export class Organisation {
     name: string;
     @OneToMany(() => OrganisationMembership, user => user.organisation, {cascade: true, onDelete:"SET NULL"})
     members: OrganisationMembership[];
-    @ManyToMany(() => User, user => user.organisationInvitations, {onDelete: "SET NULL"})
+    @ManyToMany(() => User, user => user.organisationInvitations, {onDelete: "CASCADE"})
     @JoinTable()
     invitedUsers: User[];
-    @ManyToMany(() => User, user => user.followedOrganisations, {cascade: true})
+    @ManyToMany(() => User, user => user.followedOrganisations, {cascade: true, onDelete:"CASCADE"})
     @JoinTable()
     followers: User[];
-    @OneToMany(() => Event, user => user.organisation, {cascade: true})
+    @OneToMany(() => Event, user => user.organisation, {cascade: true, onDelete:"CASCADE"})
     events: Event[];
     @OneToOne(() => Media, media => media.organisationProfilePicture, {cascade: true,  nullable: true, eager: true,onDelete:'SET NULL'})
     @JoinColumn()

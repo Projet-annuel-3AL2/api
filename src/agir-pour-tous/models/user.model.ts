@@ -87,10 +87,10 @@ export class User implements UserProps {
     @ManyToMany(() => User, user => user.blockers, {cascade: true})
     @JoinTable()
     blockedUsers: User[];
-    @ManyToMany(() => Post, post => post.likes, {cascade: true})
+    @ManyToMany(() => Post, post => post.likes, {cascade: true, onDelete:'CASCADE'})
     @JoinTable()
     likedPosts: Post[];
-    @OneToMany(() => Post, post => post.creator, {cascade: true, onDelete:"SET NULL"})
+    @OneToMany(() => Post, post => post.creator, {cascade: true, onDelete:"CASCADE"})
     createdPosts: Post[];
     @OneToMany(() => Comment, comment => comment.creator, {cascade: true, onDelete:"SET NULL"})
     comments: Comment[];
@@ -111,7 +111,7 @@ export class User implements UserProps {
     certificationRequest: CertificationRequest;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
-    @OneToMany(() => GroupMembership, group => group.user, {cascade: true})
+    @OneToMany(() => GroupMembership, group => group.user, {cascade: true, onDelete:'CASCADE'})
     groups: GroupMembership[];
     @OneToMany(() => Event, event => event.user)
     createdEvents: Event[];
@@ -122,12 +122,12 @@ export class User implements UserProps {
     organisationCreationRequest: OrganisationCreationRequest;
     @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true, onDelete:"SET NULL"})
     organisations: OrganisationMembership[];
-    @ManyToMany(() => Organisation, organisation => organisation.invitedUsers, {onDelete: "SET NULL"})
+    @ManyToMany(() => Organisation, organisation => organisation.invitedUsers, {onDelete: "CASCADE"})
     organisationInvitations: Organisation[];
     @ManyToMany(() => Organisation, organisation => organisation.followers)
     @JoinTable()
     followedOrganisations: Organisation[];
-    @OneToMany(() => Message, message => message.user, {cascade: true})
+    @OneToMany(() => Message, message => message.user, {cascade: true, onDelete:"CASCADE"})
     messages: Message[];
     @OneToMany(() => Report, report => report.userReporter, {cascade: true, onDelete:"SET NULL"})
     reports: Report[];

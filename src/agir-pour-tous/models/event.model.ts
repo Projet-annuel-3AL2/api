@@ -58,13 +58,13 @@ export class Event {
     longitude: number;
     @Column({nullable: false, default: -1})
     participantsLimit: number;
-    @ManyToOne(() => Organisation, organisation => organisation.events)
+    @ManyToOne(() => Organisation, organisation => organisation.events, {onDelete:'SET NULL'})
     organisation: Organisation;
     @ManyToOne(() => User, user => user.createdEvents)
     user: User;
-    @ManyToMany(() => User, user => user.eventsParticipation)
+    @ManyToMany(() => User, user => user.eventsParticipation, {onDelete:'CASCADE'})
     participants: User[];
-    @OneToMany(() => Post, post => post.sharedEvent)
+    @OneToMany(() => Post, post => post.sharedEvent, {onDelete:'CASCADE'})
     posts: Post[];
     @IsNotEmpty()
     @ManyToOne(() => Category, category => category.events, {nullable: false, eager: true})
