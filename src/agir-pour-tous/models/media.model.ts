@@ -22,19 +22,19 @@ export class Media {
     id: string;
     @Column({nullable: false})
     link: string;
-    @OneToOne(() => User, user => user.profilePicture,{onDelete:'CASCADE'})
+    @OneToOne(() => User, user => user.profilePicture,{cascade:true, onDelete:'CASCADE'})
     userProfilePicture: User;
-    @OneToOne(() => User, user => user.bannerPicture,{onDelete:'CASCADE'})
+    @OneToOne(() => User, user => user.bannerPicture,{cascade:true, onDelete:'CASCADE'})
     userBanner: User;
-    @ManyToOne(() => Post, post => post.medias,{onDelete:'CASCADE'})
+    @ManyToOne(() => Post, post => post.medias,{cascade:true, onDelete:'CASCADE'})
     post: Post;
-    @OneToOne(() => Organisation, organisation => organisation.profilePicture,{onDelete:'CASCADE'})
+    @OneToOne(() => Organisation, organisation => organisation.profilePicture,{cascade:true, onDelete:'CASCADE'})
     organisationProfilePicture: Organisation;
-    @OneToOne(() => Organisation, organisation => organisation.bannerPicture,{onDelete:'CASCADE'})
+    @OneToOne(() => Organisation, organisation => organisation.bannerPicture,{cascade:true, onDelete:'CASCADE'})
     organisationBannerPicture: Organisation;
-    @ManyToOne(() => Comment, comment => comment.medias,{onDelete:'CASCADE'})
+    @ManyToOne(() => Comment, comment => comment.medias,{cascade:true, onDelete:'CASCADE'})
     comments: Comment;
-    @OneToOne(() => Event, event => event.picture,{onDelete:'CASCADE'})
+    @OneToOne(() => Event, event => event.picture,{cascade:true, onDelete:'CASCADE'})
     eventPicture: Event;
     @CreateDateColumn()
     createdAt: Date;
