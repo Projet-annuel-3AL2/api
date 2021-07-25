@@ -129,9 +129,9 @@ export class User implements UserProps {
     followedOrganisations: Organisation[];
     @OneToMany(() => Message, message => message.user, {cascade: true})
     messages: Message[];
-    @OneToMany(() => Report, report => report.userReporter)
+    @OneToMany(() => Report, report => report.userReporter, {cascade: true})
     reports: Report[];
-    @OneToMany(() => Report, report => report.reportedUser)
+    @OneToMany(() => Report, report => report.reportedUser, {cascade: true})
     reported: Report[];
     @CreateDateColumn()
     createdAt: Date;

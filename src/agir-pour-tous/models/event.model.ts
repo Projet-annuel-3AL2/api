@@ -72,7 +72,7 @@ export class Event {
     @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true, eager: true})
     @JoinColumn()
     picture: Media;
-    @OneToMany(() => Report, report => report.reportedEvent)
+    @OneToMany(() => Report, report => report.reportedEvent, {cascade: true})
     reported: Report[];
     @CreateDateColumn()
     createdAt: Date;

@@ -447,10 +447,8 @@ organisationRouter.delete("/:organisationId/profile-picture", ensureLoggedIn, as
     try {
         const organisationId = req.params.organisationId;
         const organisationController = OrganisationController.getInstance();
-        const mediaController = MediaController.getInstance();
-        const profilePicture = mediaController.create(req.file);
         await organisationController.removeProfilePicture(organisationId);
-        res.json(profilePicture);
+        res.status(204).end();
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);

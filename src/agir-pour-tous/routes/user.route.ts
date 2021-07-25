@@ -7,6 +7,8 @@ import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {MediaController} from "../controllers/media.controller";
 import {FriendshipController} from "../controllers/friendship.controller";
+import {OrganisationController} from "../controllers/organisation.controller";
+import {organisationRouter} from "./organisation.route";
 
 const userRouter = express.Router();
 
@@ -290,6 +292,44 @@ userRouter.get("/organisation/invitations", ensureLoggedIn, async (req, res) => 
     }
 });
 
+userRouter.delete("/:username", ensureLoggedIn, isSuperAdmin, async (req, res) => {
+   try {
+       const username = req.params.username
+       const userController = UserController.getInstance();
+       await userController.delete(username);
+       logger.info(`User ${(req.user as User).username} has delete an user called ${username}`);
+       res.status(204).end();
+   } catch (error) {
+       logger.error(`${req.route.path} \n ${error}`);
+       res.status(400).json(error);
+   }
+});
+
+userRouter.delete("/:userId/profile-picture", ensureLoggedIn, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const userController = UserController.getInstance();
+        await userController.removeProfilePicture(userId);
+        logger.info(`User ${(req.user as User).username} has deleted ProfilePicture of user id : "${userId}"`);
+        res.status(204).end();
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
+userRouter.delete("/:userId/banner-picture", ensureLoggedIn, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const userController = UserController.getInstance();
+        await userController.removeBannerPicture(userId);
+        logger.info(`User ${(req.user as User).username} has deleted BannerPicture of user id : "${userId}"`);
+        res.status(204).end();
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
 export {
     userRouter
 }

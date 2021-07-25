@@ -331,6 +331,19 @@ eventRouter.get("/:eventId/count-report", ensureLoggedIn, isSuperAdmin, async (r
     }
 });
 
+eventRouter.delete("/:eventId/picture", ensureLoggedIn, isSuperAdmin, async (req, res ) => {
+    try {
+        const eventId = req.params.eventId
+        const eventController = EventController.getInstance();
+        await eventController.deletePicture(eventId);
+        logger.info(`User ${(req.user as User).username} as delete picture of event : ${eventId}`);
+        res.status(204).end()
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+})
+
 export {
     eventRouter
 }

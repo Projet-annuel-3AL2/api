@@ -248,4 +248,12 @@ export class UserController {
             .where("FriendTwo.username=:username", {username})
             .getMany();
     }
+
+    async removeBannerPicture(userId: any) {
+        await this.userRepository.createQueryBuilder()
+            .relation("bannerPicture")
+            .of(userId)
+            .set(null);
+
+    }
 }

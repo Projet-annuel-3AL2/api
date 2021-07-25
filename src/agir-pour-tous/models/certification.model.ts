@@ -18,7 +18,7 @@ export class Certification {
     user: User;
     @ManyToOne(() => User, user => user.issuedCertifications)
     issuer: User;
-    @OneToOne(() => CertificationRequest, request => request.certification)
+    @OneToOne(() => CertificationRequest, request => request.certification, {cascade: true})
     request: CertificationRequest;
     @CreateDateColumn()
     createdAt: Date;
