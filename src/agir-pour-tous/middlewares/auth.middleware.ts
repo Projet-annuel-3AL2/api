@@ -1,4 +1,5 @@
 import {AuthController} from "../controllers/auth.controller";
+import {logger} from "../config/logging.config";
 
 export function ensureLoggedOut(req, res, next) {
     if (req.isAuthenticated && req.isAuthenticated()) {
@@ -15,9 +16,14 @@ export function ensureLoggedIn(req, res, next) {
 }
 
 export async function isValidResetPasswordToken(req, res, next) {
-    const authController = await AuthController.getInstance();
-    if (!(await authController.isValidToken(req.params.resetToken, req.params.username))) {
-        return res.status(400).end();
+    try {
+        const authController = await AuthController.getInstance();
+        if (!(await authController.isValidToken(req.params.resetToken, req.params.username))) {
+            return res.status(400).end();
+        }
+        next();
+    } catch (e) {
+        logger.error("middleware isValidResetPasswordToken: " + e);
+        res.status(400).end();
     }
-    next();
 }

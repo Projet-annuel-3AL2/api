@@ -52,7 +52,7 @@ export class UserController {
         return this.getByUsername(username);
     }
 
-    public async getPosts(username: string): Promise<Post[]> {
+    public async getPosts(username: string, limit: number, offset: number): Promise<Post[]> {
         return await getRepository(Post)
             .createQueryBuilder()
             .leftJoinAndSelect("Post.creator", "User")
@@ -62,6 +62,8 @@ export class UserController {
             .leftJoinAndSelect("User.certification", "Certification")
             .where("User.username=:username", {username})
             .orderBy("Post.createdAt", "DESC")
+            .limit(limit)
+            .offset(offset)
             .getMany();
     }
 
