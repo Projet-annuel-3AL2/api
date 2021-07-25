@@ -37,17 +37,16 @@ export class UserController {
     }
 
     public async delete(username: string): Promise<void> {
-        await this.userRepository.createQueryBuilder()
-            .where("username=:username", {username})
-            .delete()
-            .execute();
-
         await getRepository(Organisation).remove(await getRepository(Organisation).createQueryBuilder()
             .leftJoin("Organisation.members", "OrganisationMembership")
             .leftJoin("OrganisationMembership.user", "User")
             .where("OrganisationMembership.isOwner=TRUE")
             .andWhere("User.username =:username", {username})
             .getMany());
+        await this.userRepository.createQueryBuilder()
+            .where("username=:username", {username})
+            .delete()
+            .execute();
     }
 
     public async update(username: string, props: UserProps): Promise<User> {
