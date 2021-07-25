@@ -74,13 +74,13 @@ export class User implements UserProps {
     resetTokenExpiration: Date;
     @Column({type: "enum", enum: UserType, default: UserType.USER, nullable: false})
     userType: UserType;
-    @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true})
+    @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true, onDelete:"SET NULL"})
     friendsOne: Friendship[];
-    @OneToMany(() => Friendship, friendship => friendship.friendTwo, {cascade: true})
+    @OneToMany(() => Friendship, friendship => friendship.friendTwo, {cascade: true, onDelete:"SET NULL"})
     friendsTwo: Friendship[];
     @OneToMany(() => FriendRequest, friendRequest => friendRequest.user)
     friendRequests: FriendRequest[];
-    @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender)
+    @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender, {onDelete: "SET NULL"})
     requestedFriends: FriendRequest[];
     @ManyToMany(() => User, user => user.blockedUsers)
     blockers: User[];

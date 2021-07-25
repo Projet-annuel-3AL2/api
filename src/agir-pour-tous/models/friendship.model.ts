@@ -11,9 +11,9 @@ export enum FriendshipStatus {
 
 @Entity()
 export class Friendship {
-    @ManyToOne(() => User, user => user.friendsOne, {primary: true})
+    @ManyToOne(() => User, user => user.friendsOne, {primary: true, onDelete: "CASCADE"})
     friendOne: User;
-    @ManyToOne(() => User, user => user.friendsTwo, {primary: true})
+    @ManyToOne(() => User, user => user.friendsTwo, {primary: true, onDelete: "CASCADE"})
     friendTwo: User;
     @OneToOne(() => Conversation, conversation => conversation, {cascade: true})
     @JoinColumn()
