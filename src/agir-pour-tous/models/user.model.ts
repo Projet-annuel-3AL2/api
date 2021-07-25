@@ -82,7 +82,7 @@ export class User implements UserProps {
     friendRequests: FriendRequest[];
     @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender, {cascade: true,  onDelete: "SET NULL"})
     requestedFriends: FriendRequest[];
-    @ManyToMany(() => User, user => user.blockedUsers, {onDelete:"SET NULL"})
+    @ManyToMany(() => User, user => user.blockedUsers, {onDelete:"CASCADE"})
     blockers: User[];
     @ManyToMany(() => User, user => user.blockers, {cascade: true})
     @JoinTable()
