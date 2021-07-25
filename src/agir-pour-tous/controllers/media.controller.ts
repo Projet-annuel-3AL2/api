@@ -33,7 +33,7 @@ export class MediaController {
     public async deleteMedia(mediaId: string): Promise<void> {
         await this.mediaRepository
             .remove(await this.mediaRepository.createQueryBuilder()
-                .where("Media.id=:mediaId")
+                .where("Media.id=:mediaId",{mediaId})
                 .getOne());
     }
 }
