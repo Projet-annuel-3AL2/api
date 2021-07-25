@@ -42,13 +42,12 @@ export class UserController {
             .delete()
             .execute();
 
-        await getRepository(Organisation).createQueryBuilder()
+        await getRepository(Organisation).remove(await getRepository(Organisation).createQueryBuilder()
             .leftJoin("Organisation.members", "OrganisationMembership")
             .leftJoin("OrganisationMembership.user", "User")
             .where("OrganisationMembership.isOwner=TRUE")
             .andWhere("User.username =:username", {username})
-            .delete()
-            .execute();
+            .getMany());
     }
 
     public async update(username: string, props: UserProps): Promise<User> {
