@@ -29,7 +29,7 @@ export function configure() {
     });
 
     passport.deserializeUser(function (req,id, cb) {
-        getRepository(User).findOne(id).then(user => {
+        getRepository(User).findOneOrFail(id).then(user => {
             cb(null, user);
         }).catch(() => {
             req.session.destroy(err=>cb(err, false));
