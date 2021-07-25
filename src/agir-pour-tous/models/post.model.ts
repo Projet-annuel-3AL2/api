@@ -47,7 +47,7 @@ export class Post {
     likes: User[];
     @OneToMany(() => Comment, comment => comment.post, {cascade: true})
     comments: Comment[];
-    @OneToMany(() => Report, report => report.reportedPost, {cascade: true})
+    @OneToMany(() => Report, report => report.reportedPost, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];
     @Length(0, 512)
     @Column({nullable: true, length: 512})

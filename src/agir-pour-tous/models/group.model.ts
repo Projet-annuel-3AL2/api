@@ -32,7 +32,7 @@ export class Group {
     members: GroupMembership[];
     @OneToMany(() => Post, post => post.group)
     posts: Post[];
-    @OneToMany(() => Report, report => report.reportedGroup, {cascade: true})
+    @OneToMany(() => Report, report => report.reportedGroup, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];
     @OneToOne(() => Conversation, conversation => conversation.group, {nullable:false,cascade: true})
     @JoinColumn()

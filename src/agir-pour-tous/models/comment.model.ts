@@ -32,7 +32,7 @@ export class Comment {
     text: string;
     @OneToMany(() => Media, media => media.comments, {cascade: true,  eager: true, onDelete:'SET NULL'})
     medias: Media[];
-    @OneToMany(() => Report, report => report.reportedComment, {cascade: true})
+    @OneToMany(() => Report, report => report.reportedComment, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];
     @CreateDateColumn()
     createdAt: Date;

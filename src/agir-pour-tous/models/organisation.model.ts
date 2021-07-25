@@ -54,7 +54,7 @@ export class Organisation {
     conversation: Conversation;
     @OneToMany(() => Post, post => post.organisation, {cascade: true})
     posts: Post[];
-    @OneToMany(() => Report, report => report.reportedOrganisation, {cascade: true})
+    @OneToMany(() => Report, report => report.reportedOrganisation, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];
     @CreateDateColumn()
     createdAt: Date;
