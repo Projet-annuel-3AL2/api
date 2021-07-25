@@ -1,5 +1,6 @@
 import {ISession} from "connect-typeorm";
-import {Column, Entity, Index, PrimaryColumn} from "typeorm";
+import {Column, Entity, Index, ManyToOne, PrimaryColumn} from "typeorm";
+import {User} from "./user.model";
 
 @Entity()
 export class Session implements ISession {
@@ -12,4 +13,7 @@ export class Session implements ISession {
 
     @Column("text")
     public json = "";
+
+    @ManyToOne(()=>User,user=>user.sessions, {onDelete:"CASCADE"})
+    user:User;
 }

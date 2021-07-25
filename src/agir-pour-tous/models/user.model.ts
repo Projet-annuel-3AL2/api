@@ -28,6 +28,7 @@ import {FriendRequest} from "./friend_request.model";
 import {Organisation} from "./organisation.model";
 import {CertificationRequest} from "./certification_request.model";
 import {OrganisationCreationRequest} from "./organisation_creation_request.model";
+import {Session} from "./session.model";
 
 export enum UserType {
     USER = "USER",
@@ -133,13 +134,14 @@ export class User implements UserProps {
     reports: Report[];
     @OneToMany(() => Report, report => report.reportedUser, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];
+    @OneToMany(() => Session, session => session.user, {cascade: true, onDelete:'SET NULL'})
+    sessions: Session[];
     @CreateDateColumn()
     createdAt: Date;
     @UpdateDateColumn()
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
-
     @BeforeInsert()
     async setPassword(password: string) {
         this.password = await hash(password || this.password, 10)
