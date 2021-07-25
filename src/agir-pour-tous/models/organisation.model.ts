@@ -33,9 +33,9 @@ export class Organisation {
     @Length(5, 30)
     @Column({nullable: false, unique: true})
     name: string;
-    @OneToMany(() => OrganisationMembership, user => user.organisation, {cascade: true})
+    @OneToMany(() => OrganisationMembership, user => user.organisation, {cascade: true, onDelete:"SET NULL"})
     members: OrganisationMembership[];
-    @ManyToMany(() => User, user => user.organisationInvitations)
+    @ManyToMany(() => User, user => user.organisationInvitations, {onDelete: "SET NULL"})
     @JoinTable()
     invitedUsers: User[];
     @ManyToMany(() => User, user => user.followedOrganisations, {cascade: true})

@@ -120,9 +120,9 @@ export class User implements UserProps {
     eventsParticipation: Event[];
     @OneToOne(() => OrganisationCreationRequest, organisationCreationRequest => organisationCreationRequest.user)
     organisationCreationRequest: OrganisationCreationRequest;
-    @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true})
+    @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true, onDelete:"SET NULL"})
     organisations: OrganisationMembership[];
-    @ManyToMany(() => Organisation, organisation => organisation.invitedUsers)
+    @ManyToMany(() => Organisation, organisation => organisation.invitedUsers, {onDelete: "SET NULL"})
     organisationInvitations: Organisation[];
     @ManyToMany(() => Organisation, organisation => organisation.followers)
     @JoinTable()
