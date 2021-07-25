@@ -9,18 +9,14 @@ import {upload} from "./index.route";
 import {MediaController} from "../controllers/media.controller";
 import {Media} from "../models/media.model";
 import {arePicturesFiles} from "../middlewares/media.middleware";
-import {UserController} from "../controllers/user.controller";
-import {userRouter} from "./user.route";
-import {OrganisationController} from "../controllers/organisation.controller";
-import {organisationRouter} from "./organisation.route";
 
 const postRouter = express.Router();
-postRouter.post('/', ensureLoggedIn, upload.array("post_medias",5), arePicturesFiles, async (req, res) => {
+postRouter.post('/', ensureLoggedIn, upload.array("post_medias", 5), arePicturesFiles, async (req, res) => {
     try {
         const postController = await PostController.getInstance();
         const mediaController = await MediaController.getInstance();
         let medias: Media[] = [];
-        if(req.files) {
+        if (req.files) {
             for (const file of req.files as Express.Multer.File[]) {
                 medias.push(await mediaController.create(file));
             }

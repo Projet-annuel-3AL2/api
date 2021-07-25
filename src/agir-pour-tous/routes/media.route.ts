@@ -28,7 +28,7 @@ mediaRouter.get("/user/bannerPicture/:username",async (req, res) => {
     }
 });*/
 
-mediaRouter.get("/post/:postId",async (req, res) => {
+mediaRouter.get("/post/:postId", async (req, res) => {
     try {
         const postId = req.params.postId;
         const mediaController = MediaController.getInstance();

@@ -11,13 +11,23 @@ import {
     isNotMember
 } from "../middlewares/event.middleware";
 import {logger} from "../config/logging.config";
+import {EventProps} from "../models/event.model";
+import {upload} from "./index.route";
+import {MediaController} from "../controllers/media.controller";
+import {isPictureFile} from "../middlewares/media.middleware";
 
 const eventRouter = express.Router();
 
-eventRouter.post('/', ensureLoggedIn, canCreateEvent, async (req, res) => {
+eventRouter.post('/', ensureLoggedIn, canCreateEvent, upload.single("event_media"), isPictureFile, async (req, res) => {
     try {
         const eventController = await EventController.getInstance();
-        const event = await eventController.create(req.user as User, req.body);
+        const eventProps: EventProps={...req.body};
+        const mediaController = MediaController.getInstance();
+        if (req.file) {
+            eventProps.picture = await mediaController.create(req.file);
+        }
+
+        const event = await eventController.create(req.user as User, eventProps);
         logger.info(`User ${(req.user as User).username} created event called ${event.name} with the id ${event.id}`);
         res.json(event);
     } catch (error) {
@@ -86,6 +96,7 @@ eventRouter.get('/:eventId', async (req, res) => {
     }
 });
 
+
 eventRouter.get('/:eventId/participants', async (req, res) => {
     try {
         const eventId = req.params.eventId;
@@ -151,11 +162,16 @@ eventRouter.delete('/:eventId/participant', ensureLoggedIn, isMember, async (req
     }
 });
 
-eventRouter.put('/:eventId', ensureLoggedIn, isEventOrganiser, async (req, res) => {
+eventRouter.put('/:eventId', ensureLoggedIn, isEventOrganiser, upload.single("event_media"), isPictureFile, async (req, res) => {
     try {
         const eventId = req.params.eventId;
         const eventController = EventController.getInstance();
-        const event = await eventController.update(eventId, {...req.body});
+        const eventProps: EventProps={...req.body};
+        const mediaController = MediaController.getInstance();
+        if (req.file) {
+            eventProps.picture = await mediaController.create(req.file);
+        }
+        const event = await eventController.update(eventId, eventProps);
         logger.info(`User ${(req.user as User).username} modified event with id ${eventId}`);
         res.json(event);
     } catch (error) {
@@ -274,7 +290,6 @@ eventRouter.get('/:eventId/organisation', async (req, res) => {
 
 eventRouter.post('/search-event', async (req, res) => {
     try {
-        console.log(req.body)
         const userLocationX = req.body.longitude;
         const userLocationY = req.body.latitude;
         const range = req.body.range;
@@ -282,7 +297,7 @@ eventRouter.post('/search-event', async (req, res) => {
         const endDate = req.body.endDate;
         const categoryId = req.body.categoryId;
         const eventController = await EventController.getInstance();
-        const events = await eventController.getEventsSearch(userLocationX, userLocationY, range, startDate, endDate,categoryId);
+        const events = await eventController.getEventsSearch(userLocationX, userLocationY, range, startDate, endDate, categoryId);
         res.json(events);
     } catch (error) {
         logger.error({route: req.route, error});

@@ -44,11 +44,13 @@ userRouter.get('/:username', isNotBlocked, async (req, res) => {
     }
 });
 
-userRouter.get('/:username/posts', async (req, res) => {
+userRouter.get('/:username/posts/:limit/:offset', async (req, res) => {
     try {
+        const limit = parseInt(req.params.limit);
+        const offset = parseInt(req.params.offset);
         const username = req.params.username;
         const userController = await UserController.getInstance();
-        const posts = await userController.getPosts(username);
+        const posts = await userController.getPosts(username, limit, offset);
         res.json(posts);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
@@ -69,13 +71,16 @@ userRouter.delete('/', ensureLoggedIn, async (req, res) => {
     }
 });
 
-userRouter.put('/', ensureLoggedIn, upload.fields([{ name: "profilePicture", maxCount: 1 },{name:"bannerPicture", maxCount:1}]), async (req, res) => {
+userRouter.put('/', ensureLoggedIn, upload.fields([{name: "profilePicture", maxCount: 1}, {
+    name: "bannerPicture",
+    maxCount: 1
+}]), async (req, res) => {
     try {
         const username = (req.user as User).username;
         const userController = UserController.getInstance();
         const mediaController = MediaController.getInstance();
-        let user: UserProps={...req.body};
-        if(req.files) {
+        let user: UserProps = {...req.body};
+        if (req.files) {
             if (req.files["profilePicture"]) {
                 user.profilePicture = await mediaController.create(req.files["profilePicture"][0]);
             }

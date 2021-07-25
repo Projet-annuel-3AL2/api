@@ -5,6 +5,7 @@ import {User} from "../models/user.model";
 import {validate} from "class-validator";
 import {GroupMembership} from "../models/group_membership.model";
 import {Report, ReportProps} from "../models/report.model";
+import {Conversation} from "../models/conversation.model";
 
 export class GroupController {
     private static instance: GroupController;
@@ -23,14 +24,15 @@ export class GroupController {
     }
 
     public async create(user: User, props: GroupProps): Promise<Group> {
-        const group = this.groupRepository.create({...props});
-        const creatorMembership = getRepository(GroupMembership).create({group, user});
-        group.members = [creatorMembership];
+        const group = this.groupRepository.create({...props, conversation: new Conversation()});
+        const creatorMembership = getRepository(GroupMembership).create({user});
+        group.members = props.users.map(user=>getRepository(GroupMembership).create({user}));
+        group.members.push(creatorMembership);
         const err = await validate(group);
         if (err.length > 0) {
             throw err;
         }
-        return this.groupRepository.save(group);
+        return await this.groupRepository.save(group);
     }
 
     public async getById(id: string): Promise<Group> {
@@ -93,5 +95,21 @@ export class GroupController {
             .leftJoinAndSelect("Report.reportedGroup", "ReportedGroup")
             .where("ReportedGroup.id =:groupId", {groupId})
             .getCount();
+    }
+
+    async removeUser(groupId:string,userId:string) {
+        await getRepository(GroupMembership).remove(await getRepository(GroupMembership).createQueryBuilder()
+            .leftJoinAndSelect("GroupMembership.user","User")
+            .leftJoinAndSelect("GroupMembership.group","Group")
+            .where("User.id=:userId",{userId})
+            .andWhere("Group.id=:groupId",{groupId})
+            .getOne());
+        const membersCount = await getRepository(GroupMembership).createQueryBuilder()
+            .leftJoin("GroupMembership.group","Group")
+            .where("Group.id=:groupId",{groupId})
+            .getCount()
+        if (membersCount <= 1){
+            await this.groupRepository.delete(groupId);
+        }
     }
 }

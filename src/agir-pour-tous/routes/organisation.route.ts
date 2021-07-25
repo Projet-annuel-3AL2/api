@@ -14,22 +14,19 @@ import {logger} from "../config/logging.config";
 import {upload} from "./index.route";
 import {isPicture} from "../../utils/file.utils";
 import {MediaController} from "../controllers/media.controller";
-import {PostController} from "../controllers/post.controller";
-import {EventController} from "../controllers/event.controller";
-import {eventRouter} from "./event.route";
 import {Organisation} from "../models/organisation.model";
 import {arePicturesFiles} from "../middlewares/media.middleware";
 
 const organisationRouter = express.Router();
 
 
-organisationRouter.post("/:organisationId/profile-picture", ensureLoggedIn, upload.single("profilePicture"),isPicture, async (req, res) => {
+organisationRouter.post("/:organisationId/profile-picture", ensureLoggedIn, upload.single("profilePicture"), isPicture, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = OrganisationController.getInstance();
         const mediaController = MediaController.getInstance();
         const profilePicture = mediaController.create(req.file);
-        await organisationController.setProfilePicture(organisationId,profilePicture);
+        await organisationController.setProfilePicture(organisationId, profilePicture);
         res.status(204).end();
     } catch (err) {
         logger.error(err);
@@ -37,13 +34,13 @@ organisationRouter.post("/:organisationId/profile-picture", ensureLoggedIn, uplo
     }
 });
 
-organisationRouter.post("/:organisationId/banner-picture", ensureLoggedIn, upload.single("bannerPicture"),isPicture, async (req, res) => {
+organisationRouter.post("/:organisationId/banner-picture", ensureLoggedIn, upload.single("bannerPicture"), isPicture, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = OrganisationController.getInstance();
         const mediaController = MediaController.getInstance();
         const profilePicture = mediaController.create(req.file);
-        await organisationController.setBannerPicture(organisationId,profilePicture);
+        await organisationController.setBannerPicture(organisationId, profilePicture);
         res.status(204).end();
     } catch (err) {
         logger.error(err);
@@ -59,18 +56,6 @@ organisationRouter.get('/', async (req, res) => {
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
-    }
-});
-
-organisationRouter.get('/:organisationId', async (req, res) => {
-    try {
-        const organisationId = req.params.organisationId;
-        const organisationController = await OrganisationController.getInstance();
-        const organisation = await organisationController.getById(organisationId);
-        res.json(organisation);
-    } catch (error) {
-        logger.error(`${req.route.path} \n ${error}`);
-        res.status(404).json(error);
     }
 });
 
@@ -113,13 +98,16 @@ organisationRouter.delete('/:organisationId', ensureLoggedIn, isOrganisationOwne
     }
 });
 
-organisationRouter.put('/:organisationId', ensureLoggedIn, isOrganisationAdmin,upload.fields([{ name: "profilePicture", maxCount: 1 },{name:"bannerPicture", maxCount:1}]), arePicturesFiles, async (req, res) => {
+organisationRouter.put('/:organisationId', ensureLoggedIn, isOrganisationAdmin, upload.fields([{
+    name: "profilePicture",
+    maxCount: 1
+}, {name: "bannerPicture", maxCount: 1}]), arePicturesFiles, async (req, res) => {
     try {
         const organisationId = req.params.organisationId;
         const organisationController = await OrganisationController.getInstance();
         const mediaController = MediaController.getInstance();
         let organisation: Organisation = {...req.body};
-        if(req.files) {
+        if (req.files) {
             if (req.files["profilePicture"]) {
                 organisation.profilePicture = await mediaController.create(req.files["profilePicture"][0]);
             }
@@ -432,9 +420,9 @@ organisationRouter.put('/:requestId/accept', ensureLoggedIn, hasAdminRights, asy
     try {
         const requestId = req.params.requestId;
         const organisationController = await OrganisationController.getInstance();
-        await organisationController.acceptCreationDemand(requestId);
+        const organisation = await organisationController.acceptCreationDemand(requestId);
         logger.info(`User ${(req.user as User).username} has accepted the creation request of an organisation with name ${req.body.name}`);
-        res.status(204).end();
+        res.json(organisation);
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
@@ -453,7 +441,6 @@ organisationRouter.delete('/:requestId/reject', ensureLoggedIn, hasAdminRights, 
         res.status(400).json(error);
     }
 });
-
 
 
 organisationRouter.delete("/:organisationId/profile-picture", ensureLoggedIn, async (req, res) => {
@@ -527,6 +514,18 @@ organisationRouter.get("/:organisationId/invited/user", ensureLoggedIn, async (r
     } catch (error) {
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
+    }
+});
+
+organisationRouter.get('/:organisationId', async (req, res) => {
+    try {
+        const organisationId = req.params.organisationId;
+        const organisationController = await OrganisationController.getInstance();
+        const organisation = await organisationController.getById(organisationId);
+        res.json(organisation);
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(404).json(error);
     }
 });
 

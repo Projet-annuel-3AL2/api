@@ -1,5 +1,6 @@
 import {User, UserType} from "../models/user.model";
 import {UserController} from "../controllers/user.controller";
+import {logger} from "../config/logging.config";
 
 export async function isAskedUser(req, res, next) {
     if (!(req.user && (req.user as User).username === req.params.username)) {
@@ -30,11 +31,16 @@ export async function isSuperAdmin(req, res, next) {
 }
 
 export async function isNotBlocked(req, res, next) {
-    const username = req.params.username;
-    const userController = UserController.getInstance();
-    const blocksCurrentUser = await userController.isBlocked(username, (req.user as User).username);
-    if (blocksCurrentUser) {
-        return res.status(200).json({blocksCurrentUser});
+    try {
+        const username = req.params.username;
+        const userController = UserController.getInstance();
+        const blocksCurrentUser = await userController.isBlocked(username, (req.user as User).username);
+        if (req.user && blocksCurrentUser && (req.user as User).userType === UserType.USER) {
+            return res.status(200).json({blocksCurrentUser});
+        }
+        next();
+    } catch (e) {
+        logger.error("middleware isNotBlocked: " + e);
+        res.status(400).json(e);
     }
-    next();
 }

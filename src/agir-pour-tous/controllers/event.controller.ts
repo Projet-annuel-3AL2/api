@@ -46,7 +46,12 @@ export class EventController {
     }
 
     public async create(user: User, props: EventProps) {
-        let event = await this.eventRepository.create({...props, user: user, startDate:new Date(props.startDate), endDate: new Date(props.endDate)});
+        let event = await this.eventRepository.create({
+            ...props,
+            user: user,
+            startDate: new Date(props.startDate),
+            endDate: new Date(props.endDate)
+        });
         const err = await validate(event, {validationError: {target: false}});
         if (err.length > 0) {
             throw err;
@@ -60,7 +65,14 @@ export class EventController {
     }
 
     public async update(eventId: string, props: EventProps): Promise<Event> {
-        await this.eventRepository.update(eventId, props);
+        props.id = eventId;
+        props.startDate = new Date(props.startDate);
+        props.endDate = new Date(props.endDate);
+        await this.eventRepository.createQueryBuilder()
+            .update()
+            .set(props)
+            .where("Event.id =:eventId", {eventId})
+            .execute();
         return await this.getById(eventId);
     }
 
@@ -82,15 +94,15 @@ export class EventController {
         const searchQuery: any = this.eventRepository.createQueryBuilder();
 
         if (userLocationX !== undefined && userLocationY !== undefined && range !== undefined) {
-            const longitude =  Number(userLocationY);
+            const longitude = Number(userLocationY);
             const latitude = Number(userLocationX);
             const rangeNumber = Number(range);
             searchQuery.andWhere("(1852 * 60 * cbrt((Event.longitude - :longitude) * cos(:latitude + Event.latitude) / 2)^2 + ((Event.latitude - :latitude)^ 2)) < :rangeNumber"
                 , {
-                rangeNumber,
-                longitude,
-                latitude
-            });
+                    rangeNumber,
+                    longitude,
+                    latitude
+                });
         }
 
         if (startDate !== null && endDate !== null && startDate !== undefined && endDate !== undefined) {
@@ -146,7 +158,7 @@ export class EventController {
             .getMany();
     }
 
-    public async isOwner(userId:string, eventId:string):Promise<boolean>{
+    public async isOwner(userId: string, eventId: string): Promise<boolean> {
         return (await this.getOwners(eventId)).some(user => user.id === userId);
     }
 
@@ -172,7 +184,7 @@ export class EventController {
             .getOne();
     }
 
-    public async isMember(userId: string,eventId: string): Promise<boolean> {
+    public async isMember(userId: string, eventId: string): Promise<boolean> {
         return (await getRepository(Event).createQueryBuilder()
             .leftJoin("Event.participants", "User")
             .where("Event.id=:eventId", {eventId})
@@ -199,17 +211,17 @@ export class EventController {
         })
     }
 
-    public async getCategory(eventId: string): Promise<Category>{
+    public async getCategory(eventId: string): Promise<Category> {
         return await getRepository(Category).createQueryBuilder()
-            .leftJoin("Category.events","Event")
-            .where("Event.id=:eventId",{eventId})
+            .leftJoin("Category.events", "Event")
+            .where("Event.id=:eventId", {eventId})
             .getOne();
     }
 
-    public async getOrganisation(eventId: string): Promise<Category>{
+    public async getOrganisation(eventId: string): Promise<Category> {
         return await getRepository(Organisation).createQueryBuilder()
-            .leftJoin("Organisation.events","Event")
-            .where("Event.id=:eventId",{eventId})
+            .leftJoin("Organisation.events", "Event")
+            .where("Event.id=:eventId", {eventId})
             .getOne();
     }
 

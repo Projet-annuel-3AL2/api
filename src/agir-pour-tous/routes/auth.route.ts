@@ -11,19 +11,19 @@ authRouter.post('/login', ensureLoggedOut, passport.authenticate('local-agir-pou
     res.json(req.user);
 });
 
-authRouter.post('/register', ensureLoggedOut, async (req, res,next) => {
-    try {
-        const authController = AuthController.getInstance();
-        await authController.register({...req.body});
-        logger.info(`Registering user with username: ${req.body.username}`);
-        next();
-    } catch (error) {
-        logger.error(`${req.route.path} \n ${error}`);
-        res.status(400).json(error);
-    }
-},
+authRouter.post('/register', ensureLoggedOut, async (req, res, next) => {
+        try {
+            const authController = AuthController.getInstance();
+            await authController.register({...req.body});
+            logger.info(`Registering user with username: ${req.body.username}`);
+            next();
+        } catch (error) {
+            logger.error(`${req.route.path} \n ${error}`);
+            res.status(400).json(error);
+        }
+    },
     passport.authenticate('local-agir-pour-tous'),
-    (req,res)=>res.json(req.user));
+    (req, res) => res.json(req.user));
 
 
 authRouter.get("/forgot-password/:username", ensureLoggedOut, async (req, res) => {

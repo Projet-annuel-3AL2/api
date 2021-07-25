@@ -77,15 +77,6 @@ export class PostController {
             .remove(userId);
     }
 
-    public async getTimeline(userId: string, offset: number, limit: number): Promise<Post[]> {
-        return Array.from(new Set((([] as Post[]).concat(await this.getOwnPosts(userId))
-            .concat(await this.getFriendOnePosts(userId))
-            .concat(await this.getFriendTwoPosts(userId))
-            .concat(await this.getFollowedOrganisationPosts(userId))
-            .concat(await this.getMemberOrganisationPosts(userId)))))
-            .sort((a: Post, b: Post) => b.createdAt.getTime() - a.createdAt.getTime());
-    }
-
     public async reportPost(userReporter: User, reportedPost: Post, props: ReportProps): Promise<Report> {
         const report = getRepository(Report).create({...props, userReporter, reportedPost});
         return await getRepository(Report).save(report);
@@ -111,18 +102,19 @@ export class PostController {
         return getRepository(Comment)
             .createQueryBuilder()
             .leftJoinAndSelect("Comment.creator", "User")
+            .leftJoinAndSelect("User.profilePicture", "ProfPic")
             .leftJoin("Comment.post", "Post")
             .where("Post.id=:postId", {postId})
-            .orderBy("Comment.createdAt","DESC")
+            .orderBy("Comment.createdAt", "DESC")
             .getMany();
     }
 
     public async getSharedPost(postId: string): Promise<Post> {
         return this.postRepository
             .createQueryBuilder()
-            .leftJoinAndSelect("Post.creator","Creator")
-            .leftJoinAndSelect("Creator.certification","Certification")
-            .leftJoinAndSelect("Creator.profilePicture","ProfPic")
+            .leftJoinAndSelect("Post.creator", "Creator")
+            .leftJoinAndSelect("Creator.certification", "Certification")
+            .leftJoinAndSelect("Creator.profilePicture", "ProfPic")
             .leftJoin("Post.sharedPosts", "Shares")
             .where("Shares.id=:postId", {postId})
             .getOne();
@@ -132,67 +124,6 @@ export class PostController {
         const post = await this.getById(postId);
         let comment = getRepository(Comment).create({...commentProps, creator, post});
         return await getRepository(Comment).save(comment);
-    }
-
-    private getOwnPosts(userId: string): Promise<Post[]> {
-        return this.postRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Post.creator", "User")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
-            .leftJoinAndSelect("User.certification", "Cert")
-            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
-            .where("User.id=:userId", {userId})
-            .getMany();
-    }
-
-    private getFriendOnePosts(userId: string): Promise<Post[]> {
-        return this.postRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Post.creator", "User")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
-            .leftJoinAndSelect("User.certification", "Cert")
-            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
-            .leftJoin("User.friendsOne", "FriendOne")
-            .leftJoin("FriendOne.friendTwo", "FriendTwo")
-            .where("FriendTwo.id=:userId", {userId})
-            .getMany();
-    }
-
-    private getFriendTwoPosts(userId: string): Promise<Post[]> {
-        return this.postRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Post.creator", "User")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
-            .leftJoinAndSelect("User.certification", "Cert")
-            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
-            .leftJoin("User.friendsTwo", "FriendTwo")
-            .leftJoin("FriendTwo.friendOne", "FriendOne")
-            .where("FriendOne.id=:userId", {userId})
-            .getMany();
-    }
-
-    private getFollowedOrganisationPosts(userId: string): Promise<Post[]> {
-        return this.postRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Post.organisation", "Organisation")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
-            .leftJoinAndSelect("Organisation.profilePicture", "ProfilePicture")
-            .leftJoin("Organisation.followers", "Follower")
-            .where("Follower.id=:userId", {userId})
-            .getMany();
-    }
-
-    private getMemberOrganisationPosts(userId: string): Promise<Post[]> {
-        return this.postRepository
-            .createQueryBuilder()
-            .leftJoinAndSelect("Post.organisation", "Organisation")
-            .leftJoinAndSelect("Post.sharedEvent", "Event")
-            .leftJoin("Organisation.members", "OrganisationMembership")
-            .leftJoin("OrganisationMembership.user", "User")
-            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
-            .leftJoinAndSelect("User.certification", "cert")
-            .where("User.id=:userId", {userId})
-            .getMany();
     }
 
     async getAllReport(): Promise<Report[]> {
@@ -209,5 +140,32 @@ export class PostController {
             .leftJoinAndSelect("Report.reportedPost", "ReportedPost")
             .where("ReportedPost.id =:postId", {postId})
             .getCount();
+    }
+
+
+    public async getTimeline(userId: string, offset: number, limit: number): Promise<Post[]> {
+        return this.postRepository.createQueryBuilder()
+            .leftJoinAndSelect("Post.creator", "User")
+            .leftJoinAndSelect("Post.sharedEvent", "Event")
+            .leftJoinAndSelect("User.certification", "Cert")
+            .leftJoinAndSelect("User.profilePicture", "ProfilePicture")
+            .leftJoin("User.friendsOne", "FriendshipOne")
+            .leftJoin("FriendshipOne.friendTwo", "FriendTwo")
+            .leftJoin("User.friendsTwo", "FriendshipTwo")
+            .leftJoin("FriendshipTwo.friendOne", "FriendOne")
+            .leftJoinAndSelect("Post.organisation", "Organisation")
+            .leftJoinAndSelect("Organisation.profilePicture", "OrgaProfilePicture")
+            .leftJoin("Organisation.followers", "Follower")
+            .leftJoin("Organisation.members", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.user", "Member")
+            .where("User.id=:userId", {userId})
+            .orWhere("FriendTwo.id=:userId", {userId})
+            .orWhere("FriendOne.id=:userId", {userId})
+            .orWhere("Follower.id=:userId", {userId})
+            .orWhere("Member.id=:userId", {userId})
+            .limit(limit)
+            .offset(offset)
+            .orderBy("Post.createdAt","DESC")
+            .getMany();
     }
 }
