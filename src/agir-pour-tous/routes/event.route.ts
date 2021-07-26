@@ -31,6 +31,7 @@ eventRouter.post('/', ensureLoggedIn, canCreateEvent, upload.single("event_media
         logger.info(`User ${(req.user as User).username} created event called ${event.name} with the id ${event.id}`);
         res.json(event);
     } catch (error) {
+        console.log(error)
         logger.error(`${req.route.path} \n ${error}`);
         res.status(400).json(error);
     }
@@ -290,14 +291,14 @@ eventRouter.get('/:eventId/organisation', async (req, res) => {
 
 eventRouter.post('/search-event', async (req, res) => {
     try {
-        const userLocationX = req.body.longitude;
-        const userLocationY = req.body.latitude;
-        const range = req.body.range;
+        const longitude = parseFloat(req.body.longitude);
+        const latitude = parseFloat(req.body.latitude);
+        const range = parseFloat(req.body.range);
         const startDate = req.body.startDate;
         const endDate = req.body.endDate;
         const categoryId = req.body.categoryId;
         const eventController = await EventController.getInstance();
-        const events = await eventController.getEventsSearch(userLocationX, userLocationY, range, startDate, endDate, categoryId);
+        const events = await eventController.getEventsSearch(longitude, latitude, range, startDate, endDate, categoryId);
         res.json(events);
     } catch (error) {
         logger.error({route: req.route, error});

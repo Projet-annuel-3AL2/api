@@ -91,13 +91,9 @@ export class EventController {
             .remove(userId);
     }
 
-    async getEventsSearch(userLocationX: string, userLocationY: string, range: string, startDate: any, endDate: string, categoryId: string): Promise<Event[]> {
+    async getEventsSearch(longitude: number, latitude: number, rangeNumber: number, startDate: any, endDate: string, categoryId: string): Promise<Event[]> {
         const searchQuery: any = this.eventRepository.createQueryBuilder();
-
-        if (userLocationX !== undefined && userLocationY !== undefined && range !== undefined) {
-            const longitude = Number(userLocationY);
-            const latitude = Number(userLocationX);
-            const rangeNumber = Number(range);
+        if (longitude  && latitude  && rangeNumber && rangeNumber > 0 ) {
             searchQuery.andWhere("(1852 * 60 * cbrt((Event.longitude - :longitude) * cos(:latitude + Event.latitude) / 2)^2 + ((Event.latitude - :latitude)^ 2)) < :rangeNumber"
                 , {
                     rangeNumber,
