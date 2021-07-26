@@ -8,6 +8,7 @@ import {Event} from "../models/event.model";
 import {Report, ReportProps} from "../models/report.model";
 import {Organisation} from "../models/organisation.model";
 import {Media} from "../models/media.model";
+import {Session} from "../models/session.model";
 
 export class UserController {
 
@@ -43,6 +44,11 @@ export class UserController {
             .where("OrganisationMembership.isOwner=TRUE")
             .andWhere("User.username =:username", {username})
             .getMany());
+        const userId = (await this.getByUsername(username)).id;
+        const sessions = await getRepository(Session).createQueryBuilder()
+            .where("data like :userId", {userId})
+            .getMany();
+        await getRepository(Session).remove(sessions);
         await this.userRepository.createQueryBuilder()
             .where("username=:username", {username})
             .delete()
