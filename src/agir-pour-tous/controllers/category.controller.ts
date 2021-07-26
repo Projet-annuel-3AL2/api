@@ -29,7 +29,7 @@ export class CategoryController {
     }
 
     public async delete(categoryId: string): Promise<void> {
-        await this.categoryRepository.softDelete(categoryId);
+        await this.categoryRepository.delete(categoryId);
     }
 
     public async update(categoryId: string, props: CategoryProps): Promise<Category> {

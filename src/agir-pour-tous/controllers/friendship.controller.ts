@@ -42,8 +42,7 @@ export class FriendshipController {
     }
 
     public async removeFriendship(friendOneUsername: string, friendTwoUsername: string): Promise<void> {
-
-        await this.friendshipRepository.remove(await this.friendshipRepository.createQueryBuilder()
+        const friendship = await this.friendshipRepository.createQueryBuilder()
             .leftJoinAndSelect("Friendship.friendOne", "FriendOne")
             .leftJoinAndSelect("Friendship.friendTwo", "FriendTwo")
             .where("FriendOne.username=:friendOneUsername and FriendTwo.username=:friendTwoUsername ", {
@@ -54,7 +53,10 @@ export class FriendshipController {
                 friendTwoUsername,
                 friendOneUsername
             })
-            .getOne());
+            .getOne()
+        if(friendship) {
+            await this.friendshipRepository.remove(friendship);
+        }
     }
 
     public async isFriendshipRequested(currentUsername: string, username: string): Promise<FriendshipStatus> {

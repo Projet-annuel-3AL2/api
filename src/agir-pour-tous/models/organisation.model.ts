@@ -33,28 +33,28 @@ export class Organisation {
     @Length(5, 30)
     @Column({nullable: false, unique: true})
     name: string;
-    @OneToMany(() => OrganisationMembership, user => user.organisation, {cascade: true})
+    @OneToMany(() => OrganisationMembership, user => user.organisation, {cascade: true, onDelete:"SET NULL"})
     members: OrganisationMembership[];
-    @ManyToMany(() => User, user => user.organisationInvitations)
+    @ManyToMany(() => User, user => user.organisationInvitations, {onDelete: "CASCADE"})
     @JoinTable()
     invitedUsers: User[];
-    @ManyToMany(() => User, user => user.followedOrganisations, {cascade: true})
+    @ManyToMany(() => User, user => user.followedOrganisations, {cascade: true, onDelete:"CASCADE"})
     @JoinTable()
     followers: User[];
-    @OneToMany(() => Event, user => user.organisation, {cascade: true})
+    @OneToMany(() => Event, user => user.organisation, {cascade: true, onDelete:"CASCADE"})
     events: Event[];
-    @OneToOne(() => Media, media => media.organisationProfilePicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.organisationProfilePicture, {cascade: true,  nullable: true, eager: true,onDelete:'SET NULL'})
     @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.organisationBannerPicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.organisationBannerPicture, {cascade: true,  nullable: true, eager: true,onDelete:'SET NULL'})
     @JoinColumn()
     bannerPicture: Media;
     @OneToOne(() => Conversation, conversation => conversation.organisation, {nullable: false, cascade: true})
     @JoinColumn()
     conversation: Conversation;
-    @OneToMany(() => Post, post => post.organisation, {cascade: true})
+    @OneToMany(() => Post, post => post.organisation, {cascade: true, onDelete:"SET NULL"})
     posts: Post[];
-    @OneToMany(() => Report, report => report.reportedOrganisation, {cascade: true})
+    @OneToMany(() => Report, report => report.reportedOrganisation, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];
     @CreateDateColumn()
     createdAt: Date;

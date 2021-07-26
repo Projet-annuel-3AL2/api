@@ -44,7 +44,7 @@ export class GroupController {
     }
 
     public async delete(groupId: string): Promise<void> {
-        await this.groupRepository.softDelete(groupId);
+        await this.groupRepository.delete(groupId);
     }
 
     public async update(groupId: string, props: GroupProps): Promise<Group> {

@@ -30,20 +30,20 @@ export interface ReportProps {
 export class Report {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @ManyToOne(() => User, user => user.reports)
+    @ManyToOne(() => User, user => user.reports, {onDelete:"CASCADE"})
     userReporter: User;
     @Length(0, 500)
     @Column({length: 500, nullable: false})
     text: string;
-    @ManyToOne(() => User, user => user.reported)
+    @ManyToOne(() => User, user => user.reported, {onDelete:"CASCADE"})
     reportedUser: User;
-    @ManyToOne(() => Organisation, organisation => organisation.reported)
+    @ManyToOne(() => Organisation, organisation => organisation.reported, {onDelete:"CASCADE"})
     reportedOrganisation: Organisation;
-    @ManyToOne(() => Group, group => group.reported)
+    @ManyToOne(() => Group, group => group.reported, {onDelete:"CASCADE"})
     reportedGroup: Group;
-    @ManyToOne(() => Post, post => post.reported)
+    @ManyToOne(() => Post, post => post.reported, {onDelete:"CASCADE"})
     reportedPost: Post;
-    @ManyToOne(() => Event, event => event.reported)
+    @ManyToOne(() => Event, event => event.reported, {onDelete:"CASCADE"})
     reportedEvent: Event;
     @ManyToOne(() => Comment, comment => comment.reported, {onDelete: "CASCADE"})
     reportedComment: Comment;

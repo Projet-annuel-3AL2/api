@@ -61,6 +61,7 @@ export class EventController {
     }
 
     public async delete(id: string) {
+        await this.deleteReports(id);
         await this.eventRepository.delete(id);
     }
 
@@ -238,5 +239,25 @@ export class EventController {
             .leftJoinAndSelect("Report.reportedEvent", "ReportedEvent")
             .where("ReportedEvent.id =:eventId", {eventId})
             .getCount();
+    }
+
+    private async deleteReports(id: string) {
+        await getRepository(Report).createQueryBuilder()
+            .leftJoinAndSelect("Report.reportedEvent", "ReportedEvent")
+            .where("ReportedEvent.id=:id", {id})
+            .getMany()
+            .then(reports => {
+                reports.forEach(report => {
+                    getRepository(Report).remove(report);
+                })
+            })
+
+    }
+
+    async deletePicture(eventId: any) {
+        await this.eventRepository.createQueryBuilder()
+            .relation("picture")
+            .of(eventId)
+            .set(null);
     }
 }

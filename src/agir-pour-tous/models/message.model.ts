@@ -22,7 +22,7 @@ export class Message {
     id: string;
     @Column()
     text: string;
-    @ManyToOne(() => User, user => user.messages)
+    @ManyToOne(() => User, user => user.messages, {onDelete: 'CASCADE'})
     user: User;
     @ManyToOne(() => Conversation, conversation => conversation.messages)
     conversation: Conversation;

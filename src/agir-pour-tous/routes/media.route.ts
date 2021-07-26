@@ -40,6 +40,18 @@ mediaRouter.get("/post/:postId", async (req, res) => {
     }
 });
 
+mediaRouter.delete("/:mediaId", async (req, res) => {
+    try {
+        const mediaId = req.params.mediaId;
+        const mediaController = MediaController.getInstance();
+        await mediaController.deleteMedia(mediaId);
+        res.status(204).end();
+    } catch (error) {
+        logger.error(`${req.route.path} \n ${error}`);
+        res.status(400).json(error);
+    }
+});
+
 export {
     mediaRouter
 }

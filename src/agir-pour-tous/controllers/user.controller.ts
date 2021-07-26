@@ -37,9 +37,15 @@ export class UserController {
     }
 
     public async delete(username: string): Promise<void> {
+        await getRepository(Organisation).remove(await getRepository(Organisation).createQueryBuilder()
+            .leftJoin("Organisation.members", "OrganisationMembership")
+            .leftJoin("OrganisationMembership.user", "User")
+            .where("OrganisationMembership.isOwner=TRUE")
+            .andWhere("User.username =:username", {username})
+            .getMany());
         await this.userRepository.createQueryBuilder()
             .where("username=:username", {username})
-            .softDelete()
+            .delete()
             .execute();
     }
 
@@ -185,7 +191,7 @@ export class UserController {
     async deleteReport(reportId: any) {
         return await getRepository(Report).createQueryBuilder()
             .where("Report.id=:reportId", {reportId})
-            .softDelete()
+            .delete()
             .execute();
     }
 
@@ -251,5 +257,13 @@ export class UserController {
             .leftJoin("FriendshipOne.friendTwo", "FriendTwo")
             .where("FriendTwo.username=:username", {username})
             .getMany();
+    }
+
+    async removeBannerPicture(userId: any) {
+        await this.userRepository.createQueryBuilder()
+            .relation("bannerPicture")
+            .of(userId)
+            .set(null);
+
     }
 }

@@ -58,21 +58,21 @@ export class Event {
     longitude: number;
     @Column({nullable: false, default: -1})
     participantsLimit: number;
-    @ManyToOne(() => Organisation, organisation => organisation.events)
+    @ManyToOne(() => Organisation, organisation => organisation.events, {onDelete:'SET NULL'})
     organisation: Organisation;
     @ManyToOne(() => User, user => user.createdEvents)
     user: User;
-    @ManyToMany(() => User, user => user.eventsParticipation)
+    @ManyToMany(() => User, user => user.eventsParticipation, {onDelete:'CASCADE'})
     participants: User[];
-    @OneToMany(() => Post, post => post.sharedEvent)
+    @OneToMany(() => Post, post => post.sharedEvent, {onDelete:'CASCADE'})
     posts: Post[];
     @IsNotEmpty()
     @ManyToOne(() => Category, category => category.events, {nullable: false, eager: true})
     category: Category;
-    @OneToOne(() => Media, media => media.eventPicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.eventPicture, {cascade: true,  nullable: true, eager: true,onDelete:'SET NULL'})
     @JoinColumn()
     picture: Media;
-    @OneToMany(() => Report, report => report.reportedEvent)
+    @OneToMany(() => Report, report => report.reportedEvent, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];
     @CreateDateColumn()
     createdAt: Date;

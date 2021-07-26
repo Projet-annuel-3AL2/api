@@ -11,9 +11,9 @@ export enum OrganisationMembershipStatus {
 
 @Entity()
 export class OrganisationMembership {
-    @ManyToOne(() => User, user => user.organisations, {primary: true})
+    @ManyToOne(() => User, user => user.organisations, {primary: true, onDelete:"CASCADE"})
     user: User;
-    @ManyToOne(() => Organisation, organisation => organisation.members, {primary: true})
+    @ManyToOne(() => Organisation, organisation => organisation.members, {primary: true, onDelete:"CASCADE"})
     organisation: Organisation;
     @Column({default: false, nullable: false})
     isAdmin: boolean;

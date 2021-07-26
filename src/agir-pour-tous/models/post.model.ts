@@ -31,28 +31,28 @@ export interface PostProps {
 export class Post {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-    @ManyToOne(() => User, user => user.createdPosts, {eager: true})
+    @ManyToOne(() => User, user => user.createdPosts, {eager: true, onDelete:"CASCADE"})
     creator: User;
-    @ManyToOne(() => Organisation, organisation => organisation.posts, {eager: true})
+    @ManyToOne(() => Organisation, organisation => organisation.posts, {eager: true, onDelete:"CASCADE"})
     organisation: Organisation;
     @ManyToOne(() => Group, group => group.posts, {eager: true})
     group: Group;
-    @ManyToOne(() => Event, event => event.posts, {eager: true})
+    @ManyToOne(() => Event, event => event.posts, {eager: true, onDelete:'SET NULL'})
     sharedEvent: Event;
-    @OneToMany(() => Post, post => post.sharesPost)
+    @OneToMany(() => Post, post => post.sharesPost, {onDelete: "SET NULL"})
     sharedPosts: Post[];
-    @ManyToOne(() => Post, post => post.sharedPosts)
+    @ManyToOne(() => Post, post => post.sharedPosts, {onDelete:'SET NULL'})
     sharesPost: Post;
-    @ManyToMany(() => User, user => user.likedPosts)
+    @ManyToMany(() => User, user => user.likedPosts, {onDelete: "CASCADE"})
     likes: User[];
     @OneToMany(() => Comment, comment => comment.post, {cascade: true})
     comments: Comment[];
-    @OneToMany(() => Report, report => report.reportedPost, {cascade: true})
+    @OneToMany(() => Report, report => report.reportedPost, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];
     @Length(0, 512)
     @Column({nullable: true, length: 512})
     text: string;
-    @OneToMany(() => Media, media => media.post, {cascade: true})
+    @OneToMany(() => Media, media => media.post, {cascade: true,  onDelete:'SET NULL'})
     medias: Media[];
     @CreateDateColumn()
     createdAt: Date;

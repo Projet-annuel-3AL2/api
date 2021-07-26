@@ -28,9 +28,11 @@ export function configure() {
         cb(null, user.id);
     });
 
-    passport.deserializeUser(function (id, cb) {
-        getRepository(User).findOne(id).then(user => {
+    passport.deserializeUser(function (req,id, cb) {
+        getRepository(User).findOneOrFail(id).then(user => {
             cb(null, user);
-        }).catch(err => cb(err, false));
+        }).catch(() => {
+            req.session.destroy(err=>cb(err, false));
+        });
     });
 }

@@ -48,7 +48,7 @@ export class OrganisationController {
     }
 
     public async delete(id: string): Promise<void> {
-        await this.organisationRepository.softDelete(id);
+        await this.organisationRepository.delete(id);
     }
 
     public async update(id: string, organisation: Organisation): Promise<Organisation> {
@@ -120,7 +120,7 @@ export class OrganisationController {
     }
 
     public async removeMember(organisationId: string, userId: string): Promise<void> {
-        await getRepository(OrganisationMembership).softRemove(await getRepository(OrganisationMembership).createQueryBuilder()
+        await getRepository(OrganisationMembership).remove(await getRepository(OrganisationMembership).createQueryBuilder()
             .leftJoinAndSelect("OrganisationMembership.organisation", "Organisation")
             .leftJoinAndSelect("OrganisationMembership.user", "User")
             .where("User.id=:userId", {userId})
@@ -274,7 +274,7 @@ export class OrganisationController {
 
     async removeProfilePicture(organisationId: any) {
         await this.organisationRepository.createQueryBuilder()
-            .relation("bannerPicture")
+            .relation("profilePicture")
             .of(organisationId)
             .set(null);
     }

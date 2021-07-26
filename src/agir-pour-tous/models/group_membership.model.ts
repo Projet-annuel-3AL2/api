@@ -4,7 +4,7 @@ import {User} from "./user.model";
 
 @Entity()
 export class GroupMembership {
-    @ManyToOne(() => User, user => user.groups, {primary: true})
+    @ManyToOne(() => User, user => user.groups, {primary: true, onDelete:'CASCADE'})
     user: User;
     @ManyToOne(() => Group, group => group.members, {primary: true})
     group: Group;

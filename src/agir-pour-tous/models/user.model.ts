@@ -74,30 +74,30 @@ export class User implements UserProps {
     resetTokenExpiration: Date;
     @Column({type: "enum", enum: UserType, default: UserType.USER, nullable: false})
     userType: UserType;
-    @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true})
+    @OneToMany(() => Friendship, friendship => friendship.friendOne, {cascade: true, onDelete:"SET NULL"})
     friendsOne: Friendship[];
-    @OneToMany(() => Friendship, friendship => friendship.friendTwo, {cascade: true})
+    @OneToMany(() => Friendship, friendship => friendship.friendTwo, {cascade: true,  onDelete:"SET NULL"})
     friendsTwo: Friendship[];
-    @OneToMany(() => FriendRequest, friendRequest => friendRequest.user)
+    @OneToMany(() => FriendRequest, friendRequest => friendRequest.user, {cascade: true,  onDelete: "SET NULL"})
     friendRequests: FriendRequest[];
-    @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender)
+    @OneToMany(() => FriendRequest, friendRequest => friendRequest.sender, {cascade: true,  onDelete: "SET NULL"})
     requestedFriends: FriendRequest[];
-    @ManyToMany(() => User, user => user.blockedUsers)
+    @ManyToMany(() => User, user => user.blockedUsers, {onDelete:"CASCADE"})
     blockers: User[];
     @ManyToMany(() => User, user => user.blockers, {cascade: true})
     @JoinTable()
     blockedUsers: User[];
-    @ManyToMany(() => Post, post => post.likes, {cascade: true})
+    @ManyToMany(() => Post, post => post.likes, {cascade: true, onDelete:'CASCADE'})
     @JoinTable()
     likedPosts: Post[];
-    @OneToMany(() => Post, post => post.creator, {cascade: true})
+    @OneToMany(() => Post, post => post.creator, {cascade: true, onDelete:"CASCADE"})
     createdPosts: Post[];
-    @OneToMany(() => Comment, comment => comment.creator, {cascade: true})
+    @OneToMany(() => Comment, comment => comment.creator, {cascade: true, onDelete:"SET NULL"})
     comments: Comment[];
-    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.userProfilePicture, {nullable: true, eager: true,cascade: true,   onDelete:'SET NULL'})
     @JoinColumn()
     profilePicture: Media;
-    @OneToOne(() => Media, media => media.userBanner, {nullable: true, cascade: true, eager: true})
+    @OneToOne(() => Media, media => media.userBanner, {nullable: true, eager: true,cascade: true, onDelete:'SET NULL'})
     @JoinColumn()
     bannerPicture: Media;
     @OneToOne(() => Certification, certification => certification.user, {
@@ -107,11 +107,11 @@ export class User implements UserProps {
     })
     @JoinColumn()
     certification: Certification;
-    @OneToOne(() => CertificationRequest, certification => certification.user, {cascade: true})
+    @OneToOne(() => CertificationRequest, certification => certification.user, {cascade: true, onDelete:"SET NULL"})
     certificationRequest: CertificationRequest;
     @OneToMany(() => Certification, certification => certification.issuer)
     issuedCertifications: Certification[];
-    @OneToMany(() => GroupMembership, group => group.user, {cascade: true})
+    @OneToMany(() => GroupMembership, group => group.user, {cascade: true, onDelete:'CASCADE'})
     groups: GroupMembership[];
     @OneToMany(() => Event, event => event.user)
     createdEvents: Event[];
@@ -120,18 +120,18 @@ export class User implements UserProps {
     eventsParticipation: Event[];
     @OneToOne(() => OrganisationCreationRequest, organisationCreationRequest => organisationCreationRequest.user)
     organisationCreationRequest: OrganisationCreationRequest;
-    @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true})
+    @OneToMany(() => OrganisationMembership, organisation => organisation.user, {cascade: true, onDelete:"SET NULL"})
     organisations: OrganisationMembership[];
-    @ManyToMany(() => Organisation, organisation => organisation.invitedUsers)
+    @ManyToMany(() => Organisation, organisation => organisation.invitedUsers, {onDelete: "CASCADE"})
     organisationInvitations: Organisation[];
     @ManyToMany(() => Organisation, organisation => organisation.followers)
     @JoinTable()
     followedOrganisations: Organisation[];
-    @OneToMany(() => Message, message => message.user, {cascade: true})
+    @OneToMany(() => Message, message => message.user, {cascade: true, onDelete:"CASCADE"})
     messages: Message[];
-    @OneToMany(() => Report, report => report.userReporter)
+    @OneToMany(() => Report, report => report.userReporter, {cascade: true, onDelete:"SET NULL"})
     reports: Report[];
-    @OneToMany(() => Report, report => report.reportedUser)
+    @OneToMany(() => Report, report => report.reportedUser, {cascade: true, onDelete:'SET NULL'})
     reported: Report[];
     @CreateDateColumn()
     createdAt: Date;
@@ -139,7 +139,6 @@ export class User implements UserProps {
     updatedAt: Date;
     @DeleteDateColumn()
     deletedAt: Date;
-
     @BeforeInsert()
     async setPassword(password: string) {
         this.password = await hash(password || this.password, 10)
